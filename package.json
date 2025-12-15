@@ -1,0 +1,21 @@
+{
+    "name": "mizzle",
+    "module": "src/index.ts",
+    "type": "module",
+    "scripts": {
+        "test": "vitest"
+    },
+    "devDependencies": {
+        "@aws-sdk/client-dynamodb": "^3.948.0",
+        "@aws-sdk/lib-dynamodb": "^3.948.0",
+        "@types/bun": "latest",
+        "tsx": "^4.21.0",
+        "vitest": "^4.0.15"
+    },
+    "peerDependencies": {
+        "typescript": "^5.9.3"
+    },
+    "dependencies": {
+        "uuid": "^13.0.0"
+    }
+}
