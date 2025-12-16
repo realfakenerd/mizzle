@@ -234,6 +234,7 @@ export abstract class ColumnBuider<
         : IsPartitionKey<NotNull<this>> {
         this.config.isPartitionKey = true;
         this.config.notNull = false;
+
         return this as TExtraConfig["partitionKeyHasDefault"] extends true
             ? IsPartitionKey<HasDefault<NotNull<this>>>
             : IsPartitionKey<NotNull<this>>;
@@ -269,25 +270,4 @@ export abstract class ColumnBuider<
     abstract build<TTableName extends string>(
         table: AnyTable<{ name: TTableName }>,
     ): Column<MakeColumnConfig<T, TTableName>>;
-
-    buildExtraConfigColumn<TTableName extends string>(
-        table: AnyTable<{ name: TTableName }>,
-    ): ExtraConfigColumn {
-        return new ExtraConfigColumn(table, this.config);
-    }
-
-    /** @internal */
-    buildSortKey(column: Column): LsiBuilder[] {
-        const { isSortKey, name } = this.config;
-        if (!isSortKey) {
-            return [];
-        }
-
-        return [
-            lsi({
-                name: `${column.table[TableName]!}-${name}-lsi`,
-                sk: column,
-            }),
-        ];
-    }
 }
