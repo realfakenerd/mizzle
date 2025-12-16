@@ -1,54 +1,100 @@
-import { Column, ExtraConfigColumn, type GetColumnData } from "./column";
+import { Column, type GetColumnData } from "./column";
 import type {
     BuildColumns,
-    BuildExtraConfigColumns,
     ColumnBuider,
     ColumnBuilderBase,
 } from "./column-builder";
 import { getColumnBuilders, type ColumnsBuilder } from "./columns/all";
-import type { GsiBuilder, LsiBuilder } from "./indexes";
+import type { IndexBuilder } from "./indexes";
 import type { OpitionalKeyOnly, RequiredKeyOnly } from "./operations";
+import type { KeyStrategy } from "./strategies";
 import type { Simplify, Update } from "./utils";
 
-export type TableExtraConfigValue = GsiBuilder | LsiBuilder;
-export type TableExtraConfig = Record<string, TableExtraConfigValue>;
+type IndexStrategyConfig<TIndex extends IndexBuilder> =
+    TIndex["type"] extends "lsi"
+        ? { sk: KeyStrategy }
+        : {
+              pk: KeyStrategy;
+              sk?: KeyStrategy;
+          };
+
+type IndexesStrategy<
+    TIndexes extends Record<string, IndexBuilder> | undefined,
+> =
+    TIndexes extends Record<string, IndexBuilder>
+        ? { [K in keyof TIndexes]?: IndexStrategyConfig<TIndexes[K]> }
+        : {};
+
+export type StrategyCallback<
+    TColumns extends Record<string, Column>,
+    TPhysicalConfig extends PhysicalTableConfig,
+> = (columns: TColumns) => {
+    [K in keyof TPhysicalConfig as K extends "pk" | "sk"
+        ? K
+        : never]: KeyStrategy;
+} & IndexesStrategy<TPhysicalConfig["indexes"]>;
 
 export interface EntityConfig<TColumn extends Column = Column<any>> {
     name: string;
-    table: Table;
+    table: PhysicalTable;
     columns: Record<string, TColumn>;
 }
 
-/** @internal */
-export const TableName = Symbol.for("mizzle:Name");
-/** @internal */
-export const OriginalName = Symbol.for("mizzle:OriginalName");
-/** @internal */
-export const BaseName = Symbol.for("mizzle:BaseName");
-/** @internal */
-export const SortKeys = Symbol.for("mizzle:SortKeys");
-/** @internal */
-export const ExtraConfigColumns = Symbol.for("mizzle:ExtraConfigColumn");
-/** @internal */
-export const Columns = Symbol.for("mizzle:Columns");
+export interface PhysicalTableConfig {
+    pk: ColumnBuilderBase;
+    sk?: ColumnBuilderBase;
+    indexes?: Record<string, IndexBuilder>;
+}
 
-export class Table {
+const Columns = Symbol.for("mizzle:Columns");
+const Indexes = Symbol.for("mizzle:Indexes");
+const SortKey = Symbol.for("mizzle:SortKey");
+const TableName = Symbol.for("mizzle:TableName");
+const PartitionKey = Symbol.for("mizzle:PartitionKey");
+
+const EntityName = Symbol.for("mizzle:EntityName");
+const EntityStrategy = Symbol.for("mizzle:EntityStrategy");
+const PhysicalTableSymbol = Symbol.for("mizzle:PhysicalTable");
+
+export class PhysicalTable<
+    T extends PhysicalTableConfig = PhysicalTableConfig,
+> {
+    declare readonly _: {
+        config: T;
+        name: string;
+        pk: Column;
+        sk?: Column;
+        indexes: T["indexes"];
+    };
+
     /** @internal */
     [TableName]: string;
 
     /** @internal */
-    [Columns]!: Record<string, Column>;
+    [Indexes]: T["indexes"];
 
     /** @internal */
-    [ExtraConfigColumns]!: Record<string, ExtraConfigColumn>;
+    [PartitionKey]: Column;
 
-    constructor(name: string) {
+    /** @internal */
+    [SortKey]?: Column;
+
+    static readonly Symbol = {
+        TableName: TableName as typeof TableName,
+        Indexes: Indexes as typeof Indexes,
+        PartitionKey: PartitionKey as typeof PartitionKey,
+        SortKey: SortKey as typeof SortKey,
+    };
+
+    constructor(name: string, config: T) {
         this[TableName] = name;
+        this[PartitionKey] = (config.pk as ColumnBuider).build({} as any);
+        this[SortKey] = config.sk
+            ? (config.sk as ColumnBuider).build({} as any)
+            : undefined;
+        this[Indexes] = config.indexes;
     }
 }
-
-export const EntityName = Symbol.for("mizzle:EntityName");
-export const EntityStrategy = Symbol.for("mizzle:EntityStrategy");
 
 export class Entity<T extends EntityConfig = EntityConfig> {
     declare readonly _: {
@@ -56,6 +102,7 @@ export class Entity<T extends EntityConfig = EntityConfig> {
         readonly name: T["name"];
         readonly table: T["table"];
         readonly columns: T["columns"];
+        readonly strategies: Record<string, KeyStrategy>;
         readonly inferSelect: InferSelectModel<Entity<T>>;
         readonly inferInsert: InferInsertModel<Entity<T>>;
     };
@@ -67,24 +114,30 @@ export class Entity<T extends EntityConfig = EntityConfig> {
     [EntityName]: string;
 
     /** @internal */
-    readonly table: T["table"];
+    [PhysicalTableSymbol]: T["table"];
 
     /** @internal */
     [Columns]: T["columns"];
 
-    /** @internal */
-    [EntityStrategy]: ((entity: Entity, table: Table) => any[])[];
+    [EntityStrategy]: Record<string, KeyStrategy>;
+
+    static readonly Symbol = {
+        Columns: Columns as typeof Columns,
+        EntityName: EntityName as typeof EntityName,
+        EntityStrategy: EntityStrategy as typeof EntityStrategy,
+        PhysicalTableSymbol: PhysicalTableSymbol as typeof PhysicalTableSymbol,
+    };
 
     constructor(
         name: T["name"],
         table: T["table"],
         columns: T["columns"],
-        strategy: any[],
+        strategies: Record<string, KeyStrategy>,
     ) {
         this[EntityName] = name;
-        this.table = table;
+        this[PhysicalTableSymbol] = table;
         this[Columns] = columns;
-        this[EntityStrategy] = strategy;
+        this[EntityStrategy] = strategies;
     }
 }
 
@@ -140,39 +193,6 @@ export type EntityWithColumns<T extends EntityConfig> = Entity<T> & {
     [Key in keyof T["columns"]]: T["columns"][Key];
 };
 
-export interface DynTableFn<TSchema extends string | undefined = undefined> {
-    <
-        TTableName extends string,
-        TColumnsMap extends Record<string, ColumnBuilderBase>,
-    >(
-        name: TTableName,
-        columns: TColumnsMap,
-        extraConfig?: (
-            self: BuildExtraConfigColumns<TTableName, TColumnsMap>,
-        ) => TableExtraConfigValue[],
-    ): EntityWithColumns<{
-        name: TTableName;
-        schema: TSchema;
-        columns: BuildColumns<TTableName, TColumnsMap>;
-        table: Table;
-    }>;
-    <
-        TTableName extends string,
-        TColumnsMap extends Record<string, ColumnBuilderBase>,
-    >(
-        name: TTableName,
-        columns: (columnTypes: ColumnsBuilder) => TColumnsMap,
-        extraConfig?: (
-            self: BuildExtraConfigColumns<TTableName, TColumnsMap>,
-        ) => TableExtraConfigValue[],
-    ): EntityWithColumns<{
-        name: TTableName;
-        schema: TSchema;
-        columns: BuildColumns<TTableName, TColumnsMap>;
-        table: Table;
-    }>;
-}
-
 export type UpdateTableConfig<
     T extends EntityConfig,
     TUpdate extends Partial<EntityConfig>,
@@ -182,63 +202,50 @@ export type AnyTable<TPartial extends Partial<EntityConfig> = {}> = Entity<
     UpdateTableConfig<EntityConfig, TPartial>
 >;
 
-/** @internal */
-export function tableWithSchema<
-    TTableName extends string,
-    TSchemaName extends string | undefined,
+export function dynamoEntity<
+    TName extends string,
+    TTable extends PhysicalTable,
     TColumnsMap extends Record<string, ColumnBuilderBase>,
 >(
-    name: TTableName,
-    columns: TColumnsMap | ((columnTypes: ColumnsBuilder) => TColumnsMap),
-    extraConfig:
-        | ((
-              self: BuildExtraConfigColumns<TTableName, TColumnsMap>,
-          ) => TableExtraConfigValue[] | TableExtraConfig)
-        | undefined,
-    schema: TSchemaName,
-    baseName = name,
+    table: TTable,
+    name: TName,
+    columns: TColumnsMap | ((columnsTypes: ColumnsBuilder) => TColumnsMap),
+    strategies?: StrategyCallback<
+        BuildColumns<TName, TColumnsMap>,
+        TTable["_"]
+    >,
 ): EntityWithColumns<{
-    name: TTableName;
-    schema: TSchemaName;
-    columns: BuildColumns<TTableName, TColumnsMap>;
-    table: Table;
+    name: TName;
+    table: TTable;
+    columns: BuildColumns<TName, TColumnsMap>;
 }> {
-    const rawTable = new Table(name);
-
     const parsedColumns: TColumnsMap =
         typeof columns === "function" ? columns(getColumnBuilders()) : columns;
 
+    const tempEntity = {} as Entity;
     const builtColumns = Object.fromEntries(
         Object.entries(parsedColumns).map(([name, colBuilderBase]) => {
             const colBuilder = colBuilderBase as ColumnBuider;
             colBuilder.setName(name);
-            const column = colBuilder.build(rawTable);
-            rawTable[SortKeys].push(...colBuilder.buildSortKey(column));
+            const column = colBuilder.build(tempEntity);
             return [name, column];
         }),
-    ) as unknown as BuildColumns<TTableName, TColumnsMap>;
+    ) as BuildColumns<TName, TColumnsMap>;
 
-    const builtColumnsForExtraConfig = Object.fromEntries(
-        Object.entries(parsedColumns).map(([name, colBuiderBase]) => {
-            const colBuilder = colBuiderBase as ColumnBuider;
-            colBuilder.setName(name);
-            const column = colBuilder.buildExtraConfigColumn(rawTable);
-            return [name, column];
-        }),
-    ) as unknown as BuildExtraConfigColumns<TTableName, TColumnsMap>;
+    const definedStrategies = strategies ? strategies(builtColumns) : {};
 
-    const table = Object.assign(rawTable, builtColumns);
+    const rawEntity = new Entity(name, table, {}, definedStrategies);
 
-    table[Table.Symbol.Columns] = builtColumns;
-    table[Table.Symbol.ExtraConfigColumns] = builtColumnsForExtraConfig;
+    rawEntity[Columns] = builtColumns;
 
-    if (extraConfig) {
-        table[Table.Symbol.ExtraConfigColumns] = extraConfig as any;
-    }
+    const entity = Object.assign(rawEntity, builtColumns);
 
-    return table;
+    return entity as any;
 }
 
-export const dynamoTable: DynTableFn = (name, columns, extraConfig) => {
-    return tableWithSchema(name, columns, extraConfig, undefined);
-};
+export function dynamoTable<
+    TTableName extends string,
+    TConfig extends PhysicalTableConfig,
+>(name: TTableName, config: TConfig) {
+    return new PhysicalTable(name, config);
+}
