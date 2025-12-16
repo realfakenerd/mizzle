@@ -1,32 +1,19 @@
-import type { Column } from "./column";
-
-export class GsiBuilder {
-    constructor(private config: GSI) {}
-
-    build(): GSI {
-        return this.config;
-    }
+export interface IndexColumnConfig {
+    pk?: string;
+    sk?: string;
 }
 
-export interface GSI {
-    name: string;
-    pk: Column;
-    sk?: Column;
+export class IndexBuilder {
+    constructor(
+        public type: "gsi" | "lsi",
+        public config: IndexColumnConfig,
+    ) {}
 }
 
-export const gsi = (config: GSI) => new GsiBuilder(config);
-
-export class LsiBuilder {
-    constructor(private config: LSI) {}
-
-    build(): LSI {
-        return this.config;
-    }
+export function gsi(pkColumn: string, skColumn?: string) {
+    return new IndexBuilder("gsi", { pk: pkColumn, sk: skColumn });
 }
 
-export interface LSI {
-    name: string;
-    sk: Column;
+export function lsi(skColumn: string) {
+    return new IndexBuilder("lsi", { sk: skColumn });
 }
-
-export const lsi = (config: LSI) => new LsiBuilder(config);
