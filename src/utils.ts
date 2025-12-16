@@ -1,4 +1,4 @@
-import { Table } from "./table";
+import { Entity } from "./table";
 
 export type Assume<T, U> = T extends U ? T : U;
 
@@ -10,8 +10,10 @@ export type Update<T, TUpdate> = {
     [K in Exclude<keyof T, keyof TUpdate>]: T[K];
 } & TUpdate;
 
-export function getTableColumns<T extends Table>(table: T): T["_"]["columns"] {
-    return table[Table.Symbol.Columns];
+export function getEntityColumns<T extends Entity>(
+    table: T,
+): T["_"]["columns"] {
+    return table[Entity.Symbol.Columns];
 }
 
 export interface ColumnType<
