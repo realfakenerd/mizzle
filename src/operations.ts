@@ -1,5 +1,5 @@
 import type { Column, AnyColumn } from "./column";
-import type { Table } from "./table";
+import type { PhysicalTable } from "./table";
 
 export type RequiredKeyOnly<TKey extends string, T extends Column> =
     T extends AnyColumn<{
@@ -19,7 +19,7 @@ export type SelectedFieldsFlat<TColumn extends Column> = Record<
 
 export type SelectedFields<
     TColumn extends Column,
-    TTable extends Table,
+    TTable extends PhysicalTable,
 > = Record<
     string,
     SelectedFieldsFlat<TColumn>[string] | TTable | SelectedFieldsFlat<TColumn>
