@@ -1,9 +1,8 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
-import { InsertBuilder } from "./command-builder/insert";
+import { InsertBuilder } from "./commands/insert";
 import { RelationnalQueryBuilder } from "./relational-builder";
-import type { SelectedFields } from "./select-builder";
-import { SelectBuilder } from "./select-builder";
+import { SelectBuilder, type SelectedFields } from "./commands/select";
 import type { Entity } from "./table";
 import { UpdateBuilder } from "./update-builder";
 
@@ -18,16 +17,10 @@ export class DynamoDB {
         return new InsertBuilder(table, this.docClient);
     }
 
-    select(): SelectBuilder<undefined>;
-    select<TSelection extends SelectedFields>(
-        fields: TSelection,
-    ): SelectBuilder<TSelection>;
     select<TSelection extends SelectedFields>(
         fields?: TSelection,
     ): SelectBuilder<TSelection | undefined> {
-        return new SelectBuilder({
-            fields: fields ?? undefined,
-        });
+        return new SelectBuilder(this.docClient, fields);
     }
 
     query<T extends TableDefinition<any>>(table: T) {
