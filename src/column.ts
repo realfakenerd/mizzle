@@ -3,7 +3,7 @@ import type {
     ColumnBuilderRuntimeConfig,
     ColumnDataType,
 } from "./column-builder";
-import type { Table } from "./table";
+import type { PhysicalTable } from "./table";
 import type { Update } from "./utils";
 
 export type AnyColumn<
@@ -69,7 +69,7 @@ export abstract class Column<
     protected config: ColumnRuntimeConfig<T["data"], TRuntimeConfig>;
 
     constructor(
-        readonly table: Table,
+        readonly table: PhysicalTable,
         config: ColumnRuntimeConfig<T["data"], TRuntimeConfig>,
     ) {
         this.config = config;
