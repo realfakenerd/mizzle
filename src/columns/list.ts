@@ -24,7 +24,7 @@ export class ListColumnBuilder<
         super(name, "array", "L");
     }
     override build<TTableName extends string>(
-        table: AnyTable<{ name: TTableName }>,
+        table: AnyTable,
     ): Column<MakeColumnConfig<T, TTableName>> {
         return new ListColumn<MakeColumnConfig<T, TTableName>>(
             table,

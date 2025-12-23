@@ -22,7 +22,7 @@ export class BooleanColumnBuilder<
     }
 
     build<TTableName extends string>(
-        table: AnyTable<{ name: TTableName }>,
+        table: AnyTable,
     ): BooleanColumn<MakeColumnConfig<T, TTableName>> {
         return new BooleanColumn<MakeColumnConfig<T, TTableName>>(
             table,

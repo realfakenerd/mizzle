@@ -41,7 +41,7 @@ class StringColumnBuilder<
 
     /** @internal */
     build<TTableName extends string>(
-        table: AnyTable<{ name: TTableName }>,
+        table: AnyTable,
     ): StringColumn<MakeColumnConfig<T, TTableName>> {
         return new StringColumn<MakeColumnConfig<T, TTableName>>(
             table,

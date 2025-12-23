@@ -25,7 +25,7 @@ export class MapColumnBuilder<
     }
 
     override build<TTableName extends string>(
-        table: AnyTable<{ name: TTableName }>,
+        table: AnyTable,
     ): Column<MakeColumnConfig<T, TTableName>> {
         return new MapColumn<MakeColumnConfig<T, TTableName>>(
             table,

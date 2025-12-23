@@ -26,7 +26,7 @@ export class JsonColumnBuilder<
 
     /** @internal */
     override build<TTableName extends string>(
-        table: AnyTable<{ name: TTableName }>,
+        table: AnyTable,
     ): Column<MakeColumnConfig<T, TTableName>> {
         return new JsonColumn<MakeColumnConfig<T, TTableName>>(
             table,

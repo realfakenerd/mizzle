@@ -34,7 +34,7 @@ export class NumberColumnBuilder<
 
     /** @internal */
     override build<TTableName extends string>(
-        table: AnyTable<{ name: TTableName }>,
+        table: AnyTable,
     ): NumberColumn<MakeColumnConfig<T, TTableName>> {
         return new NumberColumn<MakeColumnConfig<T, TTableName>>(
             table,

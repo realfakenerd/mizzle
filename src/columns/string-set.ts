@@ -36,7 +36,7 @@ export class StringSetColumnBuilder<
     }
 
     override build<TTableName extends string>(
-        table: AnyTable<{ name: TTableName }>,
+        table: AnyTable,
     ): Column<MakeColumnConfig<T, TTableName>> {
         return new StringSetColumn<MakeColumnConfig<T, TTableName>>(
             table,

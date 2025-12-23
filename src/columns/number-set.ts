@@ -26,7 +26,7 @@ export class NumberSetColumnBuilder<
     }
 
     override build<TTableName extends string>(
-        table: AnyTable<{ name: TTableName }>,
+        table: AnyTable,
     ): Column<MakeColumnConfig<T, TTableName>> {
         return new NumberSetColumn<MakeColumnConfig<T, TTableName>>(
             table,

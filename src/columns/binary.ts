@@ -25,7 +25,7 @@ export class BinaryColumnBuilder<
     }
 
     override build<TTableName extends string>(
-        table: AnyTable<{ name: TTableName }>,
+        table: AnyTable,
     ): Column<MakeColumnConfig<T, TTableName>> {
         return new BinaryColumn<MakeColumnConfig<T, TTableName>>(
             table,
