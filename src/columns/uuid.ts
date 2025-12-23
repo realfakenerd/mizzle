@@ -26,7 +26,7 @@ export class UUIDColumnBuilder<
 
     /** @internal */
     build<TTableName extends string>(
-        table: AnyTable<{ name: TTableName }>,
+        table: AnyTable,
     ): UUIDColumn<MakeColumnConfig<T, TTableName>> {
         return new UUIDColumn<MakeColumnConfig<T, TTableName>>(
             table,
