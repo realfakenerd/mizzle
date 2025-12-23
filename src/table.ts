@@ -194,13 +194,12 @@ export type EntityWithColumns<T extends EntityConfig> = Entity<T> & {
 };
 
 export type UpdateTableConfig<
-    T extends EntityConfig,
-    TUpdate extends Partial<EntityConfig>,
+    T extends PhysicalTableConfig,
+    TUpdate extends Partial<PhysicalTableConfig>,
 > = Required<Update<T, TUpdate>>;
 
-export type AnyTable<TPartial extends Partial<EntityConfig> = {}> = Entity<
-    UpdateTableConfig<EntityConfig, TPartial>
->;
+export type AnyTable<TPartial extends Partial<PhysicalTableConfig> = {}> =
+    PhysicalTable<UpdateTableConfig<PhysicalTableConfig, TPartial>>;
 
 export function dynamoEntity<
     TName extends string,
