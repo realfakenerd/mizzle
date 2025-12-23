@@ -39,8 +39,8 @@ class InsertBase<
 
     override async execute(): Promise<TResult> {
         const itemToSave = this.processValues(this.valuesData);
-        const key = resolveStrategies(this.entity);
-        const finalItem = { ...itemToSave, ...key };
+        const key = resolveStrategies(this.entity, undefined, itemToSave);
+        const finalItem = { ...itemToSave, ...key.keys };
 
         const physicalTable = this.entity[Entity.Symbol.PhysicalTableSymbol];
         const tableName = physicalTable[PhysicalTable.Symbol.TableName];
@@ -72,7 +72,7 @@ class InsertBase<
 
             value = item[key];
 
-            if (["SS", "NS", "BS"].includes(col.dataType)) {
+            if (["SS", "NS", "BS"].includes(col.columnType)) {
                 if (Array.isArray(value)) {
                     const setVal = new Set(value);
                     item[key] = setVal;

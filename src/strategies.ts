@@ -102,6 +102,7 @@ export interface StrategyResolution {
 export function resolveStrategies(
     entity: Entity,
     whereClause?: Expression,
+    providedValues?: Record<string, any>,
 ): StrategyResolution {
     const strategies = entity[Entity.Symbol.EntityStrategy];
     const physicalTable = entity[Entity.Symbol.PhysicalTableSymbol];
@@ -109,9 +110,10 @@ export function resolveStrategies(
     const pkCol = physicalTable[PhysicalTable.Symbol.PartitionKey];
     const skCol = physicalTable[PhysicalTable.Symbol.SortKey];
 
-    const availableValues = whereClause
-        ? extracValuesFromExpression(whereClause)
-        : {};
+    const availableValues = {
+        ...(whereClause ? extracValuesFromExpression(whereClause) : {}),
+        ...(providedValues || {}),
+    };
 
     const result: StrategyResolution = {
         keys: {},
