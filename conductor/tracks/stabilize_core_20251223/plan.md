@@ -4,7 +4,7 @@ This plan outlines the steps to stabilize and verify the core `insert` and `sele
 
 ## Phase 1: Test Infrastructure & Insert Command
 
-- [ ] Task: Ensure local DynamoDB is accessible for integration tests.
+- [x] Task: Ensure local DynamoDB is accessible for integration tests. [infra]
 - [ ] Task: Write unit and integration tests for `insert` command with various column types.
 - [ ] Task: Implement/Refine `insert` logic to pass all tests, focusing on key strategies.
 - [ ] Task: Verify 80% coverage for `src/commands/insert.ts`.
