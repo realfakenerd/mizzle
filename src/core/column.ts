@@ -1,3 +1,4 @@
+import { INFER_MODE, NULLS, ORDER } from "../constants";
 import type {
     ColumnBuilderBaseConfig,
     ColumnBuilderRuntimeConfig,
@@ -97,7 +98,7 @@ export abstract class Column<
 export type GetColumnData<
     TColumn extends Column,
     TInferMode extends "query" | "raw" = "query",
-> = TInferMode extends "raw"
+> = TInferMode extends typeof INFER_MODE.RAW
     ? TColumn["_"]["data"]
     : TColumn["_"]["notNull"] extends false
       ? TColumn["_"]["data"]
@@ -108,8 +109,8 @@ export type InferColumndsDataTypes<TColumns extends Record<string, Column>> = {
 };
 
 export type IndexedExtraConfigType = {
-    order?: "asc" | "desc";
-    nulls?: "first" | "last";
+    order?: typeof ORDER.ASC | typeof ORDER.DESC;
+    nulls?: typeof NULLS.FIRST | typeof NULLS.LAST;
     opClass?: string;
 };
 
@@ -124,34 +125,34 @@ export class ExtraConfigColumn<
     }
 
     indexConfig: IndexedExtraConfigType = {
-        order: this.config.order ?? "asc",
-        nulls: this.config.nulls ?? "last",
+        order: this.config.order ?? ORDER.ASC,
+        nulls: this.config.nulls ?? NULLS.LAST,
         opClass: this.config.opClass,
     };
 
     defaultConfig: IndexedExtraConfigType = {
-        order: "asc",
-        nulls: "last",
+        order: ORDER.ASC,
+        nulls: NULLS.LAST,
         opClass: undefined,
     };
 
     asc(): Omit<this, "asc" | "desc"> {
-        this.indexConfig.order = "asc";
+        this.indexConfig.order = ORDER.ASC;
         return this;
     }
 
     desc(): Omit<this, "asc" | "desc"> {
-        this.indexConfig.order = "desc";
+        this.indexСonfig.order = ORDER.DESC;
         return this;
     }
 
     nullsFirst(): Omit<this, "nullsFirst" | "nullsLast"> {
-        this.indexConfig.nulls = "first";
+        this.indexConfig.nulls = NULLS.FIRST;
         return this;
     }
 
     nullsLast(): Omit<this, "nullsFirst" | "nullsLast"> {
-        this.indexConfig.nulls = "last";
+        this.indexConfig.nulls = NULLS.LAST;
         return this;
     }
 
