@@ -9,7 +9,7 @@ This plan outlines the steps to refactor the Mizzle codebase to reduce duplicati
 - [x] Task: Update the codebase to use the new centralized constants. 04458db
 - [x] Task: Conductor - User Manual Verification 'Preparation & Constants Centralization' (Protocol in workflow.md)
 
-## Phase 2: Core Logic Refactoring
+## Phase 2: Core Logic Refactoring [checkpoint: 48c6ad5]
 - [x] Task: Audit `src/core/table.ts` and `src/core/entity.ts` for redundant helper functions and types. a5d031e
 - [x] Task: Extract common internal logic from `src/core/` files into smaller, utility-focused functions in `src/utils/utils.ts` or new core utilities. a5d031e
 - [x] Task: Standardize naming conventions for internal symbols and properties (e.g., consistency between `PartitionKey` and `PK`). 3329313
