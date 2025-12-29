@@ -1,4 +1,4 @@
-export * from "./db";
+export * from "./utils/db";
 export * from "./expressions/operators";
 export * from "./builders/query-builder";
 export * from "./core/table";

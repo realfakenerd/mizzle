@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { dynamoTable, dynamoEntity } from "./core/table";
-import { string, uuid, number, boolean, list, map } from "./columns/all";
-import { prefixKey, staticKey } from "./core/strategies";
+import { dynamoTable, dynamoEntity } from "../src/core/table";
+import { string, uuid, number, boolean, list, map } from "../src/columns/all";
+import { prefixKey, staticKey } from "../src/core/strategies";
 import { DynamoDBClient, CreateTableCommand, DeleteTableCommand } from "@aws-sdk/client-dynamodb";
-import { mizzle } from "./db";
-import { eq } from "./expressions/operators";
+import { mizzle } from "../src/utils/db";
+import { eq } from "../src/expressions/operators";
 
 const client = new DynamoDBClient({
     endpoint: "http://localhost:8000",

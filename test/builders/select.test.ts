@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach, beforeAll, afterAll } from "vitest";
-import { dynamoTable, dynamoEntity } from "../core/table";
-import { string, uuid, number, boolean } from "../columns/all";
-import { prefixKey, staticKey } from "../core/strategies";
+import { dynamoTable, dynamoEntity } from "../../src/core/table";
+import { string, uuid, number, boolean } from "../../src/columns/all";
+import { prefixKey, staticKey } from "../../src/core/strategies";
 import { DynamoDBClient, CreateTableCommand, DeleteTableCommand } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
-import { mizzle } from "../db";
-import { eq, and } from "../expressions/operators";
+import { mizzle } from "../../src/utils/db";
+import { eq, and } from "../../src/expressions/operators";
 
 const client = new DynamoDBClient({
     endpoint: "http://localhost:8000",
@@ -124,7 +124,7 @@ describe("Select Command", () => {
     // Let's create a GSI test case.
 });
 
-import { gsi } from "../indexes";
+import { gsi } from "../../src/indexes";
 
 describe("Select Command with GSI", () => {
     const tableName = "TestTable_Select_GSI";

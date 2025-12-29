@@ -16,9 +16,9 @@ This plan outlines the steps to reorganize the codebase into a domain-driven, "D
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Logic Migration' (Protocol in workflow.md)
 
 ## Phase 3: Utilities & Public API
-- [ ] Task: Move `utils.ts` and `db.ts` to `src/utils/` (or keep `db.ts` at root if preferred for DX).
-- [ ] Task: Refactor `src/index.ts` to export from new locations.
-- [ ] Task: Move all test files (e.g., `src/**/*.test.ts`) to the `test/` directory.
-- [ ] Task: Update all test imports to match the new structure and ensure all tests pass.
-- [ ] Task: Cleanup any redundant files or circular dependencies introduced by the move.
-- [ ] Task: Conductor - User Manual Verification 'Phase 3: Final Integration' (Protocol in workflow.md)
+- [x] Task: Move `utils.ts` and `db.ts` to `src/utils/` (or keep `db.ts` at root if preferred for DX).
+- [x] Task: Refactor `src/index.ts` to export from new locations.
+- [x] Task: Move all test files (e.g., `src/**/*.test.ts`) to the `test/` directory.
+- [x] Task: Update all test imports to match the new structure and ensure all tests pass.
+- [x] Task: Cleanup any redundant files or circular dependencies introduced by the move.
+- [x] Task: Conductor - User Manual Verification 'Phase 3: Final Integration' (Protocol in workflow.md)
