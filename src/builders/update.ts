@@ -1,17 +1,13 @@
 import { UpdateCommand, type DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
-import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "../constants";
-import { Entity, PhysicalTable, type InferInsertModel } from "../core/table";
+import { Entity, type InferInsertModel } from "../core/table";
 import { entityKind } from "../core/entity";
-import { QueryPromise } from "./query-promise";
 import { type Expression } from "../expressions/operators";
-import { resolveStrategies } from "../core/strategies";
-
-import { resolveTableName } from "../utils/utils";
+import { BaseBuilder } from "./base";
 
 export class UpdateBuilder<
     TEntity extends Entity,
     TResult = any,
-> extends QueryPromise<TResult> {
+> extends BaseBuilder<TEntity, TResult> {
     static readonly [entityKind]: string = "UpdateBuilder";
 
     private _setValues: Partial<InferInsertModel<TEntity>> = {};
@@ -23,10 +19,10 @@ export class UpdateBuilder<
     private _explicitKey?: Record<string, any>;
 
     constructor(
-        private entity: TEntity,
-        private client: DynamoDBDocumentClient,
+        entity: TEntity,
+        client: DynamoDBDocumentClient,
     ) {
-        super();
+        super(entity, client);
     }
 
     key(keyObject: Record<string, any>): this {
@@ -64,14 +60,11 @@ export class UpdateBuilder<
         return this;
     }
 
-    async execute(): Promise<TResult> {
-        const tableName = resolveTableName(this.entity);
-
+    override async execute(): Promise<TResult> {
         let keys: Record<string, any> | undefined = this._explicitKey;
 
         if (!keys) {
-            const resolved = resolveStrategies(
-                this.entity,
+            const resolved = this.resolveKeys(
                 this._whereClause,
             );
             keys = resolved.keys;
@@ -132,7 +125,7 @@ export class UpdateBuilder<
         }
 
         const command = new UpdateCommand({
-            TableName: tableName,
+            TableName: this.tableName,
             Key: keys,
             UpdateExpression: updateExpressions.join(" "),
             ExpressionAttributeNames: Object.keys(attributeNames).length > 0 ? attributeNames : undefined,

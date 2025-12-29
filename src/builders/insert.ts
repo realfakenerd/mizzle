@@ -1,12 +1,8 @@
 import { PutCommand, type DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
-import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "../constants";
-import { Entity, PhysicalTable, type InferInsertModel } from "../core/table";
+import { ENTITY_SYMBOLS } from "../constants";
+import { Entity, type InferInsertModel } from "../core/table";
 import { entityKind } from "../core/entity";
-import { QueryPromise } from "./query-promise";
-import { resolveStrategies, type KeyStrategy } from "../core/strategies";
-import { Column } from "../core/column";
-
-import { resolveTableName } from "../utils/utils";
+import { BaseBuilder } from "./base";
 
 export class InsertBuilder<TEntity extends Entity> {
     static readonly [entityKind]: string = "InsertBuilder";
@@ -24,15 +20,15 @@ export class InsertBuilder<TEntity extends Entity> {
 class InsertBase<
     TEntity extends Entity,
     TResult = undefined,
-> extends QueryPromise<TResult> {
+> extends BaseBuilder<TEntity, TResult> {
     private shouldReturnValues = false;
 
     constructor(
-        private entity: TEntity,
-        private client: DynamoDBDocumentClient,
+        entity: TEntity,
+        client: DynamoDBDocumentClient,
         private valuesData: InferInsertModel<TEntity>,
     ) {
-        super();
+        super(entity, client);
     }
 
     returning(): InsertBase<TEntity, InferInsertModel<TEntity>> {
@@ -42,13 +38,11 @@ class InsertBase<
 
     override async execute(): Promise<TResult> {
         const itemToSave = this.processValues(this.valuesData);
-        const key = resolveStrategies(this.entity, undefined, itemToSave);
+        const key = this.resolveKeys(undefined, itemToSave);
         const finalItem = { ...itemToSave, ...key.keys };
 
-        const tableName = resolveTableName(this.entity);
-
         const command = new PutCommand({
-            TableName: tableName,
+            TableName: this.tableName,
             Item: finalItem,
         });
 

@@ -4,16 +4,13 @@ import {
     ScanCommand,
     type DynamoDBDocumentClient,
 } from "@aws-sdk/lib-dynamodb";
-import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "../constants";
+import { TABLE_SYMBOLS } from "../constants";
 import type { Column } from "../core/column";
 import { entityKind } from "../core/entity";
 import type { SelectedFields as SelectedFieldsBase } from "../core/operations";
-import { BinaryExpression, type Expression } from "../expressions/operators";
-import { QueryPromise } from "./query-promise";
-import { resolveStrategies } from "../core/strategies";
+import { type Expression } from "../expressions/operators";
 import { Entity, PhysicalTable, type InferSelectModel } from "../core/table";
-
-import { resolveTableName } from "../utils/utils";
+import { BaseBuilder } from "./base";
 
 export type SelectedFields = SelectedFieldsBase<Column, PhysicalTable>;
 
@@ -32,17 +29,17 @@ class SelectBase<
     TEntity extends Entity,
     TSelection extends SelectedFields | undefined = undefined,
     TResult = TSelection extends undefined ? InferSelectModel<TEntity> : any,
-> extends QueryPromise<TResult[]> {
+> extends BaseBuilder<TEntity, TResult[]> {
     static readonly [entityKind]: string = "SelectBase";
 
     private whereClause?: Expression;
 
     constructor(
-        private entity: TEntity,
-        private client: DynamoDBDocumentClient,
+        entity: TEntity,
+        client: DynamoDBDocumentClient,
         private fields?: TSelection,
     ) {
-        super();
+        super(entity, client);
     }
 
     where(expression: Expression): this {
@@ -51,18 +48,14 @@ class SelectBase<
     }
 
     override async execute(): Promise<TResult[]> {
-        const tableName = resolveTableName(this.entity);
-        const physicalTable = this.entity[ENTITY_SYMBOLS.PHYSICAL_TABLE];
-
-        const { keys, hasPartitionKey, hasSortKey, indexName } = resolveStrategies(
-            this.entity,
+        const { keys, hasPartitionKey, hasSortKey, indexName } = this.resolveKeys(
             this.whereClause,
         );
 
         // GetItem (PK + SK)
         if (hasPartitionKey && hasSortKey && !indexName) {
             const command = new GetCommand({
-                TableName: tableName,
+                TableName: this.tableName,
                 Key: keys,
             });
 
@@ -77,15 +70,15 @@ class SelectBase<
 
             if (indexName) {
                 // Find index definition to get PK name
-                const indexes = physicalTable[TABLE_SYMBOLS.INDEXES];
+                const indexes = this.physicalTable[TABLE_SYMBOLS.INDEXES];
                 if (!indexes || !indexes[indexName]) {
                      throw new Error(`Index ${indexName} not found on table definition.`);
                 }
                 pkName = indexes[indexName].config.pk!;
                 skName = indexes[indexName].config.sk;
             } else {
-                 pkName = physicalTable[TABLE_SYMBOLS.PARTITION_KEY].name;
-                 skName = physicalTable[TABLE_SYMBOLS.SORT_KEY]?.name;
+                 pkName = this.physicalTable[TABLE_SYMBOLS.PARTITION_KEY].name;
+                 skName = this.physicalTable[TABLE_SYMBOLS.SORT_KEY]?.name;
             }
             
             const pkValue = keys[pkName];
@@ -102,7 +95,7 @@ class SelectBase<
             }
 
             const command = new QueryCommand({
-                TableName: tableName,
+                TableName: this.tableName,
                 IndexName: indexName,
                 KeyConditionExpression: keyConditionExpression,
                 ExpressionAttributeValues: expressionAttributeValues,
@@ -115,7 +108,7 @@ class SelectBase<
         // Scan (No keys resolved)
         // WARN: Scanning is expensive!
         const command = new ScanCommand({
-            TableName: tableName,
+            TableName: this.tableName,
         });
         
         // TODO: Apply filter expression from this.whereClause if strictly scanning
