@@ -95,4 +95,26 @@ describe("Update Builder", () => {
         expect(call.input.ExpressionAttributeNames).toEqual({ "#age": "age" });
         expect(call.input.ExpressionAttributeValues).toEqual({ ":age": 1 });
     });
+
+    it("should correctly construct REMOVE expression", async () => {
+        const mockDocClient = {
+            send: vi.fn().mockResolvedValue({ Attributes: {} }),
+        } as any;
+
+        const db = mizzle({ config: {} } as any);
+        (db as any).docClient = mockDocClient;
+
+        await db.update(user)
+            .remove("age", "name")
+            .where(eq(user.id, "123"))
+            .execute();
+
+        expect(mockDocClient.send).toHaveBeenCalled();
+        const call = mockDocClient.send.mock.calls[0][0];
+        expect(call.input.UpdateExpression).toContain("REMOVE #age, #name");
+        expect(call.input.ExpressionAttributeNames).toEqual({
+            "#age": "age",
+            "#name": "name",
+        });
+    });
 });

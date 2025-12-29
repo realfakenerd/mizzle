@@ -86,6 +86,16 @@ export class UpdateBuilder<
             updateExpressions.push(`ADD ${addParts.join(", ")}`);
         }
 
+        if (this._removeValues.length > 0) {
+            const removeParts: string[] = [];
+            for (const field of this._removeValues) {
+                const namePlaceholder = `#${field}`;
+                attributeNames[namePlaceholder] = field;
+                removeParts.push(namePlaceholder);
+            }
+            updateExpressions.push(`REMOVE ${removeParts.join(", ")}`);
+        }
+
         const command = new UpdateCommand({
             TableName: tableName,
             Key: keys,
