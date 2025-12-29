@@ -6,8 +6,8 @@ This plan outlines the steps to refactor the Mizzle codebase to reduce duplicati
 - [x] Task: Audit existing unit test coverage for `src/builders/` and `src/core/`. d21cc52
 - [ ] Task: Add granular unit tests for `InsertBuilder`, `SelectBuilder`, and `UpdateBuilder` to ensure existing behavior is fully captured.
 - [x] Task: Create `src/constants.ts` and consolidate magic strings (e.g., Symbol names, internal DynamoDB keys). f067c83
-- [~] Task: Update the codebase to use the new centralized constants.
-- [ ] Task: Conductor - User Manual Verification 'Preparation & Constants Centralization' (Protocol in workflow.md)
+- [x] Task: Update the codebase to use the new centralized constants. 04458db
+- [~] Task: Conductor - User Manual Verification 'Preparation & Constants Centralization' (Protocol in workflow.md)
 
 ## Phase 2: Core Logic Refactoring
 - [ ] Task: Audit `src/core/table.ts` and `src/core/entity.ts` for redundant helper functions and types.
