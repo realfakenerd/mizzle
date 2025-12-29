@@ -18,9 +18,9 @@ This plan outlines the steps to implement the `UpdateItem` operation, including 
 - [x] Task: Conductor - User Manual Verification 'Update Builder Foundation' (Protocol in workflow.md) a768f6d
 
 ## Phase 2: Expanded Update Actions & Return Values
-- [ ] Task: Implement the `ADD` action:
-    - Write unit tests for `.add()` (numbers and sets).
-    - Implement `.add(values)` method.
+- [x] Task: Implement the `ADD` action: 848eff4
+    - Write unit tests for `.add()` (numbers and sets). 848eff4
+    - Implement `.add(values)` method. 848eff4
 - [ ] Task: Implement the `REMOVE` action:
     - Write unit tests for `.remove()`.
     - Implement `.remove(...fields)` method.
