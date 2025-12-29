@@ -157,4 +157,25 @@ describe("Update Builder", () => {
         expect(call.input.ReturnValues).toBe("ALL_NEW");
         expect(result).toEqual({ name: "John", age: 30 });
     });
+
+    it("should allow explicit key provision via key()", async () => {
+        const mockDocClient = {
+            send: vi.fn().mockResolvedValue({ Attributes: {} }),
+        } as any;
+
+        const db = mizzle({ config: {} } as any);
+        (db as any).docClient = mockDocClient;
+
+        await db.update(user)
+            .set({ name: "John" })
+            .key({ pk: "MANUAL#123", sk: "METADATA" })
+            .execute();
+
+        expect(mockDocClient.send).toHaveBeenCalled();
+        const call = mockDocClient.send.mock.calls[0][0];
+        expect(call.input.Key).toEqual({
+            pk: "MANUAL#123",
+            sk: "METADATA",
+        });
+    });
 });

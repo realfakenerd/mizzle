@@ -17,12 +17,18 @@ export class UpdateBuilder<
     private _deleteValues: Record<string, any> = {};
     private _whereClause?: Expression;
     private _returnValues?: "NONE" | "ALL_OLD" | "UPDATED_OLD" | "ALL_NEW" | "UPDATED_NEW";
+    private _explicitKey?: Record<string, any>;
 
     constructor(
         private entity: TEntity,
         private client: DynamoDBDocumentClient,
     ) {
         super();
+    }
+
+    key(keyObject: Record<string, any>): this {
+        this._explicitKey = keyObject;
+        return this;
     }
 
     set(values: Partial<InferInsertModel<TEntity>>): this {
@@ -59,10 +65,15 @@ export class UpdateBuilder<
         const physicalTable = this.entity[Entity.Symbol.PhysicalTableSymbol];
         const tableName = physicalTable[PhysicalTable.Symbol.TableName];
 
-        const { keys } = resolveStrategies(
-            this.entity,
-            this._whereClause,
-        );
+        let keys: Record<string, any> | undefined = this._explicitKey;
+
+        if (!keys) {
+            const resolved = resolveStrategies(
+                this.entity,
+                this._whereClause,
+            );
+            keys = resolved.keys;
+        }
 
         const attributeNames: Record<string, string> = {};
         const attributeValues: Record<string, any> = {};
