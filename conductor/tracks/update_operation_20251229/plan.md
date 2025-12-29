@@ -33,7 +33,7 @@ This plan outlines the steps to implement the `UpdateItem` operation, including 
 - [x] Task: Implement explicit `.key()` support: 3fa7d23
 - [x] Task: Conductor - User Manual Verification 'Expanded Update Actions' (Protocol in workflow.md)
 
-## Phase 3: Integration & Cleanup
+## Phase 3: Integration & Cleanup [checkpoint: b5d47e3]
 - [x] Task: Integration Testing: 7190501
     - Create `test/update.integration.test.ts`.
     - Verify full update lifecycle against a local DynamoDB instance.
