@@ -17,9 +17,9 @@ This plan outlines the steps to refactor the Mizzle codebase to reduce duplicati
 
 ## Phase 3: Builder Logic Consolidation
 - [x] Task: Identify shared logic between `InsertBuilder`, `SelectBuilder`, and `UpdateBuilder` (e.g., key resolution, common execution patterns). d121a8a
-- [~] Task: Implement a shared base class or common utility module for builders to reduce duplication.
-- [ ] Task: Refactor existing builders to leverage the shared logic.
-- [ ] Task: Perform a final pass to break down overly long methods in builders.
+- [x] Task: Implement a shared base class or common utility module for builders to reduce duplication. dd29db8
+- [x] Task: Refactor existing builders to leverage the shared logic. dd29db8
+- [~] Task: Perform a final pass to break down overly long methods in builders.
 - [ ] Task: Conductor - User Manual Verification 'Builder Logic Consolidation' (Protocol in workflow.md)
 
 ## Phase 4: Final Verification & Cleanup
