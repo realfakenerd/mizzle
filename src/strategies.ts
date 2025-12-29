@@ -147,6 +147,8 @@ export function resolveStrategies(
             for (const [indexName, indexBuilder] of Object.entries(indexes)) {
                 const indexStrategy = strategies[indexName] as any;
                 if (!indexStrategy) continue;
+                
+                // console.log("Checking index:", indexName, indexStrategy);
 
                 if (indexStrategy.pk && indexBuilder.config.pk) {
                     const indexPkValue = resolveKeyStrategy(

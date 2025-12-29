@@ -1,8 +1,13 @@
-import { GetCommand, type DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import {
+    GetCommand,
+    QueryCommand,
+    ScanCommand,
+    type DynamoDBDocumentClient,
+} from "@aws-sdk/lib-dynamodb";
 import type { Column } from "../column";
 import { entityKind } from "../entity";
 import type { SelectedFields as SelectedFieldsBase } from "../operations";
-import type { Expression } from "../operators";
+import { BinaryExpression, type Expression } from "../operators";
 import { QueryPromise } from "../query-promise";
 import { resolveStrategies } from "../strategies";
 import { Entity, PhysicalTable, type InferSelectModel } from "../table";
@@ -24,7 +29,7 @@ class SelectBase<
     TEntity extends Entity,
     TSelection extends SelectedFields | undefined = undefined,
     TResult = TSelection extends undefined ? InferSelectModel<TEntity> : any,
-> extends QueryPromise<TResult> {
+> extends QueryPromise<TResult[]> {
     static readonly [entityKind]: string = "SelectBase";
 
     private whereClause?: Expression;
@@ -42,7 +47,7 @@ class SelectBase<
         return this;
     }
 
-    override async execute(): Promise<TResult> {
+    override async execute(): Promise<TResult[]> {
         const physicalTable = this.entity[Entity.Symbol.PhysicalTableSymbol];
         const tableName = physicalTable[PhysicalTable.Symbol.TableName];
 
@@ -51,27 +56,68 @@ class SelectBase<
             this.whereClause,
         );
 
+        // GetItem (PK + SK)
         if (hasPk && hasSk && !indexName) {
-            let projectionExpression: string | undefined = undefined;
-            let expressionAttributeNames: Record<string, string> | undefined =
-                undefined;
-
-            if (this.fields) {
-            }
-
             const command = new GetCommand({
                 TableName: tableName,
                 Key: keys,
-                ProjectionExpression: projectionExpression,
-                ExpressionAttributeNames: expressionAttributeNames,
             });
 
             const result = await this.client.send(command);
-            return result.Item as TResult;
+            return result.Item ? ([result.Item] as TResult[]) : [];
         }
 
-        throw new Error(
-            "Mizzle: Could not resolve Primary Key from 'where' clause. Query/Scan operations are not fully implemented yet, please provide enough fields to form the full Primary Key (GetItem).",
-        );
+        // Query (PK only or Index)
+        if (hasPk || indexName) {
+            let pkName: string;
+            let skName: string | undefined;
+
+            if (indexName) {
+                // Find index definition to get PK name
+                const indexes = physicalTable[PhysicalTable.Symbol.Indexes];
+                if (!indexes || !indexes[indexName]) {
+                     throw new Error(`Index ${indexName} not found on table definition.`);
+                }
+                pkName = indexes[indexName].config.pk!;
+                skName = indexes[indexName].config.sk;
+            } else {
+                 pkName = physicalTable[PhysicalTable.Symbol.PartitionKey].name;
+                 skName = physicalTable[PhysicalTable.Symbol.SortKey]?.name;
+            }
+            
+            const pkValue = keys[pkName];
+            
+            // Construct KeyConditionExpression
+            let keyConditionExpression = `${pkName} = :pk`;
+            const expressionAttributeValues: Record<string, any> = {
+                ":pk": pkValue,
+            };
+
+            if (hasSk && skName && keys[skName] !== undefined) {
+                keyConditionExpression += ` AND ${skName} = :sk`;
+                expressionAttributeValues[":sk"] = keys[skName];
+            }
+
+            const command = new QueryCommand({
+                TableName: tableName,
+                IndexName: indexName,
+                KeyConditionExpression: keyConditionExpression,
+                ExpressionAttributeValues: expressionAttributeValues,
+            });
+
+             const result = await this.client.send(command);
+             return (result.Items ?? []) as TResult[];
+        }
+
+        // Scan (No keys resolved)
+        // WARN: Scanning is expensive!
+        const command = new ScanCommand({
+            TableName: tableName,
+        });
+        
+        // TODO: Apply filter expression from this.whereClause if strictly scanning
+
+        const result = await this.client.send(command);
+        return (result.Items ?? []) as TResult[];
     }
 }
