@@ -2,7 +2,7 @@
 
 This plan outlines the steps to reorganize the codebase into a domain-driven, "Drizzle-like" structure.
 
-## Phase 1: Preparation & Base Classes
+## Phase 1: Preparation & Base Classes [checkpoint: 57b46ee]
 - [x] Task: Audit current exports and identify all public-facing symbols.
 - [x] Task: Create new directory structure: `src/core`, `src/builders`, `src/expressions`, `src/utils`, and `test/`.
 - [x] Task: Move core files (`entity.ts`, `table.ts`, `column.ts`, `column-builder.ts`) to `src/core/` and update internal imports.
