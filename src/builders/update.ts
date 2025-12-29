@@ -78,13 +78,20 @@ export class UpdateBuilder<
         const attributeNames: Record<string, string> = {};
         const attributeValues: Record<string, any> = {};
         const updateExpressions: string[] = [];
+        let placeholderCounter = 0;
+
+        const getPlaceholders = (key: string) => {
+            const id = placeholderCounter++;
+            const namePlaceholder = `#n${id}`;
+            const valuePlaceholder = `:v${id}`;
+            attributeNames[namePlaceholder] = key;
+            return { namePlaceholder, valuePlaceholder };
+        };
 
         if (Object.keys(this._setValues).length > 0) {
             const setParts: string[] = [];
             for (const [key, value] of Object.entries(this._setValues)) {
-                const namePlaceholder = `#${key}`;
-                const valuePlaceholder = `:${key}`;
-                attributeNames[namePlaceholder] = key;
+                const { namePlaceholder, valuePlaceholder } = getPlaceholders(key);
                 attributeValues[valuePlaceholder] = value;
                 setParts.push(`${namePlaceholder} = ${valuePlaceholder}`);
             }
@@ -94,9 +101,7 @@ export class UpdateBuilder<
         if (Object.keys(this._addValues).length > 0) {
             const addParts: string[] = [];
             for (const [key, value] of Object.entries(this._addValues)) {
-                const namePlaceholder = `#${key}`;
-                const valuePlaceholder = `:${key}`;
-                attributeNames[namePlaceholder] = key;
+                const { namePlaceholder, valuePlaceholder } = getPlaceholders(key);
                 attributeValues[valuePlaceholder] = value;
                 addParts.push(`${namePlaceholder} ${valuePlaceholder}`);
             }
@@ -106,7 +111,8 @@ export class UpdateBuilder<
         if (this._removeValues.length > 0) {
             const removeParts: string[] = [];
             for (const field of this._removeValues) {
-                const namePlaceholder = `#${field}`;
+                const id = placeholderCounter++;
+                const namePlaceholder = `#n${id}`;
                 attributeNames[namePlaceholder] = field;
                 removeParts.push(namePlaceholder);
             }
@@ -116,9 +122,7 @@ export class UpdateBuilder<
         if (Object.keys(this._deleteValues).length > 0) {
             const deleteParts: string[] = [];
             for (const [key, value] of Object.entries(this._deleteValues)) {
-                const namePlaceholder = `#${key}`;
-                const valuePlaceholder = `:${key}`;
-                attributeNames[namePlaceholder] = key;
+                const { namePlaceholder, valuePlaceholder } = getPlaceholders(key);
                 attributeValues[valuePlaceholder] = value;
                 deleteParts.push(`${namePlaceholder} ${valuePlaceholder}`);
             }

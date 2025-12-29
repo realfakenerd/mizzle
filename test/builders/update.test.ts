@@ -64,15 +64,15 @@ describe("Update Builder", () => {
             sk: "METADATA",
         });
         expect(call.input.UpdateExpression).toContain("SET");
-        expect(call.input.UpdateExpression).toContain("#name = :name");
-        expect(call.input.UpdateExpression).toContain("#age = :age");
+        expect(call.input.UpdateExpression).toContain("#n0 = :v0");
+        expect(call.input.UpdateExpression).toContain("#n1 = :v1");
         expect(call.input.ExpressionAttributeNames).toEqual({
-            "#name": "name",
-            "#age": "age",
+            "#n0": "name",
+            "#n1": "age",
         });
         expect(call.input.ExpressionAttributeValues).toEqual({
-            ":name": "John",
-            ":age": 30,
+            ":v0": "John",
+            ":v1": 30,
         });
     });
 
@@ -91,9 +91,9 @@ describe("Update Builder", () => {
 
         expect(mockDocClient.send).toHaveBeenCalled();
         const call = mockDocClient.send.mock.calls[0][0];
-        expect(call.input.UpdateExpression).toContain("ADD #age :age");
-        expect(call.input.ExpressionAttributeNames).toEqual({ "#age": "age" });
-        expect(call.input.ExpressionAttributeValues).toEqual({ ":age": 1 });
+        expect(call.input.UpdateExpression).toContain("ADD #n0 :v0");
+        expect(call.input.ExpressionAttributeNames).toEqual({ "#n0": "age" });
+        expect(call.input.ExpressionAttributeValues).toEqual({ ":v0": 1 });
     });
 
     it("should correctly construct REMOVE expression", async () => {
@@ -111,10 +111,10 @@ describe("Update Builder", () => {
 
         expect(mockDocClient.send).toHaveBeenCalled();
         const call = mockDocClient.send.mock.calls[0][0];
-        expect(call.input.UpdateExpression).toContain("REMOVE #age, #name");
+        expect(call.input.UpdateExpression).toContain("REMOVE #n0, #n1");
         expect(call.input.ExpressionAttributeNames).toEqual({
-            "#age": "age",
-            "#name": "name",
+            "#n0": "age",
+            "#n1": "name",
         });
     });
 
@@ -133,9 +133,9 @@ describe("Update Builder", () => {
 
         expect(mockDocClient.send).toHaveBeenCalled();
         const call = mockDocClient.send.mock.calls[0][0];
-        expect(call.input.UpdateExpression).toContain("DELETE #tags :tags");
-        expect(call.input.ExpressionAttributeNames).toEqual({ "#tags": "tags" });
-        expect(call.input.ExpressionAttributeValues).toEqual({ ":tags": new Set(["tag1"]) });
+        expect(call.input.UpdateExpression).toContain("DELETE #n0 :v0");
+        expect(call.input.ExpressionAttributeNames).toEqual({ "#n0": "tags" });
+        expect(call.input.ExpressionAttributeValues).toEqual({ ":v0": new Set(["tag1"]) });
     });
 
     it("should correctly handle returning() and ReturnValues", async () => {
