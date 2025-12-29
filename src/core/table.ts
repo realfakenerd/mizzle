@@ -136,25 +136,19 @@ export type InferModelFromColumns<
         override: false;
     },
 > = Simplify<
-    TInferMode extends "insert"
-        ? {
-              [Key in keyof TColumns & string as RequiredKeyOnly<
-                  MapColumnName<Key, TColumns[Key], TConfig["dbColumnNames"]>,
-                  TColumns[Key]
-              >]: GetColumnData<TColumns[Key], typeof INFER_MODE.QUERY>;
-          } & {
-              [Key in keyof TColumns & string as OpitionalKeyOnly<
-                  MapColumnName<Key, TColumns[Key], TConfig["dbColumnNames"]>,
-                  TColumns[Key]
-              >]?: GetColumnData<TColumns[Key], typeof INFER_MODE.QUERY> | undefined;
-          }
-        : {
-              [Key in keyof TColumns & string as MapColumnName<
-                  Key,
-                  TColumns[Key],
-                  TConfig["dbColumnNames"]
-              >]: GetColumnData<TColumns[Key], typeof INFER_MODE.QUERY>;
-          }
+    {
+        [Key in keyof TColumns & string as RequiredKeyOnly<
+            MapColumnName<Key, TColumns[Key], TConfig["dbColumnNames"]>,
+            TColumns[Key],
+            TInferMode
+        >]: GetColumnData<TColumns[Key], typeof INFER_MODE.QUERY>;
+    } & {
+        [Key in keyof TColumns & string as OpitionalKeyOnly<
+            MapColumnName<Key, TColumns[Key], TConfig["dbColumnNames"]>,
+            TColumns[Key],
+            TInferMode
+        >]?: GetColumnData<TColumns[Key], typeof INFER_MODE.QUERY> | undefined;
+    }
 >;
 
 export type InferSelectModel<
