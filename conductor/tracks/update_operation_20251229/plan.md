@@ -21,9 +21,9 @@ This plan outlines the steps to implement the `UpdateItem` operation, including 
 - [x] Task: Implement the `ADD` action: 848eff4
     - Write unit tests for `.add()` (numbers and sets). 848eff4
     - Implement `.add(values)` method. 848eff4
-- [ ] Task: Implement the `REMOVE` action:
-    - Write unit tests for `.remove()`.
-    - Implement `.remove(...fields)` method.
+- [x] Task: Implement the `REMOVE` action: 404c493
+    - Write unit tests for `.remove()`. 404c493
+    - Implement `.remove(...fields)` method. 404c493
 - [ ] Task: Implement the `DELETE` action:
     - Write unit tests for `.delete()` (set elements).
     - Implement `.delete(values)` method.
