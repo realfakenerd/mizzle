@@ -11,9 +11,9 @@ This plan outlines the steps to refactor the Mizzle codebase to reduce duplicati
 
 ## Phase 2: Core Logic Refactoring
 - [x] Task: Audit `src/core/table.ts` and `src/core/entity.ts` for redundant helper functions and types. a5d031e
-- [~] Task: Extract common internal logic from `src/core/` files into smaller, utility-focused functions in `src/utils/utils.ts` or new core utilities.
-- [ ] Task: Standardize naming conventions for internal symbols and properties (e.g., consistency between `PartitionKey` and `PK`).
-- [ ] Task: Conductor - User Manual Verification 'Core Logic Refactoring' (Protocol in workflow.md)
+- [x] Task: Extract common internal logic from `src/core/` files into smaller, utility-focused functions in `src/utils/utils.ts` or new core utilities. a5d031e
+- [x] Task: Standardize naming conventions for internal symbols and properties (e.g., consistency between `PartitionKey` and `PK`). 3329313
+- [~] Task: Conductor - User Manual Verification 'Core Logic Refactoring' (Protocol in workflow.md)
 
 ## Phase 3: Builder Logic Consolidation
 - [ ] Task: Identify shared logic between `InsertBuilder`, `SelectBuilder`, and `UpdateBuilder` (e.g., key resolution, common execution patterns).
