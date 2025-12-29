@@ -54,13 +54,13 @@ class SelectBase<
         const tableName = resolveTableName(this.entity);
         const physicalTable = this.entity[ENTITY_SYMBOLS.PHYSICAL_TABLE];
 
-        const { keys, hasPk, hasSk, indexName } = resolveStrategies(
+        const { keys, hasPartitionKey, hasSortKey, indexName } = resolveStrategies(
             this.entity,
             this.whereClause,
         );
 
         // GetItem (PK + SK)
-        if (hasPk && hasSk && !indexName) {
+        if (hasPartitionKey && hasSortKey && !indexName) {
             const command = new GetCommand({
                 TableName: tableName,
                 Key: keys,
@@ -71,7 +71,7 @@ class SelectBase<
         }
 
         // Query (PK only or Index)
-        if (hasPk || indexName) {
+        if (hasPartitionKey || indexName) {
             let pkName: string;
             let skName: string | undefined;
 
@@ -96,7 +96,7 @@ class SelectBase<
                 ":pk": pkValue,
             };
 
-            if (hasSk && skName && keys[skName] !== undefined) {
+            if (hasSortKey && skName && keys[skName] !== undefined) {
                 keyConditionExpression += ` AND ${skName} = :sk`;
                 expressionAttributeValues[":sk"] = keys[skName];
             }

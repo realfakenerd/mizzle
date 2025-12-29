@@ -53,8 +53,8 @@ export class PhysicalTable<
     declare readonly _: {
         config: T;
         name: string;
-        pk: Column;
-        sk?: Column;
+        partitionKey: Column;
+        sortKey?: Column;
         indexes: T["indexes"];
     };
 

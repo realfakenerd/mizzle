@@ -95,8 +95,8 @@ function resolveKeyStrategy(
 
 export interface StrategyResolution {
     keys: Record<string, any>;
-    hasPk: boolean;
-    hasSk: boolean;
+    hasPartitionKey: boolean;
+    hasSortKey: boolean;
     indexName?: string;
 }
 
@@ -118,15 +118,15 @@ export function resolveStrategies(
 
     const result: StrategyResolution = {
         keys: {},
-        hasPk: false,
-        hasSk: false,
+        hasPartitionKey: false,
+        hasSortKey: false,
     };
 
     if (strategies.pk) {
         const pkValue = resolveKeyStrategy(strategies.pk, availableValues);
         if (pkValue) {
             result.keys[pkCol.name] = pkValue;
-            result.hasPk = true;
+            result.hasPartitionKey = true;
         }
     }
 
@@ -135,14 +135,14 @@ export function resolveStrategies(
         if (skValue) {
             if (skCol) {
                 result.keys[skCol.name] = skValue;
-                result.hasSk = true;
+                result.hasSortKey = true;
             }
         }
     } else {
-        result.hasSk = skCol ? false : true;
+        result.hasSortKey = skCol ? false : true;
     }
 
-    if (!result.hasPk) {
+    if (!result.hasPartitionKey) {
         const indexes = physicalTable[TABLE_SYMBOLS.INDEXES];
         if (indexes) {
             for (const [indexName, indexBuilder] of Object.entries(indexes)) {
@@ -162,7 +162,7 @@ export function resolveStrategies(
 
                         result.keys = {};
                         result.keys[indexBuilder.config.pk] = indexPkValue;
-                        result.hasPk = true;
+                        result.hasPartitionKey = true;
 
                         if (indexStrategy.sk && indexBuilder.config.sk) {
                             const indexSkValue = resolveKeyStrategy(
@@ -172,7 +172,7 @@ export function resolveStrategies(
                             if (indexSkValue) {
                                 result.keys[indexBuilder.config.sk] =
                                     indexSkValue;
-                                result.hasSk = true;
+                                result.hasSortKey = true;
                             }
                         }
                         break;
