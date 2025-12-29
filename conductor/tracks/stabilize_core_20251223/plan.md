@@ -12,9 +12,9 @@ This plan outlines the steps to stabilize and verify the core `insert` and `sele
 
 ## Phase 2: Select Command Stability
 
-- [ ] Task: Write unit and integration tests for `select` command, covering basic querying and scanning.
-- [ ] Task: Refine `select` logic (query builder translation) to handle complex filters and reserved words.
-- [ ] Task: Verify 80% coverage for `src/commands/select.ts`.
+- [x] Task: Write unit and integration tests for `select` command, covering basic querying and scanning. [275a9dc]
+- [x] Task: Refine `select` logic (query builder translation) to handle complex filters and reserved words. [275a9dc]
+- [x] Task: Verify 80% coverage for `src/commands/select.ts`. [275a9dc]
 - [ ] Task: Conductor - User Manual Verification 'Phase 2: Select Stability' (Protocol in workflow.md)
 
 ## Phase 3: End-to-End Integration
