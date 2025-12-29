@@ -17,7 +17,7 @@ This plan outlines the steps to implement the `UpdateItem` operation, including 
     - Implement `execute()` to construct and send the `UpdateCommand` using the `DynamoDBDocumentClient`. a768f6d
 - [x] Task: Conductor - User Manual Verification 'Update Builder Foundation' (Protocol in workflow.md) a768f6d
 
-## Phase 2: Expanded Update Actions & Return Values
+## Phase 2: Expanded Update Actions & Return Values [checkpoint: 12b906a]
 - [x] Task: Implement the `ADD` action: 848eff4
     - Write unit tests for `.add()` (numbers and sets). 848eff4
     - Implement `.add(values)` method. 848eff4
