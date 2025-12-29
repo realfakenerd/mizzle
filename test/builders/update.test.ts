@@ -137,4 +137,24 @@ describe("Update Builder", () => {
         expect(call.input.ExpressionAttributeNames).toEqual({ "#tags": "tags" });
         expect(call.input.ExpressionAttributeValues).toEqual({ ":tags": new Set(["tag1"]) });
     });
+
+    it("should correctly handle returning() and ReturnValues", async () => {
+        const mockDocClient = {
+            send: vi.fn().mockResolvedValue({ Attributes: { name: "John", age: 30 } }),
+        } as any;
+
+        const db = mizzle({ config: {} } as any);
+        (db as any).docClient = mockDocClient;
+
+        const result = await db.update(user)
+            .set({ name: "John" })
+            .where(eq(user.id, "123"))
+            .returning("ALL_NEW")
+            .execute();
+
+        expect(mockDocClient.send).toHaveBeenCalled();
+        const call = mockDocClient.send.mock.calls[0][0];
+        expect(call.input.ReturnValues).toBe("ALL_NEW");
+        expect(result).toEqual({ name: "John", age: 30 });
+    });
 });

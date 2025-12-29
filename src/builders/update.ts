@@ -16,6 +16,7 @@ export class UpdateBuilder<
     private _removeValues: string[] = [];
     private _deleteValues: Record<string, any> = {};
     private _whereClause?: Expression;
+    private _returnValues?: "NONE" | "ALL_OLD" | "UPDATED_OLD" | "ALL_NEW" | "UPDATED_NEW";
 
     constructor(
         private entity: TEntity,
@@ -46,6 +47,11 @@ export class UpdateBuilder<
 
     where(expression: Expression): this {
         this._whereClause = expression;
+        return this;
+    }
+
+    returning(value: "NONE" | "ALL_OLD" | "UPDATED_OLD" | "ALL_NEW" | "UPDATED_NEW"): this {
+        this._returnValues = value;
         return this;
     }
 
@@ -114,6 +120,7 @@ export class UpdateBuilder<
             UpdateExpression: updateExpressions.join(" "),
             ExpressionAttributeNames: Object.keys(attributeNames).length > 0 ? attributeNames : undefined,
             ExpressionAttributeValues: Object.keys(attributeValues).length > 0 ? attributeValues : undefined,
+            ReturnValues: this._returnValues,
         });
 
         const response = await this.client.send(command);
