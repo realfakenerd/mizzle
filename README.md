@@ -135,6 +135,18 @@ If no keys can be resolved, Mizzle defaults to a `Scan` (use with caution!).
 const allUsers = await db.select().from(user).execute();
 ```
 
+### 6. Update Data
+
+Update items using a fluent builder with support for `set`, `add`, `remove`, and `delete` (for sets).
+
+```ts
+await db.update(user)
+    .set({ name: "Alice Smith" })
+    .add({ age: 1 }) // Increment age
+    .where(eq(user.id, "018c..."))
+    .execute();
+```
+
 ## Supported Column Types
 
 Mizzle supports a wide range of DynamoDB types:
@@ -158,7 +170,7 @@ Mizzle supports a wide range of DynamoDB types:
 - [x] **Select Operation:** Intelligent routing to GetItem, Query, or Scan.
 - [x] **Key Strategies:** Prefix, Static, and Composite keys.
 - [x] **Global Secondary Indexes:** Support for querying GSIs.
-- [ ] **Update Operation:** Fluent builder for `UpdateItem`.
+- [x] **Update Operation:** Fluent builder for `UpdateItem`.
 - [ ] **Delete Operation:** Fluent builder for `DeleteItem`.
 - [ ] **Relational Queries:** `db.query.users.findMany({ with: { posts: true } })`.
 - [ ] **Transactions:** `TransactWriteItems` support.
