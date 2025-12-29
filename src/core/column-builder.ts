@@ -1,6 +1,6 @@
 import { type Column, ExtraConfigColumn } from "./column";
 import type { AnyTable } from "./table";
-import type { Assume, Simplify } from "./utils";
+import type { Assume, Simplify } from "../utils";
 
 export type ColumnDataType =
     | "S"

@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { dynamoTable, dynamoEntity } from "./table";
+import { dynamoTable, dynamoEntity } from "./core/table";
 import { string, uuid, number, boolean, list, map } from "./columns/all";
-import { prefixKey, staticKey } from "./strategies";
+import { prefixKey, staticKey } from "./core/strategies";
 import { DynamoDBClient, CreateTableCommand, DeleteTableCommand } from "@aws-sdk/client-dynamodb";
 import { mizzle } from "./db";
 import { eq } from "./operators";

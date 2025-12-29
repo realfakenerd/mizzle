@@ -4,13 +4,13 @@ import {
     ScanCommand,
     type DynamoDBDocumentClient,
 } from "@aws-sdk/lib-dynamodb";
-import type { Column } from "../column";
-import { entityKind } from "../entity";
-import type { SelectedFields as SelectedFieldsBase } from "../operations";
+import type { Column } from "../core/column";
+import { entityKind } from "../core/entity";
+import type { SelectedFields as SelectedFieldsBase } from "../core/operations";
 import { BinaryExpression, type Expression } from "../operators";
 import { QueryPromise } from "../query-promise";
-import { resolveStrategies } from "../strategies";
-import { Entity, PhysicalTable, type InferSelectModel } from "../table";
+import { resolveStrategies } from "../core/strategies";
+import { Entity, PhysicalTable, type InferSelectModel } from "../core/table";
 
 export type SelectedFields = SelectedFieldsBase<Column, PhysicalTable>;
 

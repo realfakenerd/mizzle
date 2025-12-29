@@ -1,4 +1,4 @@
-import { Column } from "./column";
+import { Column } from "./core/column";
 
 type BinaryOperators = "=" | "<" | "<=" | ">=" | ">";
 type LogicalOperators = "AND" | "OR";

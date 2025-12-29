@@ -2,13 +2,13 @@ import {
     Column,
     type ColumnBaseConfig,
     type ColumnRuntimeConfig,
-} from "../column";
+} from "../core/column";
 import {
     ColumnBuider,
     type ColumnBuilderBaseConfig,
     type MakeColumnConfig,
-} from "../column-builder";
-import type { AnyTable } from "../table";
+} from "../core/column-builder";
+import type { AnyTable } from "../core/table";
 
 export type BinaryBuilderInitial<TName extends string> = BinaryColumnBuilder<{
     name: TName;

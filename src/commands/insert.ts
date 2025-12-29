@@ -1,9 +1,9 @@
 import { PutCommand, type DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
-import { Entity, PhysicalTable, type InferInsertModel } from "../table";
-import { entityKind } from "../entity";
+import { Entity, PhysicalTable, type InferInsertModel } from "../core/table";
+import { entityKind } from "../core/entity";
 import { QueryPromise } from "../query-promise";
-import { resolveStrategies, type KeyStrategy } from "../strategies";
-import { Column } from "../column";
+import { resolveStrategies, type KeyStrategy } from "../core/strategies";
+import { Column } from "../core/column";
 
 export class InsertBuilder<TEntity extends Entity> {
     static readonly [entityKind]: string = "InsertBuilder";

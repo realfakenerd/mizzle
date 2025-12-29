@@ -3,7 +3,7 @@ import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import { InsertBuilder } from "./commands/insert";
 import { RelationnalQueryBuilder } from "./relational-builder";
 import { SelectBuilder, type SelectedFields } from "./commands/select";
-import type { Entity } from "./table";
+import type { Entity } from "./core/table";
 import { UpdateBuilder } from "./update-builder";
 
 export class DynamoDB {

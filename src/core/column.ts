@@ -4,7 +4,7 @@ import type {
     ColumnDataType,
 } from "./column-builder";
 import type { PhysicalTable } from "./table";
-import type { Update } from "./utils";
+import type { Update } from "../utils";
 
 export type AnyColumn<
     TPartial extends Partial<ColumnBaseConfig<string, ColumnDataType>> = {},

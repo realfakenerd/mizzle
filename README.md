@@ -1,36 +1,51 @@
-# mizzle
+# Mizzle
 
-mizzle it's an light and _type-safe_ ORM for **DynamoDB** built with Typescript. Projected to simplify your life with DynamoDB with fluidity.
+**Mizzle** is a light and _type-safe_ ORM for **DynamoDB** built with TypeScript. It is designed to provide a "Drizzle-like" developer experience, simplifying your interactions with DynamoDB through a fluid, intuitive API while handling the complexities of Single-Table Design.
 
-## Instalation
+## Vision
 
-Install it and the AWS SDK dependendcies:
+Mizzle aims to minimize boilerplate and maximize developer velocity. It abstracts away the raw DynamoDB JSON structures and key management, allowing you to define your data models using familiar TypeScript schemas and interact with them using a SQL-like query builder.
+
+## Installation
+
+Install Mizzle and the required AWS SDK dependencies:
 
 ```bash
 bun add mizzle @aws-sdk/client-dynamodb @aws-sdk/lib-dynamodb
 ```
 
-# How to
+## How It Works
 
-### 1. Define the table:
+Mizzle separates the concept of the **Physical Table** (the actual DynamoDB table) from the **Entity** (the logical data model). This approach is tailored for DynamoDB's Single-Table Design patterns.
 
-First, define the structure of your DynamoDB table (the physical table where the data will live).
+1.  **Physical Table:** Defines the partition key (PK), sort key (SK), and global secondary indexes (GSIs) of your DynamoDB table.
+2.  **Entity:** Defines the schema of your data (users, posts, orders) and maps it to the physical table using **Key Strategies**.
+
+Key Strategies (like `prefixKey`) automatically handle the construction of PK/SK values based on your data, so you don't have to manually string-concatenate "USER#123" every time.
+
+## How to Use
+
+### 1. Define the Physical Table
+
+First, define the structure of your DynamoDB table. This matches your `Serverless.yml` or Terraform definition.
 
 ```ts
 import { dynamoTable, string } from "mizzle";
 
-// Defines the physical table
+// Defines the physical table structure
 export const myTable = dynamoTable("MyDynamoTable", {
-    pk: string("pk").partitionKey(),
-    sk: string("sk").sortKey(),
+    pk: string("pk"),
+    sk: string("sk"),
+    // Optional: Define indexes
+    // indexes: {
+    //   gsi1: gsi("gsi1pk", "gsi1sk")
+    // }
 });
 ```
 
-### 2. Define the entity:
+### 2. Define the Entity
 
-Since DynamoDB uses a single-table design, different from `drizzle` i needed a way to define multiple virtual tables inside a physical table, multiple entities.
-
-So map the entity to the physical table. Here you define the columns of your application and how they translate to the keys of `DynamoDB`
+Map your logical entity to the physical table. Define columns and the strategy to generate keys.
 
 ```ts
 import {
@@ -38,6 +53,8 @@ import {
     string,
     uuid,
     number,
+    boolean,
+    list,
     prefixKey,
     staticKey,
 } from "mizzle";
@@ -46,53 +63,103 @@ export const user = dynamoEntity(
     myTable,
     "User",
     {
-        id: uuid(), // Automacally generates a V7 UUID, well suited for sorting
+        id: uuid(), // Automatically generates a UUID v7
         name: string(),
-        email: string().email(), // Validates to an email string
-        age: number(), // Can use the .min|max validation too
+        email: string(),
+        age: number(),
+        isActive: boolean(),
+        tags: list(string()),
     },
     (cols) => ({
-        // Strategy map user key to PK/SK
-        // Ex: PK = "USER#<id>", SK = "PROFILE"
+        // Strategy: Map entity fields to Physical Keys
+        // PK becomes "USER#<id>"
         pk: prefixKey("USER#", cols.id),
+        // SK becomes "PROFILE" (Static value)
         sk: staticKey("PROFILE"),
     }),
 );
 ```
 
-### 3. Executing operations:
-
-Initialize the client and execute queries.
+### 3. Initialize the Client
 
 ```ts
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { mizzle, eq } from "mizzle";
-import { user } from "./schema";
+import { mizzle } from "mizzle";
 
 const client = new DynamoDBClient({ region: "us-east-1" });
 const db = mizzle(client);
-
-await db
-    .insert(user)
-    .values({
-        name: "Real Fake Nerd",
-        email: "nerd@example.com",
-        age: 30,
-        // 'id' is automatically generated if not provided
-    })
-    .execute();
-
-const result = await db
-    .select()
-    .from(user)
-    .where(eq(user.id, "random-uid"))
-    .execute();
 ```
 
-## Supported column types
+### 4. Insert Data
 
-Mizzle supports all DynamoDB data types and more:
-`string()`, `stringSet()`, `number()`, `numberSet()`, `boolean()`, `binary()`, `binarySet()`, `list()`, `map()`, `json()`, `uuid()`
+Mizzle automatically resolves the PK and SK based on your strategy and the data provided.
 
-> `json()` automatically stringify and parses the data.
-> `map()` almost like the json type, but it does not stringify the data. It is the "M" on Dynamo.
+```ts
+const newUser = await db.insert(user).values({
+    name: "Alice",
+    email: "alice@example.com",
+    age: 30,
+    isActive: true,
+    tags: ["typescript", "dynamodb"],
+    // 'id' is auto-generated!
+}).returning().execute();
+
+console.log(newUser.id); // e.g., "018c..."
+console.log(newUser.pk); // "USER#018c..."
+```
+
+### 5. Select Data
+
+#### Get Item (By Primary Key)
+If you provide enough filters to resolve the Primary Key, Mizzle uses `GetItem`.
+
+```ts
+import { eq } from "mizzle";
+
+const result = await db.select().from(user).where(eq(user.id, newUser.id));
+// Returns an array with the user
+```
+
+#### Query (By Partition Key or Index)
+If you provide the Partition Key (and optionally Sort Key), Mizzle uses `Query`.
+
+```ts
+// Queries are also supported via GSIs if defined in your schema
+const admins = await db.select().from(user).where(eq(user.role, "admin"));
+```
+
+#### Scan
+If no keys can be resolved, Mizzle defaults to a `Scan` (use with caution!).
+
+```ts
+const allUsers = await db.select().from(user).execute();
+```
+
+## Supported Column Types
+
+Mizzle supports a wide range of DynamoDB types:
+
+*   `string()`: `S`
+*   `number()`: `N`
+*   `boolean()`: `BOOL`
+*   `uuid()`: `S` (Auto-generating UUID v7)
+*   `list(type)`: `L`
+*   `map({ ... })`: `M`
+*   `stringSet()`: `SS`
+*   `numberSet()`: `NS`
+*   `binary()`: `B`
+*   `binarySet()`: `BS`
+*   `json()`: `S` (Serialized JSON)
+
+## Roadmap
+
+- [x] **Core Types:** String, Number, Boolean, UUID, List, Map, Sets.
+- [x] **Insert Operation:** Type-safe insertion with auto-generated keys.
+- [x] **Select Operation:** Intelligent routing to GetItem, Query, or Scan.
+- [x] **Key Strategies:** Prefix, Static, and Composite keys.
+- [x] **Global Secondary Indexes:** Support for querying GSIs.
+- [ ] **Update Operation:** Fluent builder for `UpdateItem`.
+- [ ] **Delete Operation:** Fluent builder for `DeleteItem`.
+- [ ] **Relational Queries:** `db.query.users.findMany({ with: { posts: true } })`.
+- [ ] **Transactions:** `TransactWriteItems` support.
+- [ ] **Migration Tools:** CLI for managing table creation/updates.

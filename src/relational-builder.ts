@@ -2,7 +2,7 @@ import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import { DynamoQueryBuilder } from './query-builder';
 import { operators, type Operators } from './operators';
 import type { Condition } from './operators';
-import type { InferSelectedModel, TableDefinition } from './table';
+import type { InferSelectedModel, TableDefinition } from './core/table';
 
 type WhereCallback<T extends TableDefinition<any>> = (
 	fields: T['columns'],

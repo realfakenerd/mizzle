@@ -1,12 +1,12 @@
-import { Column, type ColumnBaseConfig } from "../column";
+import { Column, type ColumnBaseConfig } from "../core/column";
 import { v7 as uuidV7 } from "uuid";
 import {
     ColumnBuider,
     type ColumnBuilderBaseConfig,
     type ColumnBuilderRuntimeConfig,
     type MakeColumnConfig,
-} from "../column-builder";
-import type { AnyTable } from "../table";
+} from "../core/column-builder";
+import type { AnyTable } from "../core/table";
 
 export type UUIDColumnInitial<TName extends string> = UUIDColumnBuilder<{
     name: TName;

@@ -3,7 +3,7 @@ import {
     type DynamoDBDocumentClient,
 } from "@aws-sdk/lib-dynamodb";
 import type { Condition } from "./operators";
-import type { InferInsertModel } from "./table";
+import type { InferInsertModel } from "./core/table";
 
 export class UpdateBuilder<T extends TableDefinition<any>> {
     #key?: Record<string, any>;

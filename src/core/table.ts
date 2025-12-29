@@ -4,11 +4,11 @@ import type {
     ColumnBuider,
     ColumnBuilderBase,
 } from "./column-builder";
-import { getColumnBuilders, type ColumnsBuilder } from "./columns/all";
-import type { IndexBuilder } from "./indexes";
+import { getColumnBuilders, type ColumnsBuilder } from "../columns/all";
+import type { IndexBuilder } from "../indexes";
 import type { OpitionalKeyOnly, RequiredKeyOnly } from "./operations";
 import type { KeyStrategy } from "./strategies";
-import type { Simplify, Update } from "./utils";
+import type { Simplify, Update } from "../utils";
 
 type IndexStrategyConfig<TIndex extends IndexBuilder> =
     TIndex["type"] extends "lsi"

@@ -1,11 +1,11 @@
-import { Column, type ColumnBaseConfig } from "../column";
+import { Column, type ColumnBaseConfig } from "../core/column";
 import {
     ColumnBuider,
     type ColumnBuilderBaseConfig,
     type ColumnBuilderRuntimeConfig,
     type MakeColumnConfig,
-} from "../column-builder";
-import type { AnyTable } from "../table";
+} from "../core/column-builder";
+import type { AnyTable } from "../core/table";
 
 export type BooleanColumnInitial<TName extends string> = BooleanColumnBuilder<{
     name: TName;

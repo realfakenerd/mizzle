@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, beforeAll, afterAll } from "vitest";
-import { dynamoTable, dynamoEntity } from "../table";
+import { dynamoTable, dynamoEntity } from "../core/table";
 import { string, uuid, number, boolean, list, map, stringSet, numberSet } from "../columns/all";
-import { prefixKey, staticKey } from "../strategies";
+import { prefixKey, staticKey } from "../core/strategies";
 import { DynamoDBClient, CreateTableCommand, DeleteTableCommand } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, GetCommand } from "@aws-sdk/lib-dynamodb";
 import { InsertBuilder } from "./insert";

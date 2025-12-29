@@ -1,11 +1,11 @@
-import { Column, type ColumnBaseConfig } from "../column";
+import { Column, type ColumnBaseConfig } from "../core/column";
 import {
     ColumnBuider,
     type MakeColumnConfig,
     type ColumnBuilderBaseConfig,
     type ColumnBuilderRuntimeConfig,
-} from "../column-builder";
-import type { AnyTable } from "../table";
+} from "../core/column-builder";
+import type { AnyTable } from "../core/table";
 
 export type NumberColumnInitial<TName extends string> = NumberColumnBuilder<{
     name: TName;
