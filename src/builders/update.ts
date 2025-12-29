@@ -61,15 +61,39 @@ export class UpdateBuilder<
     }
 
     override async execute(): Promise<TResult> {
-        let keys: Record<string, any> | undefined = this._explicitKey;
+        const keys = this.resolveUpdateKeys();
+        const { updateExpression, attributeNames, attributeValues } =
+            this.buildUpdateExpression();
 
-        if (!keys) {
-            const resolved = this.resolveKeys(
-                this._whereClause,
-            );
-            keys = resolved.keys;
+        const command = new UpdateCommand({
+            TableName: this.tableName,
+            Key: keys,
+            UpdateExpression: updateExpression,
+            ExpressionAttributeNames:
+                Object.keys(attributeNames).length > 0
+                    ? attributeNames
+                    : undefined,
+            ExpressionAttributeValues:
+                Object.keys(attributeValues).length > 0
+                    ? attributeValues
+                    : undefined,
+            ReturnValues: this._returnValues,
+        });
+
+        const response = await this.client.send(command);
+        return response.Attributes as TResult;
+    }
+
+    private resolveUpdateKeys(): Record<string, any> {
+        if (this._explicitKey) {
+            return this._explicitKey;
         }
 
+        const resolved = this.resolveKeys(this._whereClause);
+        return resolved.keys;
+    }
+
+    private buildUpdateExpression() {
         const attributeNames: Record<string, string> = {};
         const attributeValues: Record<string, any> = {};
         const updateExpressions: string[] = [];
@@ -86,7 +110,8 @@ export class UpdateBuilder<
         if (Object.keys(this._setValues).length > 0) {
             const setParts: string[] = [];
             for (const [key, value] of Object.entries(this._setValues)) {
-                const { namePlaceholder, valuePlaceholder } = getPlaceholders(key);
+                const { namePlaceholder, valuePlaceholder } =
+                    getPlaceholders(key);
                 attributeValues[valuePlaceholder] = value;
                 setParts.push(`${namePlaceholder} = ${valuePlaceholder}`);
             }
@@ -96,7 +121,8 @@ export class UpdateBuilder<
         if (Object.keys(this._addValues).length > 0) {
             const addParts: string[] = [];
             for (const [key, value] of Object.entries(this._addValues)) {
-                const { namePlaceholder, valuePlaceholder } = getPlaceholders(key);
+                const { namePlaceholder, valuePlaceholder } =
+                    getPlaceholders(key);
                 attributeValues[valuePlaceholder] = value;
                 addParts.push(`${namePlaceholder} ${valuePlaceholder}`);
             }
@@ -117,23 +143,18 @@ export class UpdateBuilder<
         if (Object.keys(this._deleteValues).length > 0) {
             const deleteParts: string[] = [];
             for (const [key, value] of Object.entries(this._deleteValues)) {
-                const { namePlaceholder, valuePlaceholder } = getPlaceholders(key);
+                const { namePlaceholder, valuePlaceholder } =
+                    getPlaceholders(key);
                 attributeValues[valuePlaceholder] = value;
                 deleteParts.push(`${namePlaceholder} ${valuePlaceholder}`);
             }
             updateExpressions.push(`DELETE ${deleteParts.join(", ")}`);
         }
 
-        const command = new UpdateCommand({
-            TableName: this.tableName,
-            Key: keys,
-            UpdateExpression: updateExpressions.join(" "),
-            ExpressionAttributeNames: Object.keys(attributeNames).length > 0 ? attributeNames : undefined,
-            ExpressionAttributeValues: Object.keys(attributeValues).length > 0 ? attributeValues : undefined,
-            ReturnValues: this._returnValues,
-        });
-
-        const response = await this.client.send(command);
-        return response.Attributes as TResult;
+        return {
+            updateExpression: updateExpressions.join(" "),
+            attributeNames,
+            attributeValues,
+        };
     }
 }

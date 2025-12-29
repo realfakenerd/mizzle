@@ -48,69 +48,81 @@ class SelectBase<
     }
 
     override async execute(): Promise<TResult[]> {
-        const { keys, hasPartitionKey, hasSortKey, indexName } = this.resolveKeys(
-            this.whereClause,
-        );
+        const resolution = this.resolveKeys(this.whereClause);
 
         // GetItem (PK + SK)
-        if (hasPartitionKey && hasSortKey && !indexName) {
-            const command = new GetCommand({
-                TableName: this.tableName,
-                Key: keys,
-            });
-
-            const result = await this.client.send(command);
-            return result.Item ? ([result.Item] as TResult[]) : [];
+        if (resolution.hasPartitionKey && resolution.hasSortKey && !resolution.indexName) {
+            return this.executeGet(resolution.keys);
         }
 
         // Query (PK only or Index)
-        if (hasPartitionKey || indexName) {
-            let pkName: string;
-            let skName: string | undefined;
-
-            if (indexName) {
-                // Find index definition to get PK name
-                const indexes = this.physicalTable[TABLE_SYMBOLS.INDEXES];
-                if (!indexes || !indexes[indexName]) {
-                     throw new Error(`Index ${indexName} not found on table definition.`);
-                }
-                pkName = indexes[indexName].config.pk!;
-                skName = indexes[indexName].config.sk;
-            } else {
-                 pkName = this.physicalTable[TABLE_SYMBOLS.PARTITION_KEY].name;
-                 skName = this.physicalTable[TABLE_SYMBOLS.SORT_KEY]?.name;
-            }
-            
-            const pkValue = keys[pkName];
-            
-            // Construct KeyConditionExpression
-            let keyConditionExpression = `${pkName} = :pk`;
-            const expressionAttributeValues: Record<string, any> = {
-                ":pk": pkValue,
-            };
-
-            if (hasSortKey && skName && keys[skName] !== undefined) {
-                keyConditionExpression += ` AND ${skName} = :sk`;
-                expressionAttributeValues[":sk"] = keys[skName];
-            }
-
-            const command = new QueryCommand({
-                TableName: this.tableName,
-                IndexName: indexName,
-                KeyConditionExpression: keyConditionExpression,
-                ExpressionAttributeValues: expressionAttributeValues,
-            });
-
-             const result = await this.client.send(command);
-             return (result.Items ?? []) as TResult[];
+        if (resolution.hasPartitionKey || resolution.indexName) {
+            return this.executeQuery(resolution);
         }
 
         // Scan (No keys resolved)
+        return this.executeScan();
+    }
+
+    private async executeGet(keys: Record<string, any>): Promise<TResult[]> {
+        const command = new GetCommand({
+            TableName: this.tableName,
+            Key: keys,
+        });
+
+        const result = await this.client.send(command);
+        return result.Item ? ([result.Item] as TResult[]) : [];
+    }
+
+    private async executeQuery(
+        resolution: any,
+    ): Promise<TResult[]> {
+        let pkName: string;
+        let skName: string | undefined;
+
+        if (resolution.indexName) {
+            const indexes = this.physicalTable[TABLE_SYMBOLS.INDEXES];
+            if (!indexes || !indexes[resolution.indexName]) {
+                throw new Error(
+                    `Index ${resolution.indexName} not found on table definition.`,
+                );
+            }
+            pkName = indexes[resolution.indexName].config.pk!;
+            skName = indexes[resolution.indexName].config.sk;
+        } else {
+            pkName = this.physicalTable[TABLE_SYMBOLS.PARTITION_KEY].name;
+            skName = this.physicalTable[TABLE_SYMBOLS.SORT_KEY]?.name;
+        }
+
+        const pkValue = resolution.keys[pkName];
+
+        let keyConditionExpression = `${pkName} = :pk`;
+        const expressionAttributeValues: Record<string, any> = {
+            ":pk": pkValue,
+        };
+
+        if (resolution.hasSortKey && skName && resolution.keys[skName] !== undefined) {
+            keyConditionExpression += ` AND ${skName} = :sk`;
+            expressionAttributeValues[":sk"] = resolution.keys[skName];
+        }
+
+        const command = new QueryCommand({
+            TableName: this.tableName,
+            IndexName: resolution.indexName,
+            KeyConditionExpression: keyConditionExpression,
+            ExpressionAttributeValues: expressionAttributeValues,
+        });
+
+        const result = await this.client.send(command);
+        return (result.Items ?? []) as TResult[];
+    }
+
+    private async executeScan(): Promise<TResult[]> {
         // WARN: Scanning is expensive!
         const command = new ScanCommand({
             TableName: this.tableName,
         });
-        
+
         // TODO: Apply filter expression from this.whereClause if strictly scanning
 
         const result = await this.client.send(command);
