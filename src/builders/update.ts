@@ -74,6 +74,18 @@ export class UpdateBuilder<
             updateExpressions.push(`SET ${setParts.join(", ")}`);
         }
 
+        if (Object.keys(this._addValues).length > 0) {
+            const addParts: string[] = [];
+            for (const [key, value] of Object.entries(this._addValues)) {
+                const namePlaceholder = `#${key}`;
+                const valuePlaceholder = `:${key}`;
+                attributeNames[namePlaceholder] = key;
+                attributeValues[valuePlaceholder] = value;
+                addParts.push(`${namePlaceholder} ${valuePlaceholder}`);
+            }
+            updateExpressions.push(`ADD ${addParts.join(", ")}`);
+        }
+
         const command = new UpdateCommand({
             TableName: tableName,
             Key: keys,

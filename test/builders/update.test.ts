@@ -75,4 +75,24 @@ describe("Update Builder", () => {
             ":age": 30,
         });
     });
+
+    it("should correctly construct ADD expression for numbers and sets", async () => {
+        const mockDocClient = {
+            send: vi.fn().mockResolvedValue({ Attributes: { age: 31 } }),
+        } as any;
+
+        const db = mizzle({ config: {} } as any);
+        (db as any).docClient = mockDocClient;
+
+        await db.update(user)
+            .add({ age: 1 })
+            .where(eq(user.id, "123"))
+            .execute();
+
+        expect(mockDocClient.send).toHaveBeenCalled();
+        const call = mockDocClient.send.mock.calls[0][0];
+        expect(call.input.UpdateExpression).toContain("ADD #age :age");
+        expect(call.input.ExpressionAttributeNames).toEqual({ "#age": "age" });
+        expect(call.input.ExpressionAttributeValues).toEqual({ ":age": 1 });
+    });
 });
