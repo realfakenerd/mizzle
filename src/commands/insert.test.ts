@@ -4,7 +4,7 @@ import { string, uuid, number, boolean, list, map, stringSet, numberSet } from "
 import { prefixKey, staticKey } from "../core/strategies";
 import { DynamoDBClient, CreateTableCommand, DeleteTableCommand } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, GetCommand } from "@aws-sdk/lib-dynamodb";
-import { InsertBuilder } from "./insert";
+import { InsertBuilder } from "../builders/insert";
 
 const client = new DynamoDBClient({
     endpoint: "http://localhost:8000",

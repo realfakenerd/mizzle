@@ -1,8 +1,8 @@
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import { DynamoQueryBuilder } from './query-builder';
-import { operators, type Operators } from './operators';
-import type { Condition } from './operators';
-import type { InferSelectedModel, TableDefinition } from './core/table';
+import { operators, type Operators } from '../expressions/operators';
+import type { Condition } from '../expressions/operators';
+import type { InferSelectedModel, TableDefinition } from '../core/table';
 
 type WhereCallback<T extends TableDefinition<any>> = (
 	fields: T['columns'],

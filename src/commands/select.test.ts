@@ -5,7 +5,7 @@ import { prefixKey, staticKey } from "../core/strategies";
 import { DynamoDBClient, CreateTableCommand, DeleteTableCommand } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { mizzle } from "../db";
-import { eq, and } from "../operators";
+import { eq, and } from "../expressions/operators";
 
 const client = new DynamoDBClient({
     endpoint: "http://localhost:8000",

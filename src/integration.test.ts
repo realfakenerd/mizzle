@@ -4,7 +4,7 @@ import { string, uuid, number, boolean, list, map } from "./columns/all";
 import { prefixKey, staticKey } from "./core/strategies";
 import { DynamoDBClient, CreateTableCommand, DeleteTableCommand } from "@aws-sdk/client-dynamodb";
 import { mizzle } from "./db";
-import { eq } from "./operators";
+import { eq } from "./expressions/operators";
 
 const client = new DynamoDBClient({
     endpoint: "http://localhost:8000",

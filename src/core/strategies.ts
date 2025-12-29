@@ -3,7 +3,7 @@ import {
     BinaryExpression,
     LogicalExpression,
     type Expression,
-} from "../operators";
+} from "../expressions/operators";
 import { Entity, PhysicalTable } from "./table";
 
 export type KeyStrategyType = "static" | "prefix" | "composite";

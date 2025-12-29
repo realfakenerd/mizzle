@@ -2,8 +2,8 @@ import {
     UpdateCommand,
     type DynamoDBDocumentClient,
 } from "@aws-sdk/lib-dynamodb";
-import type { Condition } from "./operators";
-import type { InferInsertModel } from "./core/table";
+import type { Condition } from "../expressions/operators";
+import type { InferInsertModel } from "../core/table";
 
 export class UpdateBuilder<T extends TableDefinition<any>> {
     #key?: Record<string, any>;

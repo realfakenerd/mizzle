@@ -1,10 +1,10 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
-import { InsertBuilder } from "./commands/insert";
-import { RelationnalQueryBuilder } from "./relational-builder";
-import { SelectBuilder, type SelectedFields } from "./commands/select";
+import { InsertBuilder } from "./builders/insert";
+import { RelationnalQueryBuilder } from "./builders/relational-builder";
+import { SelectBuilder, type SelectedFields } from "./builders/select";
 import type { Entity } from "./core/table";
-import { UpdateBuilder } from "./update-builder";
+import { UpdateBuilder } from "./builders/update-builder";
 
 export class DynamoDB {
     private docClient: DynamoDBDocumentClient;

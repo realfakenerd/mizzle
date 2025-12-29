@@ -10,10 +10,10 @@ This plan outlines the steps to reorganize the codebase into a domain-driven, "D
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Core Migration' (Protocol in workflow.md)
 
 ## Phase 2: Logic & Commands
-- [ ] Task: Move command builders (`commands/insert.ts`, `commands/select.ts`, `update-builder.ts`) to `src/builders/`.
-- [ ] Task: Move query/relational builders (`query-builder.ts`, `query-promise.ts`, `relational-builder.ts`) to `src/builders/`.
-- [ ] Task: Move `operators.ts` to `src/expressions/`.
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: Logic Migration' (Protocol in workflow.md)
+- [x] Task: Move command builders (`commands/insert.ts`, `commands/select.ts`, `update-builder.ts`) to `src/builders/`.
+- [x] Task: Move query/relational builders (`query-builder.ts`, `query-promise.ts`, `relational-builder.ts`) to `src/builders/`.
+- [x] Task: Move `operators.ts` to `src/expressions/`.
+- [x] Task: Conductor - User Manual Verification 'Phase 2: Logic Migration' (Protocol in workflow.md)
 
 ## Phase 3: Utilities & Public API
 - [ ] Task: Move `utils.ts` and `db.ts` to `src/utils/` (or keep `db.ts` at root if preferred for DX).

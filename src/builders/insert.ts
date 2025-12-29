@@ -1,7 +1,7 @@
 import { PutCommand, type DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import { Entity, PhysicalTable, type InferInsertModel } from "../core/table";
 import { entityKind } from "../core/entity";
-import { QueryPromise } from "../query-promise";
+import { QueryPromise } from "./query-promise";
 import { resolveStrategies, type KeyStrategy } from "../core/strategies";
 import { Column } from "../core/column";
 
