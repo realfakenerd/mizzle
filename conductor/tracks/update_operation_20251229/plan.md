@@ -27,9 +27,9 @@ This plan outlines the steps to implement the `UpdateItem` operation, including 
 - [x] Task: Implement the `DELETE` action: f2a1d15
     - Write unit tests for `.delete()` (set elements). f2a1d15
     - Implement `.delete(values)` method. f2a1d15
-- [ ] Task: Implement `.returning()` support:
-    - Write unit tests for different `ReturnValues` configurations.
-    - Implement `.returning(value)` and update `execute()` to handle the response.
+- [x] Task: Implement `.returning()` support: fd0c9ed
+    - Write unit tests for different `ReturnValues` configurations. fd0c9ed
+    - Implement `.returning(value)` and update `execute()` to handle the response. fd0c9ed
 - [ ] Task: Implement explicit `.key()` support:
     - Write unit tests for manual key provision.
     - Implement `.key(keyObject)` as an alternative/override to `.where()` resolution.
