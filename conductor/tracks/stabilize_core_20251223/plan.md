@@ -19,6 +19,6 @@ This plan outlines the steps to stabilize and verify the core `insert` and `sele
 
 ## Phase 3: End-to-End Integration
 
-- [ ] Task: Create a full entity example and perform a complete CRUD lifecycle test (Insert -> Select -> Verify).
-- [ ] Task: Final code review and cleanup.
-- [ ] Task: Conductor - User Manual Verification 'Phase 3: Final Integration' (Protocol in workflow.md)
+- [x] Task: Create a full entity example and perform a complete CRUD lifecycle test (Insert -> Select -> Verify). [3982c5b]
+- [x] Task: Final code review and cleanup. [3982c5b]
+- [x] Task: Conductor - User Manual Verification 'Phase 3: Final Integration' (Protocol in workflow.md) [checkpoint: 1f619cd]
