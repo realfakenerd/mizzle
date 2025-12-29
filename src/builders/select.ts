@@ -4,9 +4,8 @@ import {
     ScanCommand,
     type DynamoDBDocumentClient,
 } from "@aws-sdk/lib-dynamodb";
-import { TABLE_SYMBOLS } from "../constants";
+import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "../constants";
 import type { Column } from "../core/column";
-import { entityKind } from "../core/entity";
 import type { SelectedFields as SelectedFieldsBase } from "../core/operations";
 import { type Expression } from "../expressions/operators";
 import { Entity, PhysicalTable, type InferSelectModel } from "../core/table";
@@ -30,7 +29,7 @@ class SelectBase<
     TSelection extends SelectedFields | undefined = undefined,
     TResult = TSelection extends undefined ? InferSelectModel<TEntity> : any,
 > extends BaseBuilder<TEntity, TResult[]> {
-    static readonly [entityKind]: string = "SelectBase";
+    static readonly [ENTITY_SYMBOLS.ENTITY_KIND]: string = "SelectBase";
 
     private whereClause?: Expression;
 

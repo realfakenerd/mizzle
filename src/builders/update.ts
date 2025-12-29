@@ -1,6 +1,6 @@
 import { UpdateCommand, type DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import { ENTITY_SYMBOLS } from "../constants";
 import { Entity, type InferInsertModel } from "../core/table";
-import { entityKind } from "../core/entity";
 import { type Expression } from "../expressions/operators";
 import { BaseBuilder } from "./base";
 
@@ -8,7 +8,7 @@ export class UpdateBuilder<
     TEntity extends Entity,
     TResult = any,
 > extends BaseBuilder<TEntity, TResult> {
-    static readonly [entityKind]: string = "UpdateBuilder";
+    static readonly [ENTITY_SYMBOLS.ENTITY_KIND]: string = "UpdateBuilder";
 
     private _setValues: Partial<InferInsertModel<TEntity>> = {};
     private _addValues: Record<string, any> = {};

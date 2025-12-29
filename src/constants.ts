@@ -26,4 +26,5 @@ export const ENTITY_SYMBOLS = {
     ENTITY_STRATEGY: Symbol.for("mizzle:EntityStrategy"),
     PHYSICAL_TABLE: Symbol.for("mizzle:PhysicalTable"),
     COLUMNS: Symbol.for("mizzle:Columns"),
+    ENTITY_KIND: Symbol.for("mizzle:EntityKind"),
 };

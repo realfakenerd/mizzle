@@ -1,11 +1,10 @@
 import { PutCommand, type DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import { ENTITY_SYMBOLS } from "../constants";
 import { Entity, type InferInsertModel } from "../core/table";
-import { entityKind } from "../core/entity";
 import { BaseBuilder } from "./base";
 
 export class InsertBuilder<TEntity extends Entity> {
-    static readonly [entityKind]: string = "InsertBuilder";
+    static readonly [ENTITY_SYMBOLS.ENTITY_KIND]: string = "InsertBuilder";
 
     constructor(
         private entity: TEntity,
