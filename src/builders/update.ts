@@ -96,6 +96,18 @@ export class UpdateBuilder<
             updateExpressions.push(`REMOVE ${removeParts.join(", ")}`);
         }
 
+        if (Object.keys(this._deleteValues).length > 0) {
+            const deleteParts: string[] = [];
+            for (const [key, value] of Object.entries(this._deleteValues)) {
+                const namePlaceholder = `#${key}`;
+                const valuePlaceholder = `:${key}`;
+                attributeNames[namePlaceholder] = key;
+                attributeValues[valuePlaceholder] = value;
+                deleteParts.push(`${namePlaceholder} ${valuePlaceholder}`);
+            }
+            updateExpressions.push(`DELETE ${deleteParts.join(", ")}`);
+        }
+
         const command = new UpdateCommand({
             TableName: tableName,
             Key: keys,

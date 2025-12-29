@@ -117,4 +117,24 @@ describe("Update Builder", () => {
             "#name": "name",
         });
     });
+
+    it("should correctly construct DELETE expression", async () => {
+        const mockDocClient = {
+            send: vi.fn().mockResolvedValue({ Attributes: {} }),
+        } as any;
+
+        const db = mizzle({ config: {} } as any);
+        (db as any).docClient = mockDocClient;
+
+        await db.update(user)
+            .delete({ tags: new Set(["tag1"]) })
+            .where(eq(user.id, "123"))
+            .execute();
+
+        expect(mockDocClient.send).toHaveBeenCalled();
+        const call = mockDocClient.send.mock.calls[0][0];
+        expect(call.input.UpdateExpression).toContain("DELETE #tags :tags");
+        expect(call.input.ExpressionAttributeNames).toEqual({ "#tags": "tags" });
+        expect(call.input.ExpressionAttributeValues).toEqual({ ":tags": new Set(["tag1"]) });
+    });
 });
