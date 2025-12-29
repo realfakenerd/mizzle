@@ -6,6 +6,8 @@ import { QueryPromise } from "./query-promise";
 import { type Expression } from "../expressions/operators";
 import { resolveStrategies } from "../core/strategies";
 
+import { resolveTableName } from "../utils/utils";
+
 export class UpdateBuilder<
     TEntity extends Entity,
     TResult = any,
@@ -63,8 +65,7 @@ export class UpdateBuilder<
     }
 
     async execute(): Promise<TResult> {
-        const physicalTable = this.entity[ENTITY_SYMBOLS.PHYSICAL_TABLE];
-        const tableName = physicalTable[TABLE_SYMBOLS.TABLE_NAME];
+        const tableName = resolveTableName(this.entity);
 
         let keys: Record<string, any> | undefined = this._explicitKey;
 

@@ -13,6 +13,8 @@ import { QueryPromise } from "./query-promise";
 import { resolveStrategies } from "../core/strategies";
 import { Entity, PhysicalTable, type InferSelectModel } from "../core/table";
 
+import { resolveTableName } from "../utils/utils";
+
 export type SelectedFields = SelectedFieldsBase<Column, PhysicalTable>;
 
 export class SelectBuilder<TSelection extends SelectedFields | undefined> {
@@ -49,8 +51,8 @@ class SelectBase<
     }
 
     override async execute(): Promise<TResult[]> {
+        const tableName = resolveTableName(this.entity);
         const physicalTable = this.entity[ENTITY_SYMBOLS.PHYSICAL_TABLE];
-        const tableName = physicalTable[TABLE_SYMBOLS.TABLE_NAME];
 
         const { keys, hasPk, hasSk, indexName } = resolveStrategies(
             this.entity,

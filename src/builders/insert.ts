@@ -6,6 +6,8 @@ import { QueryPromise } from "./query-promise";
 import { resolveStrategies, type KeyStrategy } from "../core/strategies";
 import { Column } from "../core/column";
 
+import { resolveTableName } from "../utils/utils";
+
 export class InsertBuilder<TEntity extends Entity> {
     static readonly [entityKind]: string = "InsertBuilder";
 
@@ -43,8 +45,7 @@ class InsertBase<
         const key = resolveStrategies(this.entity, undefined, itemToSave);
         const finalItem = { ...itemToSave, ...key.keys };
 
-        const physicalTable = this.entity[ENTITY_SYMBOLS.PHYSICAL_TABLE];
-        const tableName = physicalTable[TABLE_SYMBOLS.TABLE_NAME];
+        const tableName = resolveTableName(this.entity);
 
         const command = new PutCommand({
             TableName: tableName,
