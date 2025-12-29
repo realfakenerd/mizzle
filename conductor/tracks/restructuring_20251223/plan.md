@@ -9,7 +9,7 @@ This plan outlines the steps to reorganize the codebase into a domain-driven, "D
 - [x] Task: Move `strategies.ts` and `operations.ts` to `src/core/`.
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Core Migration' (Protocol in workflow.md)
 
-## Phase 2: Logic & Commands
+## Phase 2: Logic & Commands [checkpoint: 42c4412]
 - [x] Task: Move command builders (`commands/insert.ts`, `commands/select.ts`, `update-builder.ts`) to `src/builders/`.
 - [x] Task: Move query/relational builders (`query-builder.ts`, `query-promise.ts`, `relational-builder.ts`) to `src/builders/`.
 - [x] Task: Move `operators.ts` to `src/expressions/`.
