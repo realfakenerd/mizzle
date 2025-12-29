@@ -15,7 +15,7 @@ This plan outlines the steps to reorganize the codebase into a domain-driven, "D
 - [x] Task: Move `operators.ts` to `src/expressions/`.
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Logic Migration' (Protocol in workflow.md)
 
-## Phase 3: Utilities & Public API
+## Phase 3: Utilities & Public API [checkpoint: d124fa2]
 - [x] Task: Move `utils.ts` and `db.ts` to `src/utils/` (or keep `db.ts` at root if preferred for DX).
 - [x] Task: Refactor `src/index.ts` to export from new locations.
 - [x] Task: Move all test files (e.g., `src/**/*.test.ts`) to the `test/` directory.
