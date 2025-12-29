@@ -24,9 +24,9 @@ This plan outlines the steps to implement the `UpdateItem` operation, including 
 - [x] Task: Implement the `REMOVE` action: 404c493
     - Write unit tests for `.remove()`. 404c493
     - Implement `.remove(...fields)` method. 404c493
-- [ ] Task: Implement the `DELETE` action:
-    - Write unit tests for `.delete()` (set elements).
-    - Implement `.delete(values)` method.
+- [x] Task: Implement the `DELETE` action: f2a1d15
+    - Write unit tests for `.delete()` (set elements). f2a1d15
+    - Implement `.delete(values)` method. f2a1d15
 - [ ] Task: Implement `.returning()` support:
     - Write unit tests for different `ReturnValues` configurations.
     - Implement `.returning(value)` and update `execute()` to handle the response.
