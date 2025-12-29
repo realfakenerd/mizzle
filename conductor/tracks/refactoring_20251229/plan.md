@@ -22,8 +22,8 @@ This plan outlines the steps to refactor the Mizzle codebase to reduce duplicati
 - [x] Task: Perform a final pass to break down overly long methods in builders. 129c79a
 - [~] Task: Conductor - User Manual Verification 'Builder Logic Consolidation' (Protocol in workflow.md)
 
-## Phase 4: Final Verification & Cleanup
+## Phase 4: Final Verification & Cleanup [checkpoint: 39a0699]
 - [x] Task: Ensure all tests pass with the refactored architecture. 6f63523
 - [x] Task: Verify that code coverage remains above project requirements (>80%). 6f63523
 - [x] Task: Remove any dead code or deprecated types uncovered during refactoring. 3bf5267
-- [~] Task: Conductor - User Manual Verification 'Final Verification & Cleanup' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Final Verification & Cleanup' (Protocol in workflow.md)
