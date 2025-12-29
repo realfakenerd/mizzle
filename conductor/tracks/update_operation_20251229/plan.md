@@ -34,10 +34,10 @@ This plan outlines the steps to implement the `UpdateItem` operation, including 
 - [x] Task: Conductor - User Manual Verification 'Expanded Update Actions' (Protocol in workflow.md)
 
 ## Phase 3: Integration & Cleanup
-- [ ] Task: Integration Testing:
+- [x] Task: Integration Testing: 7190501
     - Create `test/update.integration.test.ts`.
     - Verify full update lifecycle against a local DynamoDB instance.
-- [ ] Task: Refactor and optimize `UpdateExpression` construction logic.
+- [~] Task: Refactor and optimize `UpdateExpression` construction logic.
 - [ ] Task: Update `src/index.ts` to export necessary types/classes for the new feature.
 - [ ] Task: Update `README.md` roadmap to mark the Update Operation as complete.
 - [ ] Task: Conductor - User Manual Verification 'Final Integration' (Protocol in workflow.md)
