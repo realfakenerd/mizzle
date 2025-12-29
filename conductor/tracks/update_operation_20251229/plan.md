@@ -30,9 +30,9 @@ This plan outlines the steps to implement the `UpdateItem` operation, including 
 - [x] Task: Implement `.returning()` support: fd0c9ed
     - Write unit tests for different `ReturnValues` configurations. fd0c9ed
     - Implement `.returning(value)` and update `execute()` to handle the response. fd0c9ed
-- [ ] Task: Implement explicit `.key()` support:
-    - Write unit tests for manual key provision.
-    - Implement `.key(keyObject)` as an alternative/override to `.where()` resolution.
+- [x] Task: Implement explicit `.key()` support: 3fa7d23
+    - Write unit tests for manual key provision. 3fa7d23
+    - Implement `.key(keyObject)` as an alternative/override to `.where()` resolution. 3fa7d23
 - [ ] Task: Conductor - User Manual Verification 'Expanded Update Actions' (Protocol in workflow.md)
 
 ## Phase 3: Integration & Cleanup
