@@ -39,5 +39,5 @@ This plan outlines the steps to implement the `UpdateItem` operation, including 
     - Verify full update lifecycle against a local DynamoDB instance.
 - [x] Task: Refactor and optimize `UpdateExpression` construction logic. 9ca6350
 - [x] Task: Update `src/index.ts` to export necessary types/classes for the new feature. 9ca6350
-- [~] Task: Update `README.md` roadmap to mark the Update Operation as complete.
-- [ ] Task: Conductor - User Manual Verification 'Final Integration' (Protocol in workflow.md)
+- [x] Task: Update `README.md` roadmap to mark the Update Operation as complete. 21ee200
+- [x] Task: Conductor - User Manual Verification 'Final Integration' (Protocol in workflow.md)
