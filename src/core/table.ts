@@ -1,3 +1,4 @@
+import { ENTITY_SYMBOLS, INFER_MODE, TABLE_SYMBOLS } from "../constants";
 import { Column, type GetColumnData } from "./column";
 import type {
     BuildColumns,
@@ -46,16 +47,6 @@ export interface PhysicalTableConfig {
     indexes?: Record<string, IndexBuilder>;
 }
 
-const Columns = Symbol.for("mizzle:Columns");
-const Indexes = Symbol.for("mizzle:Indexes");
-const SortKey = Symbol.for("mizzle:SortKey");
-const TableName = Symbol.for("mizzle:TableName");
-const PartitionKey = Symbol.for("mizzle:PartitionKey");
-
-const EntityName = Symbol.for("mizzle:EntityName");
-const EntityStrategy = Symbol.for("mizzle:EntityStrategy");
-const PhysicalTableSymbol = Symbol.for("mizzle:PhysicalTable");
-
 export class PhysicalTable<
     T extends PhysicalTableConfig = PhysicalTableConfig,
 > {
@@ -68,31 +59,26 @@ export class PhysicalTable<
     };
 
     /** @internal */
-    [TableName]: string;
+    [TABLE_SYMBOLS.TABLE_NAME]: string;
 
     /** @internal */
-    [Indexes]: T["indexes"];
+    [TABLE_SYMBOLS.INDEXES]: T["indexes"];
 
     /** @internal */
-    [PartitionKey]: Column;
+    [TABLE_SYMBOLS.PARTITION_KEY]: Column;
 
     /** @internal */
-    [SortKey]?: Column;
+    [TABLE_SYMBOLS.SORT_KEY]?: Column;
 
-    static readonly Symbol = {
-        TableName: TableName as typeof TableName,
-        Indexes: Indexes as typeof Indexes,
-        PartitionKey: PartitionKey as typeof PartitionKey,
-        SortKey: SortKey as typeof SortKey,
-    };
+    static readonly Symbol = TABLE_SYMBOLS;
 
     constructor(name: string, config: T) {
-        this[TableName] = name;
-        this[PartitionKey] = (config.pk as ColumnBuider).build({} as any);
-        this[SortKey] = config.sk
+        this[TABLE_SYMBOLS.TABLE_NAME] = name;
+        this[TABLE_SYMBOLS.PARTITION_KEY] = (config.pk as ColumnBuider).build({} as any);
+        this[TABLE_SYMBOLS.SORT_KEY] = config.sk
             ? (config.sk as ColumnBuider).build({} as any)
             : undefined;
-        this[Indexes] = config.indexes;
+        this[TABLE_SYMBOLS.INDEXES] = config.indexes;
     }
 }
 
@@ -111,22 +97,17 @@ export class Entity<T extends EntityConfig = EntityConfig> {
     declare readonly $inferInsert: InferInsertModel<Entity<T>>;
 
     /** @internal */
-    [EntityName]: string;
+    [ENTITY_SYMBOLS.ENTITY_NAME]: string;
 
     /** @internal */
-    [PhysicalTableSymbol]: T["table"];
+    [ENTITY_SYMBOLS.PHYSICAL_TABLE]: T["table"];
 
     /** @internal */
-    [Columns]: T["columns"];
+    [ENTITY_SYMBOLS.COLUMNS]: T["columns"];
 
-    [EntityStrategy]: Record<string, KeyStrategy>;
+    [ENTITY_SYMBOLS.ENTITY_STRATEGY]: Record<string, KeyStrategy>;
 
-    static readonly Symbol = {
-        Columns: Columns as typeof Columns,
-        EntityName: EntityName as typeof EntityName,
-        EntityStrategy: EntityStrategy as typeof EntityStrategy,
-        PhysicalTableSymbol: PhysicalTableSymbol as typeof PhysicalTableSymbol,
-    };
+    static readonly Symbol = ENTITY_SYMBOLS;
 
     constructor(
         name: T["name"],
@@ -134,10 +115,10 @@ export class Entity<T extends EntityConfig = EntityConfig> {
         columns: T["columns"],
         strategies: Record<string, KeyStrategy>,
     ) {
-        this[EntityName] = name;
-        this[PhysicalTableSymbol] = table;
-        this[Columns] = columns;
-        this[EntityStrategy] = strategies;
+        this[ENTITY_SYMBOLS.ENTITY_NAME] = name;
+        this[ENTITY_SYMBOLS.PHYSICAL_TABLE] = table;
+        this[ENTITY_SYMBOLS.COLUMNS] = columns;
+        this[ENTITY_SYMBOLS.ENTITY_STRATEGY] = strategies;
     }
 }
 
@@ -160,19 +141,19 @@ export type InferModelFromColumns<
               [Key in keyof TColumns & string as RequiredKeyOnly<
                   MapColumnName<Key, TColumns[Key], TConfig["dbColumnNames"]>,
                   TColumns[Key]
-              >]: GetColumnData<TColumns[Key], "query">;
+              >]: GetColumnData<TColumns[Key], typeof INFER_MODE.QUERY>;
           } & {
               [Key in keyof TColumns & string as OpitionalKeyOnly<
                   MapColumnName<Key, TColumns[Key], TConfig["dbColumnNames"]>,
                   TColumns[Key]
-              >]?: GetColumnData<TColumns[Key], "query"> | undefined;
+              >]?: GetColumnData<TColumns[Key], typeof INFER_MODE.QUERY> | undefined;
           }
         : {
               [Key in keyof TColumns & string as MapColumnName<
                   Key,
                   TColumns[Key],
                   TConfig["dbColumnNames"]
-              >]: GetColumnData<TColumns[Key], "query">;
+              >]: GetColumnData<TColumns[Key], typeof INFER_MODE.QUERY>;
           }
 >;
 
