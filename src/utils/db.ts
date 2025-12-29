@@ -4,7 +4,7 @@ import { InsertBuilder } from "../builders/insert";
 import { RelationnalQueryBuilder } from "../builders/relational-builder";
 import { SelectBuilder, type SelectedFields } from "../builders/select";
 import type { Entity } from "../core/table";
-import { UpdateBuilder } from "../builders/update-builder";
+import { UpdateBuilder } from "../builders/update";
 
 export class DynamoDB {
     private docClient: DynamoDBDocumentClient;
@@ -23,14 +23,12 @@ export class DynamoDB {
         return new SelectBuilder(this.docClient, fields);
     }
 
-    query<T extends TableDefinition<any>>(table: T) {
-        return new RelationnalQueryBuilder<T>(this.docClient, table);
+    query<T extends Entity>(table: T) {
+        return new RelationnalQueryBuilder<any>(this.docClient, table as any);
     }
 
-    update<T extends TableDefinition<any>>(table: T) {
-        const update_builder = new UpdateBuilder<T>(this.docClient, table);
-
-        return update_builder;
+    update<T extends Entity>(table: T): UpdateBuilder<T> {
+        return new UpdateBuilder(table, this.docClient);
     }
 }
 
