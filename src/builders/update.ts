@@ -1,4 +1,5 @@
 import { UpdateCommand, type DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "../constants";
 import { Entity, PhysicalTable, type InferInsertModel } from "../core/table";
 import { entityKind } from "../core/entity";
 import { QueryPromise } from "./query-promise";
@@ -62,8 +63,8 @@ export class UpdateBuilder<
     }
 
     async execute(): Promise<TResult> {
-        const physicalTable = this.entity[Entity.Symbol.PhysicalTableSymbol];
-        const tableName = physicalTable[PhysicalTable.Symbol.TableName];
+        const physicalTable = this.entity[ENTITY_SYMBOLS.PHYSICAL_TABLE];
+        const tableName = physicalTable[TABLE_SYMBOLS.TABLE_NAME];
 
         let keys: Record<string, any> | undefined = this._explicitKey;
 

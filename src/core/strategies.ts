@@ -1,3 +1,4 @@
+import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "../constants";
 import { Column } from "./column";
 import {
     BinaryExpression,
@@ -104,11 +105,11 @@ export function resolveStrategies(
     whereClause?: Expression,
     providedValues?: Record<string, any>,
 ): StrategyResolution {
-    const strategies = entity[Entity.Symbol.EntityStrategy];
-    const physicalTable = entity[Entity.Symbol.PhysicalTableSymbol];
+    const strategies = entity[ENTITY_SYMBOLS.ENTITY_STRATEGY];
+    const physicalTable = entity[ENTITY_SYMBOLS.PHYSICAL_TABLE];
 
-    const pkCol = physicalTable[PhysicalTable.Symbol.PartitionKey];
-    const skCol = physicalTable[PhysicalTable.Symbol.SortKey];
+    const pkCol = physicalTable[TABLE_SYMBOLS.PARTITION_KEY];
+    const skCol = physicalTable[TABLE_SYMBOLS.SORT_KEY];
 
     const availableValues = {
         ...(whereClause ? extracValuesFromExpression(whereClause) : {}),
@@ -142,7 +143,7 @@ export function resolveStrategies(
     }
 
     if (!result.hasPk) {
-        const indexes = physicalTable[PhysicalTable.Symbol.Indexes];
+        const indexes = physicalTable[TABLE_SYMBOLS.INDEXES];
         if (indexes) {
             for (const [indexName, indexBuilder] of Object.entries(indexes)) {
                 const indexStrategy = strategies[indexName] as any;

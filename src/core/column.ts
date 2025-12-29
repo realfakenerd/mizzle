@@ -142,7 +142,7 @@ export class ExtraConfigColumn<
     }
 
     desc(): Omit<this, "asc" | "desc"> {
-        this.indexСonfig.order = ORDER.DESC;
+        this.indexConfig.order = ORDER.DESC;
         return this;
     }
 

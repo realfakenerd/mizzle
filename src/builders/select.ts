@@ -4,6 +4,7 @@ import {
     ScanCommand,
     type DynamoDBDocumentClient,
 } from "@aws-sdk/lib-dynamodb";
+import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "../constants";
 import type { Column } from "../core/column";
 import { entityKind } from "../core/entity";
 import type { SelectedFields as SelectedFieldsBase } from "../core/operations";
@@ -48,8 +49,8 @@ class SelectBase<
     }
 
     override async execute(): Promise<TResult[]> {
-        const physicalTable = this.entity[Entity.Symbol.PhysicalTableSymbol];
-        const tableName = physicalTable[PhysicalTable.Symbol.TableName];
+        const physicalTable = this.entity[ENTITY_SYMBOLS.PHYSICAL_TABLE];
+        const tableName = physicalTable[TABLE_SYMBOLS.TABLE_NAME];
 
         const { keys, hasPk, hasSk, indexName } = resolveStrategies(
             this.entity,
@@ -74,15 +75,15 @@ class SelectBase<
 
             if (indexName) {
                 // Find index definition to get PK name
-                const indexes = physicalTable[PhysicalTable.Symbol.Indexes];
+                const indexes = physicalTable[TABLE_SYMBOLS.INDEXES];
                 if (!indexes || !indexes[indexName]) {
                      throw new Error(`Index ${indexName} not found on table definition.`);
                 }
                 pkName = indexes[indexName].config.pk!;
                 skName = indexes[indexName].config.sk;
             } else {
-                 pkName = physicalTable[PhysicalTable.Symbol.PartitionKey].name;
-                 skName = physicalTable[PhysicalTable.Symbol.SortKey]?.name;
+                 pkName = physicalTable[TABLE_SYMBOLS.PARTITION_KEY].name;
+                 skName = physicalTable[TABLE_SYMBOLS.SORT_KEY]?.name;
             }
             
             const pkValue = keys[pkName];

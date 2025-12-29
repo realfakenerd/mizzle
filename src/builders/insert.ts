@@ -1,4 +1,5 @@
 import { PutCommand, type DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "../constants";
 import { Entity, PhysicalTable, type InferInsertModel } from "../core/table";
 import { entityKind } from "../core/entity";
 import { QueryPromise } from "./query-promise";
@@ -42,8 +43,8 @@ class InsertBase<
         const key = resolveStrategies(this.entity, undefined, itemToSave);
         const finalItem = { ...itemToSave, ...key.keys };
 
-        const physicalTable = this.entity[Entity.Symbol.PhysicalTableSymbol];
-        const tableName = physicalTable[PhysicalTable.Symbol.TableName];
+        const physicalTable = this.entity[ENTITY_SYMBOLS.PHYSICAL_TABLE];
+        const tableName = physicalTable[TABLE_SYMBOLS.TABLE_NAME];
 
         const command = new PutCommand({
             TableName: tableName,
@@ -60,7 +61,7 @@ class InsertBase<
         values: InferInsertModel<TEntity>,
     ): Record<string, any> {
         const item: any = { ...values };
-        const columns = this.entity[Entity.Symbol.Columns];
+        const columns = this.entity[ENTITY_SYMBOLS.COLUMNS];
 
         for (const [key, col] of Object.entries(columns)) {
             let value = item[key];

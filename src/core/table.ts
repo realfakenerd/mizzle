@@ -216,7 +216,7 @@ export function dynamoEntity<
 
     const rawEntity = new Entity(name, table, {}, definedStrategies);
 
-    rawEntity[Columns] = builtColumns;
+    rawEntity[ENTITY_SYMBOLS.COLUMNS] = builtColumns;
 
     const entity = Object.assign(rawEntity, builtColumns);
 
