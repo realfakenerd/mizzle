@@ -78,9 +78,10 @@ class SelectBase<
     ): Promise<TResult[]> {
         let pkName: string;
         let skName: string | undefined;
+        const physicalTable = this.physicalTable as any;
 
         if (resolution.indexName) {
-            const indexes = this.physicalTable[TABLE_SYMBOLS.INDEXES];
+            const indexes = physicalTable[TABLE_SYMBOLS.INDEXES];
             if (!indexes || !indexes[resolution.indexName]) {
                 throw new Error(
                     `Index ${resolution.indexName} not found on table definition.`,
@@ -89,8 +90,8 @@ class SelectBase<
             pkName = indexes[resolution.indexName].config.pk!;
             skName = indexes[resolution.indexName].config.sk;
         } else {
-            pkName = this.physicalTable[TABLE_SYMBOLS.PARTITION_KEY].name;
-            skName = this.physicalTable[TABLE_SYMBOLS.SORT_KEY]?.name;
+            pkName = physicalTable[TABLE_SYMBOLS.PARTITION_KEY].name;
+            skName = physicalTable[TABLE_SYMBOLS.SORT_KEY]?.name;
         }
 
         const pkValue = resolution.keys[pkName];

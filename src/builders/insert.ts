@@ -55,7 +55,7 @@ class InsertBase<
         values: InferInsertModel<TEntity>,
     ): Record<string, any> {
         const item: any = { ...values };
-        const columns = this.entity[ENTITY_SYMBOLS.COLUMNS];
+        const columns = this.entity[ENTITY_SYMBOLS.COLUMNS] as Record<string, any>;
 
         for (const [key, col] of Object.entries(columns)) {
             let value = item[key];

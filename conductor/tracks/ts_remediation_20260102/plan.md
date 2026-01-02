@@ -11,9 +11,9 @@ Fix fundamental type definitions in the core module that propagate errors to the
 ## Phase 2: Basic Builders
 Address errors in the primary data manipulation builders.
 
-- [ ] Task: Fix `src/builders/insert.ts` - Resolve `Object.entries` type mismatches and missing property errors on `KeyStrategy`.
-- [ ] Task: Fix `src/builders/select.ts` - Fix symbol indexing and undefined object access.
-- [ ] Task: Conductor - User Manual Verification 'Basic Builders' (Protocol in workflow.md)
+- [x] Task: Fix `src/builders/insert.ts` - Resolve `Object.entries` type mismatches and missing property errors on `KeyStrategy`.
+- [x] Task: Fix `src/builders/select.ts` - Fix symbol indexing and undefined object access.
+- [~] Task: Conductor - User Manual Verification 'Basic Builders' (Protocol in workflow.md)
 
 ## Phase 3: Advanced Builders & Relational
 Fix errors in complex query and update builders.
