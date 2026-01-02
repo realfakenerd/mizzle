@@ -23,9 +23,9 @@ Fix errors in complex query and update builders.
 - [x] Task: Fix `src/builders/update-builder.ts` - Fix missing type definitions (`TableDefinition`, `AtomicValues`) and primary key detection logic.
 - [x] Task: Conductor - User Manual Verification 'Advanced Builders & Relational' (Protocol in workflow.md)
 
-## Phase 4: Final Verification
+## Phase 4: Final Verification [checkpoint: 143c6a6]
 Ensure the entire source tree is clean and no regressions were introduced.
 
-- [ ] Task: Final Type Check - Run `bun run check` and ensure zero errors in `src/`.
-- [ ] Task: Regression Test - Run `bun test` and ensure all existing tests pass.
-- [ ] Task: Conductor - User Manual Verification 'Final Verification' (Protocol in workflow.md)
+- [x] Task: Final Type Check - Run `bun run check` and ensure zero errors in `src/`.
+- [x] Task: Regression Test - Run `bun test` and ensure all existing tests pass.
+- [~] Task: Conductor - User Manual Verification 'Final Verification' (Protocol in workflow.md)

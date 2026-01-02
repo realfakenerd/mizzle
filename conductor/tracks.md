@@ -4,5 +4,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-## [~] Track: Reduce code duplication, code smells...
-*Link: [./conductor/tracks/refactoring_20251229/](./conductor/tracks/refactoring_20251229/)*
+## [~] Track: fix all errors with typescript from the tsc check
+*Link: [./conductor/tracks/ts_remediation_20260102/](./conductor/tracks/ts_remediation_20260102/)*
