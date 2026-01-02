@@ -21,9 +21,9 @@ Add support for returning the deleted item's data.
 - [x] Task: Implement the `.returning()` logic in `DeleteBuilder` using `ReturnValues: 'ALL_OLD'`.
 - [x] Task: Conductor - User Manual Verification 'Returning Attributes' (Protocol in workflow.md)
 
-## Phase 4: Final Verification and Type Safety
+## Phase 4: Final Verification and Type Safety [checkpoint: d75093d]
 Ensure the implementation is robust, type-safe, and regression-free.
 
 - [x] Task: Run `bun run check` to verify type safety of the new API.
 - [x] Task: Run full test suite `bun run test` to ensure no regressions.
-- [~] Task: Conductor - User Manual Verification 'Final Verification and Type Safety' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Final Verification and Type Safety' (Protocol in workflow.md)
