@@ -14,6 +14,7 @@
 
 - **Testing:** [Vitest](https://vitest.dev/) - A Vite-native unit test framework, utilized for its speed and compatibility with TypeScript/Bun.
 - **ID Generation:** [uuid](https://www.npmjs.com/package/uuid) - Used for generating unique identifiers, including v7 UUIDs.
+- **Static Analysis:** [TypeScript Compiler (tsc)](https://www.typescriptlang.org/) - Used with the `--noEmit` flag for continuous type-safety verification.
 
 ## Constraints
 

@@ -4,5 +4,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-## [~] Track: fix all errors with typescript from the tsc check
-*Link: [./conductor/tracks/ts_remediation_20260102/](./conductor/tracks/ts_remediation_20260102/)*
+## [~] Track: add now the delete feature from the roadmap
+*Link: [./conductor/tracks/delete_feature_20260102/](./conductor/tracks/delete_feature_20260102/)*

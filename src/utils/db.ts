@@ -3,8 +3,9 @@ import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import { InsertBuilder } from "../builders/insert";
 import { RelationnalQueryBuilder } from "../builders/relational-builder";
 import { SelectBuilder, type SelectedFields } from "../builders/select";
-import type { Entity } from "../core/table";
+import type { Entity, InferInsertModel } from "../core/table";
 import { UpdateBuilder } from "../builders/update";
+import { DeleteBuilder } from "../builders/delete";
 
 export class DynamoDB {
     private docClient: DynamoDBDocumentClient;
@@ -29,6 +30,13 @@ export class DynamoDB {
 
     update<T extends Entity>(table: T): UpdateBuilder<T> {
         return new UpdateBuilder(table, this.docClient);
+    }
+
+    delete<T extends Entity>(
+        table: T,
+        keys: Partial<InferInsertModel<T>>,
+    ): DeleteBuilder<T> {
+        return new DeleteBuilder(table, this.docClient, keys);
     }
 }
 
