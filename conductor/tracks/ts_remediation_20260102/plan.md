@@ -15,13 +15,13 @@ Address errors in the primary data manipulation builders.
 - [x] Task: Fix `src/builders/select.ts` - Fix symbol indexing and undefined object access.
 - [x] Task: Conductor - User Manual Verification 'Basic Builders' (Protocol in workflow.md)
 
-## Phase 3: Advanced Builders & Relational
+## Phase 3: Advanced Builders & Relational [checkpoint: e86d833]
 Fix errors in complex query and update builders.
 
 - [x] Task: Fix `src/builders/query-builder.ts` - Resolve missing exports, type assertions for columns, and index signature errors.
 - [x] Task: Fix `src/builders/relational-builder.ts` - Resolve missing member exports from operators.
 - [x] Task: Fix `src/builders/update-builder.ts` - Fix missing type definitions (`TableDefinition`, `AtomicValues`) and primary key detection logic.
-- [~] Task: Conductor - User Manual Verification 'Advanced Builders & Relational' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Advanced Builders & Relational' (Protocol in workflow.md)
 
 ## Phase 4: Final Verification
 Ensure the entire source tree is clean and no regressions were introduced.
