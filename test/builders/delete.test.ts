@@ -68,19 +68,27 @@ describe("Delete Command Integration", () => {
         const newUser = { id, name: "Alice" } as any;
         await db.insert(user).values(newUser).execute();
 
-        // 2. Verify it exists
-        let results = await db.select().from(user).where({ id } as any); // Use simple where for now
-        // wait, select().where() might need eq()
-        // but wait, I can just use db.select().from(user).execute() and find it.
-        // Actually, let's use the query builder if select is tricky.
-        
         // 3. Delete it
         await db.delete(user, { id }).execute();
 
         // 4. Verify it's gone
-        // Using scan-like select for verification
         const allItems = await db.select().from(user).execute();
         const found = (allItems as any[]).find(u => u.id === id);
         expect(found).toBeUndefined();
+    });
+
+    it("should return deleted attributes when .returning() is used", async () => {
+        // 1. Insert an item
+        const id = "test-user-returning";
+        const newUser = { id, name: "Bob" } as any;
+        await db.insert(user).values(newUser).execute();
+
+        // 2. Delete it with returning()
+        const deletedItem = await db.delete(user, { id }).returning().execute();
+
+        // 3. Verify returned item
+        expect(deletedItem).toBeDefined();
+        expect(deletedItem.id).toBe(id);
+        expect(deletedItem.name).toBe("Bob");
     });
 });
