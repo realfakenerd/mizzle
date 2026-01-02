@@ -24,6 +24,6 @@ Add support for returning the deleted item's data.
 ## Phase 4: Final Verification and Type Safety
 Ensure the implementation is robust, type-safe, and regression-free.
 
-- [ ] Task: Run `bun run check` to verify type safety of the new API.
-- [ ] Task: Run full test suite `bun run test` to ensure no regressions.
-- [ ] Task: Conductor - User Manual Verification 'Final Verification and Type Safety' (Protocol in workflow.md)
+- [x] Task: Run `bun run check` to verify type safety of the new API.
+- [x] Task: Run full test suite `bun run test` to ensure no regressions.
+- [~] Task: Conductor - User Manual Verification 'Final Verification and Type Safety' (Protocol in workflow.md)
