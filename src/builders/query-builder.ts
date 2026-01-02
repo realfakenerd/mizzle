@@ -7,6 +7,7 @@ import {
 } from '@aws-sdk/lib-dynamodb';
 import type { Condition } from '../expressions/operators';
 import type { InferSelectedModel, TableDefinition } from '../core/table';
+import { ENTITY_SYMBOLS } from '../constants';
 
 export class DynamoQueryBuilder<T extends TableDefinition<any>> {
 	private whereClause?: Condition;
@@ -36,12 +37,14 @@ export class DynamoQueryBuilder<T extends TableDefinition<any>> {
 
 	// Executa a query
 	async execute(): Promise<InferSelectedModel<T>[]> {
-		const { tableName, columns } = this.table;
+		const table = this.table as any;
+		const tableName = table[ENTITY_SYMBOLS.ENTITY_NAME] || (table as any).tableName;
+		const columns = table[ENTITY_SYMBOLS.COLUMNS] || (table as any).columns;
 
 		let pkPhisicalName: string | undefined;
 
-		for (const col of Object.values(columns)) {
-			if (col.config.isPrimaryKey) {
+		for (const col of Object.values(columns) as any[]) {
+			if (col.config?.isPrimaryKey || col.isPrimaryKey) {
 				pkPhisicalName = col.name;
 				break;
 			}
@@ -52,96 +55,98 @@ export class DynamoQueryBuilder<T extends TableDefinition<any>> {
 		}
 
 		// Estado para montar a query do Dynamo
-		const expressionAttributeNames: Record<`#${string}`, string> = {};
-		const expressionAttributeValues: Record<`:v${string}`, any> = {};
+		const expressionAttributeNames: Record<string, string> = {};
+		const expressionAttributeValues: Record<string, any> = {};
 		let valueCounter = 0;
 
 		const addValue = (val: any) => {
 			const key = `:v${++valueCounter}`;
-			expressionAttributeValues[key] = val;
+			(expressionAttributeValues as any)[key] = val;
 			return key;
 		};
 
 		const addName = (name: string) => {
 			const key = `#${name}`;
-			expressionAttributeNames[key] = name;
+			(expressionAttributeNames as any)[key] = name;
 			return key;
 		};
 
 		const getColName = (colRef: string | { name: string }) =>
 			typeof colRef === 'string' ? colRef : colRef.name;
 
-		// Função recursiva para transformar Condition -> String do Dynamo
-		const buildExpression = (cond: Condition): string => {
-			if (cond.type === 'logical' && cond.conditions) {
-				const parts = cond.conditions.map(buildExpression);
-				return `(${parts.join(` ${cond.operator} `)})`;
-			}
-
-			if (cond.type === 'binary' && cond.column) {
-				const colNameStr = getColName(cond.column);
-				const colName = addName(colNameStr);
-				const valKey = addValue(cond.value);
-
-				if (cond.operator === 'begins_with') {
-					return `begins_with(${colName}, ${valKey})`;
-				}
-				return `${colName} ${cond.operator} ${valKey}`;
-			}
-			return '';
-		};
-
-		// --- Lógica de Decisão: Query vs Scan ---
-
-		let keyConditionExpression = '';
-		let filterExpression = '';
-		let isQuery = false;
-
-		// Simplificação: Se for um 'eq' simples na PK, é Query.
-		// Se for um 'and', verificamos se um dos filhos é PK.
-		// (Uma implementação completa varreria a árvore de condições recursivamente)
-
-		if (this.whereClause) {
-			const cond = this.whereClause;
-
-			// Verifica se é uma igualdade simples na PK
-			const isPkEquality = (c: Condition) =>
-				c.type === 'binary' && c.operator === '=' && getColName(c.column!) === pkPhisicalName;
-
-			if (isPkEquality(cond)) {
-				isQuery = true;
-				keyConditionExpression = buildExpression(cond);
-			} else if (cond.type === 'logical' && cond.operator === 'AND' && cond.conditions) {
-				// Procura a condição da PK dentro do AND
-				const pkCondIndex = cond.conditions.findIndex(isPkEquality);
-
-				if (pkCondIndex !== -1) {
-					isQuery = true;
-					const pkCond = cond.conditions[pkCondIndex];
-					keyConditionExpression = buildExpression(pkCond);
-
-					// O resto vira FilterExpression
-					const otherConds = cond.conditions.filter((_, i) => i !== pkCondIndex);
-					if (otherConds.length > 0) {
-						filterExpression = buildExpression({
-							type: 'logical',
-							operator: 'AND',
-							conditions: otherConds
-						});
+		        // Função recursiva para transformar Condition -> String do Dynamo
+				const buildExpression = (cond: Condition): string => {
+					const c = cond as any;
+					if (c.type === 'logical' && c.conditions) {
+						const parts = c.conditions.map(buildExpression);
+						return `(${parts.join(` ${c.operator} `)})`;
 					}
-				} else {
-					filterExpression = buildExpression(cond);
+		
+					if (c.type === 'binary' && c.column) {
+						const colNameStr = getColName(c.column);
+						const colName = addName(colNameStr);
+						const valKey = addValue(c.value);
+		
+						if (c.operator === 'begins_with') {
+							return `begins_with(${colName}, ${valKey})`;
+						}
+						return `${colName} ${c.operator} ${valKey}`;
+					}
+					return '';
+				};
+		
+				// --- Lógica de Decisão: Query vs Scan ---
+		
+				let keyConditionExpression = '';
+				let filterExpression = '';
+				let isQuery = false;
+		
+				// Simplification: If it is a simple 'eq' in the PK, it is Query.
+				// If it is an 'and', we check if one of the children is PK.
+				// (A full implementation would traverse the condition tree recursively)
+		
+				if (this.whereClause) {
+					const cond = this.whereClause;
+		
+					// Verifica se é uma igualdade simples na PK
+					const isPkEquality = (c: Condition) => {
+						const cc = c as any;
+						return cc.type === 'binary' && cc.operator === '=' && getColName(cc.column!) === pkPhisicalName;
+					};
+		
+					if (isPkEquality(cond)) {
+						isQuery = true;
+						keyConditionExpression = buildExpression(cond);
+					} else if ((cond as any).type === 'logical' && (cond as any).operator === 'AND' && (cond as any).conditions) {
+						// Procura a condição da PK dentro do AND
+						const pkCondIndex = (cond as any).conditions.findIndex(isPkEquality);
+		
+						if (pkCondIndex !== -1) {
+							isQuery = true;
+							const pkCond = (cond as any).conditions[pkCondIndex];
+							keyConditionExpression = buildExpression(pkCond);
+		
+							// O resto vira FilterExpression
+							const otherConds = (cond as any).conditions.filter((_: any, i: number) => i !== pkCondIndex);
+							if (otherConds.length > 0) {
+								filterExpression = buildExpression({
+									type: 'logical',
+									operator: 'AND',
+									conditions: otherConds
+								} as any);
+							}
+						} else {
+							filterExpression = buildExpression(cond);
+						}
+					} else {
+						filterExpression = buildExpression(cond);
+					}
 				}
-			} else {
-				filterExpression = buildExpression(cond);
-			}
-		}
-
-		const params: QueryCommandInput | ScanCommandInput = {
-			TableName: tableName,
-			Limit: this.limitVal
-		};
-
+		
+				const params: QueryCommandInput | ScanCommandInput = {
+					TableName: tableName,
+					Limit: this.limitVal as number | undefined
+				};
 		if (this.projectionFields && this.projectionFields.length > 0) {
 			console.log(this.projectionFields);
 

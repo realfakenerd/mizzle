@@ -166,6 +166,17 @@ export type InferInsertModel<
     },
 > = InferModelFromColumns<TTable["_"]["columns"], "insert", TConfig>;
 
+export type InferSelectedModel<
+    TTable extends Entity,
+    TConfig extends { dbColumnNames: boolean } = { dbColumnNames: false },
+> = InferSelectModel<TTable, TConfig>;
+
+export type TableDefinition<T extends EntityConfig = EntityConfig> = Entity<T> & {
+    columns: T["columns"];
+};
+
+export type AtomicValues<T extends Entity> = Partial<InferInsertModel<T>>;
+
 export type EntityWithColumns<T extends EntityConfig> = Entity<T> & {
     [Key in keyof T["columns"]]: T["columns"][Key];
 };

@@ -3,7 +3,8 @@ import {
     type DynamoDBDocumentClient,
 } from "@aws-sdk/lib-dynamodb";
 import type { Condition } from "../expressions/operators";
-import type { InferInsertModel } from "../core/table";
+import type { InferInsertModel, TableDefinition, InferSelectedModel, AtomicValues } from "../core/table";
+import { ENTITY_SYMBOLS } from "../constants";
 
 export class UpdateBuilder<T extends TableDefinition<any>> {
     #key?: Record<string, any>;
@@ -33,7 +34,7 @@ export class UpdateBuilder<T extends TableDefinition<any>> {
         return this;
     }
 
-    remove(keys: (keyof T["_builders"])[]) {
+    remove(keys: (keyof any)[]) {
         this.#removeKeys.push(...(keys as string[]));
         return this;
     }
@@ -49,12 +50,14 @@ export class UpdateBuilder<T extends TableDefinition<any>> {
     }
 
     async execute(): Promise<InferSelectedModel<T>> {
-        const { tableName, columns } = this.table;
+        const table = this.table as any;
+        const tableName = table[ENTITY_SYMBOLS.ENTITY_NAME] || table.tableName;
+        const columns = table[ENTITY_SYMBOLS.COLUMNS] || table.columns;
 
         let pkPhisicalName: string | undefined;
 
-        for (const col of Object.values(columns)) {
-            if (col.config.isPrimaryKey) {
+        for (const col of Object.values(columns) as any[]) {
+            if (col.config?.isPrimaryKey || col.isPrimaryKey) {
                 pkPhisicalName = col.name;
                 break;
             }
@@ -87,7 +90,7 @@ export class UpdateBuilder<T extends TableDefinition<any>> {
 
         // SET Clause
         const setParts: string[] = [];
-        for (const [key, value] of Object.entries(this.#setValues)) {
+        for (const [key, value] of Object.entries(this.#setValues as any)) {
             if (value !== undefined) {
                 setParts.push(`${addName(key)} = ${addValue(value)}`);
             }
@@ -99,7 +102,7 @@ export class UpdateBuilder<T extends TableDefinition<any>> {
 
         // ADD Clause
         const addParts: string[] = [];
-        for (const [key, value] of Object.entries(this.#addValues)) {
+        for (const [key, value] of Object.entries(this.#addValues as any)) {
             if (value !== undefined) {
                 addParts.push(`${addName(key)} ${addValue(value)}`);
             }
@@ -119,13 +122,14 @@ export class UpdateBuilder<T extends TableDefinition<any>> {
         const keyObj: any = {};
 
         // Vamos fazer uma extração simples da PK para o exemplo funcionar:
+        const where = this.#where as any;
         if (
-            this.#where &&
-            this.#where.type === "binary" &&
-            this.#where.column === pkPhisicalName &&
-            this.#where.operator === "="
+            where &&
+            where.type === "binary" &&
+            (typeof where.column === 'string' ? where.column : where.column.name) === pkPhisicalName &&
+            where.operator === "="
         ) {
-            keyObj[pkPhisicalName] = this.#where.value;
+            keyObj[pkPhisicalName] = where.value;
         } else {
             throw new Error(
                 "Para update, o .where() deve conter uma igualdade simples na Chave Primária.",
@@ -145,3 +149,4 @@ export class UpdateBuilder<T extends TableDefinition<any>> {
         return result.Attributes as InferSelectedModel<T>;
     }
 }
+

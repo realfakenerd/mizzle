@@ -94,3 +94,5 @@ export const operators = {
 };
 
 export type Operators = typeof operators;
+
+export type Condition = Expression;
