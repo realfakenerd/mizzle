@@ -59,22 +59,24 @@ export class PhysicalTable<
     };
 
     /** @internal */
-    [TABLE_SYMBOLS.TABLE_NAME]: string;
+    [TABLE_SYMBOLS.TABLE_NAME]: string = "";
 
     /** @internal */
-    [TABLE_SYMBOLS.INDEXES]: T["indexes"];
+    [TABLE_SYMBOLS.INDEXES]: T["indexes"] = undefined;
 
     /** @internal */
-    [TABLE_SYMBOLS.PARTITION_KEY]: Column;
+    [TABLE_SYMBOLS.PARTITION_KEY]: Column = {} as any;
 
     /** @internal */
-    [TABLE_SYMBOLS.SORT_KEY]?: Column;
+    [TABLE_SYMBOLS.SORT_KEY]?: Column = undefined;
 
     static readonly Symbol = TABLE_SYMBOLS;
 
     constructor(name: string, config: T) {
         this[TABLE_SYMBOLS.TABLE_NAME] = name;
-        this[TABLE_SYMBOLS.PARTITION_KEY] = (config.pk as ColumnBuider).build({} as any);
+        this[TABLE_SYMBOLS.PARTITION_KEY] = (config.pk as ColumnBuider).build(
+            {} as any,
+        );
         this[TABLE_SYMBOLS.SORT_KEY] = config.sk
             ? (config.sk as ColumnBuider).build({} as any)
             : undefined;
@@ -97,15 +99,15 @@ export class Entity<T extends EntityConfig = EntityConfig> {
     declare readonly $inferInsert: InferInsertModel<Entity<T>>;
 
     /** @internal */
-    [ENTITY_SYMBOLS.ENTITY_NAME]: string;
+    [ENTITY_SYMBOLS.ENTITY_NAME]: string = "";
 
     /** @internal */
-    [ENTITY_SYMBOLS.PHYSICAL_TABLE]: T["table"];
+    [ENTITY_SYMBOLS.PHYSICAL_TABLE]: T["table"] = {} as any;
 
     /** @internal */
-    [ENTITY_SYMBOLS.COLUMNS]: T["columns"];
+    [ENTITY_SYMBOLS.COLUMNS]: T["columns"] = {} as any;
 
-    [ENTITY_SYMBOLS.ENTITY_STRATEGY]: Record<string, KeyStrategy>;
+    [ENTITY_SYMBOLS.ENTITY_STRATEGY]: Record<string, KeyStrategy> = {};
 
     static readonly Symbol = ENTITY_SYMBOLS;
 
@@ -186,7 +188,7 @@ export function dynamoEntity<
     columns: TColumnsMap | ((columnsTypes: ColumnsBuilder) => TColumnsMap),
     strategies?: StrategyCallback<
         BuildColumns<TName, TColumnsMap>,
-        TTable["_"]
+        TTable["_"] extends PhysicalTableConfig ? TTable["_"] : any
     >,
 ): EntityWithColumns<{
     name: TName;
@@ -201,7 +203,7 @@ export function dynamoEntity<
         Object.entries(parsedColumns).map(([name, colBuilderBase]) => {
             const colBuilder = colBuilderBase as ColumnBuider;
             colBuilder.setName(name);
-            const column = colBuilder.build(tempEntity);
+            const column = colBuilder.build(tempEntity as any);
             return [name, column];
         }),
     ) as BuildColumns<TName, TColumnsMap>;

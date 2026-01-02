@@ -105,11 +105,11 @@ export function resolveStrategies(
     whereClause?: Expression,
     providedValues?: Record<string, any>,
 ): StrategyResolution {
-    const strategies = entity[ENTITY_SYMBOLS.ENTITY_STRATEGY];
-    const physicalTable = entity[ENTITY_SYMBOLS.PHYSICAL_TABLE];
+    const strategies = entity[ENTITY_SYMBOLS.ENTITY_STRATEGY] as Record<string, KeyStrategy>;
+    const physicalTable = entity[ENTITY_SYMBOLS.PHYSICAL_TABLE] as any;
 
-    const pkCol = physicalTable[TABLE_SYMBOLS.PARTITION_KEY];
-    const skCol = physicalTable[TABLE_SYMBOLS.SORT_KEY];
+    const pkCol = physicalTable[TABLE_SYMBOLS.PARTITION_KEY] as Column;
+    const skCol = physicalTable[TABLE_SYMBOLS.SORT_KEY] as Column | undefined;
 
     const availableValues = {
         ...(whereClause ? extracValuesFromExpression(whereClause) : {}),
@@ -145,7 +145,8 @@ export function resolveStrategies(
     if (!result.hasPartitionKey) {
         const indexes = physicalTable[TABLE_SYMBOLS.INDEXES];
         if (indexes) {
-            for (const [indexName, indexBuilder] of Object.entries(indexes)) {
+            for (const [indexName, indexBuilderBase] of Object.entries(indexes)) {
+                const indexBuilder = indexBuilderBase as any;
                 const indexStrategy = strategies[indexName] as any;
                 if (!indexStrategy) continue;
                 
