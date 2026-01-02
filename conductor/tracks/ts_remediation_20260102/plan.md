@@ -1,12 +1,12 @@
-# Plan: TypeScript Error Remediation (Source Code)
+# Plan: TypeScript Error Remediation (Source Code) [checkpoint: a934e42]
 
-## Phase 1: Core Type Foundations
+## Phase 1: Core Type Foundations [checkpoint: a934e42]
 Fix fundamental type definitions in the core module that propagate errors to the builders.
 
 - [x] Task: Fix `src/core/table.ts` - Resolve symbol assignment and interface mismatch errors.
 - [x] Task: Fix `src/core/column-builder.ts` - Address property commonality errors in `AnyTable`.
 - [x] Task: Fix `src/core/strategies.ts` - Resolve potentially undefined properties and symbol indexing issues.
-- [~] Task: Conductor - User Manual Verification 'Core Type Foundations' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Core Type Foundations' (Protocol in workflow.md)
 
 ## Phase 2: Basic Builders
 Address errors in the primary data manipulation builders.
