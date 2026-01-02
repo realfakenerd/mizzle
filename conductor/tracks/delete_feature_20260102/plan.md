@@ -7,12 +7,12 @@ Set up the core `DeleteBuilder` class and integrate it into the main library ent
 - [x] Task: Update `src/utils/db.ts` to add the `delete(entity, keys) ` method to the `DynamoDB` class.
 - [x] Task: Conductor - User Manual Verification 'Foundation and API Integration' (Protocol in workflow.md)
 
-## Phase 2: Core Deletion (TDD)
+## Phase 2: Core Deletion (TDD) [checkpoint: e2c4bfc]
 Implement the fundamental deletion logic using a Test-Driven Development approach.
 
 - [x] Task: Write failing integration tests in `test/builders/delete.test.ts` covering basic deletion by PK.
 - [x] Task: Implement the `execute()` method in `DeleteBuilder` using `DeleteCommand` from the AWS SDK.
-- [~] Task: Conductor - User Manual Verification 'Core Deletion' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Core Deletion' (Protocol in workflow.md)
 
 ## Phase 3: Returning Attributes (TDD)
 Add support for returning the deleted item's data.
