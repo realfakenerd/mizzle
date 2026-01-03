@@ -7,7 +7,7 @@ import {
 } from '@aws-sdk/lib-dynamodb';
 import type { Condition } from '../expressions/operators';
 import type { InferSelectedModel, TableDefinition } from '../core/table';
-import { ENTITY_SYMBOLS } from '../constants';
+import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from '../constants';
 
 export class DynamoQueryBuilder<T extends TableDefinition<any>> {
 	private whereClause?: Condition;
@@ -39,16 +39,10 @@ export class DynamoQueryBuilder<T extends TableDefinition<any>> {
 	async execute(): Promise<InferSelectedModel<T>[]> {
 		const table = this.table as any;
 		const tableName = table[ENTITY_SYMBOLS.ENTITY_NAME] || (table as any).tableName;
-		const columns = table[ENTITY_SYMBOLS.COLUMNS] || (table as any).columns;
 
-		let pkPhisicalName: string | undefined;
-
-		for (const col of Object.values(columns) as any[]) {
-			if (col.config?.isPrimaryKey || col.isPrimaryKey) {
-				pkPhisicalName = col.name;
-				break;
-			}
-		}
+		const physicalTable = table[ENTITY_SYMBOLS.PHYSICAL_TABLE];
+		const pkColumn = physicalTable?.[TABLE_SYMBOLS.PARTITION_KEY];
+		const pkPhisicalName = pkColumn?.name;
 
 		if (!pkPhisicalName) {
 			throw new Error(`Table ${tableName} does not have an Partition Key defined`);
@@ -148,8 +142,6 @@ export class DynamoQueryBuilder<T extends TableDefinition<any>> {
 					Limit: this.limitVal as number | undefined
 				};
 		if (this.projectionFields && this.projectionFields.length > 0) {
-			console.log(this.projectionFields);
-
 			const projExprs = this.projectionFields.map((col) => addName(col));
 			params.ProjectionExpression = projExprs.join(', ');
 		}
