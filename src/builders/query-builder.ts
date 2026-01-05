@@ -84,11 +84,24 @@ export class DynamoQueryBuilder<T extends Entity<any>> {
 					if (c.type === 'binary' && c.column) {
 						const colNameStr = getColName(c.column);
 						const colName = addName(colNameStr);
-						const valKey = addValue(c.value);
-		
+
 						if (c.operator === 'begins_with') {
+							const valKey = addValue(c.value);
 							return `begins_with(${colName}, ${valKey})`;
 						}
+
+						if (c.operator === 'between') {
+							const valKey1 = addValue(c.value[0]);
+							const valKey2 = addValue(c.value[1]);
+							return `${colName} BETWEEN ${valKey1} AND ${valKey2}`;
+						}
+
+						if (c.operator === 'in') {
+							const valKeys = (c.value as any[]).map(val => addValue(val));
+							return `${colName} IN (${valKeys.join(', ')})`;
+						}
+
+						const valKey = addValue(c.value);
 						return `${colName} ${c.operator} ${valKey}`;
 					}
 					return '';
@@ -147,8 +160,6 @@ export class DynamoQueryBuilder<T extends Entity<any>> {
 					Limit: this.limitVal as number | undefined
 				};
 		if (this.projectionFields && this.projectionFields.length > 0) {
-			console.log(this.projectionFields);
-
 			const projExprs = this.projectionFields.map((col) => addName(col));
 			params.ProjectionExpression = projExprs.join(', ');
 		}
