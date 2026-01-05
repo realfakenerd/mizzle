@@ -15,7 +15,7 @@ Implement the high-level API access and basic query execution.
 - [x] Task: Implement the `db.query` proxy to provide dynamic access to entities in the schema. 4f3a5c3
 - [x] Task: Implement `RelationalQueryBuilder.findMany()` base logic. 5b91de5
 - [ ] Task: Write failing tests in `test/builders/relational.test.ts` for basic `findMany` without relations.
-- [ ] Task: Implement logic to translate `where` conditions inside `findMany` to DynamoDB expressions.
+- [x] Task: Implement logic to translate `where` conditions inside `findMany` to DynamoDB expressions. 4599ad0
 - [ ] Task: Conductor - User Manual Verification 'The Query Proxy & FindMany' (Protocol in workflow.md)
 
 ## Phase 3: Single-Table Mapping & Item Parsing (TDD)
