@@ -28,3 +28,7 @@ export const ENTITY_SYMBOLS = {
     COLUMNS: Symbol.for("mizzle:Columns"),
     ENTITY_KIND: Symbol.for("mizzle:EntityKind"),
 };
+
+export const RELATION_SYMBOLS = {
+    RELATION_CONFIG: Symbol.for("mizzle:RelationConfig"),
+};
