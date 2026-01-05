@@ -2,25 +2,47 @@ import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import { DynamoQueryBuilder } from './query-builder';
 import { operators, type Operators } from '../expressions/operators';
 import type { Condition } from '../expressions/operators';
-import type { InferSelectedModel, TableDefinition } from '../core/table';
+import type { Entity, InferSelectedModel } from '../core/table';
 
-type WhereCallback<T extends TableDefinition<any>> = (
-	fields: T['columns'],
+type WhereCallback<T extends Entity> = (
+	fields: T['_']['columns'],
 	ops: Operators
 ) => Condition;
 
-type FindManyOptions<T extends TableDefinition<any>> = {
-	where?: Condition | WhereCallback<T>;
+/**
+ * Options for selecting related entities.
+ */
+export type IncludeOptions = boolean | {
+	where?: Condition;
 	limit?: number;
+	with?: Record<string, IncludeOptions>;
+	include?: Record<string, IncludeOptions>;
 };
 
-export class RelationnalQueryBuilder<T extends TableDefinition<any>> {
+/**
+ * Options for a relational query.
+ */
+export type RelationalQueryOptions<T extends Entity> = {
+	where?: Condition | WhereCallback<T>;
+	limit?: number;
+	orderBy?: 'asc' | 'desc';
+	/**
+	 * Select relationships to include (Drizzle-style).
+	 */
+	with?: Record<string, IncludeOptions>;
+	/**
+	 * Select relationships to include (Prisma-style).
+	 */
+	include?: Record<string, IncludeOptions>;
+};
+
+export class RelationnalQueryBuilder<T extends Entity> {
 	constructor(
 		private client: DynamoDBDocumentClient,
 		private table: T
 	) {}
 
-	async findMany(options: FindManyOptions<T> = {}): Promise<InferSelectedModel<T>[]> {
+	async findMany(options: RelationalQueryOptions<T> = {}): Promise<InferSelectedModel<T>[]> {
 		const qb = new DynamoQueryBuilder<T>(this.client, this.table);
 
 		if (options.limit) {
@@ -31,7 +53,7 @@ export class RelationnalQueryBuilder<T extends TableDefinition<any>> {
 			let condition: Condition;
 
 			if (typeof options.where === 'function') {
-				condition = options.where(this.table.columns, operators);
+				condition = options.where(this.table._.columns, operators);
 			} else {
 				condition = options.where;
 			}
@@ -42,7 +64,7 @@ export class RelationnalQueryBuilder<T extends TableDefinition<any>> {
 		return qb.execute();
 	}
 
-	async findFirst(options: FindManyOptions<T> = {}): Promise<InferSelectedModel<T> | undefined> {
+	async findFirst(options: RelationalQueryOptions<T> = {}): Promise<InferSelectedModel<T> | undefined> {
 		const res = await this.findMany({ ...options, limit: 1 });
 		return res[0];
 	}
