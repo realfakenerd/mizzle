@@ -49,11 +49,16 @@ export class RelationnalQueryBuilder<T extends Entity> {
 			qb.limit(options.limit);
 		}
 
+		if (options.orderBy) {
+			qb.sort(options.orderBy === 'asc');
+		}
+
 		if (options.where) {
 			let condition: Condition;
 
 			if (typeof options.where === 'function') {
-				condition = options.where(this.table._.columns, operators);
+				const columns = this.table._?.columns || (this.table as any).columns || this.table;
+				condition = options.where(columns, operators);
 			} else {
 				condition = options.where;
 			}
