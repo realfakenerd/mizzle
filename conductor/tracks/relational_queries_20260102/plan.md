@@ -4,7 +4,7 @@
 Establish the foundation for the relational schema and the new initialization logic.
 
 - [x] Task: Update `mizzle` entry point in `src/utils/db.ts` to support `mizzle({ client, relations })`. 3e502d1
-- [ ] Task: Implement `defineRelations` utility in `src/core/relations.ts`.
+- [x] Task: Implement `defineRelations` utility in `src/core/relations.ts`. c374176
 - [ ] Task: Define internal metadata structures for mapping entities to relations.
 - [ ] Task: Create basic types for the `RelationalQueryBuilder` and query options (`where`, `with`, `include`).
 - [ ] Task: Conductor - User Manual Verification 'Core Architecture & Schema Types' (Protocol in workflow.md)
