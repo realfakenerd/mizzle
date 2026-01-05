@@ -171,7 +171,7 @@ Mizzle supports a wide range of DynamoDB types:
 - [x] **Key Strategies:** Prefix, Static, and Composite keys.
 - [x] **Global Secondary Indexes:** Support for querying GSIs.
 - [x] **Update Operation:** Fluent builder for `UpdateItem`.
-- [ ] **Delete Operation:** Fluent builder for `DeleteItem`.
+- [x] **Delete Operation:** Fluent builder for `DeleteItem`.
 - [ ] **Relational Queries:** `db.query.users.findMany({ with: { posts: true } })`.
 - [ ] **Transactions:** `TransactWriteItems` support.
 - [ ] **Migration Tools:** CLI for managing table creation/updates.

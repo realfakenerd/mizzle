@@ -4,5 +4,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-## [~] Track: add now the delete feature from the roadmap
-*Link: [./conductor/tracks/delete_feature_20260102/](./conductor/tracks/delete_feature_20260102/)*
+## [~] Track: implement the relational queries from the roadmap
+*Link: [./conductor/tracks/relational_queries_20260102/](./conductor/tracks/relational_queries_20260102/)*
