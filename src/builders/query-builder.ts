@@ -7,7 +7,7 @@ import {
 } from '@aws-sdk/lib-dynamodb';
 import type { Condition } from '../expressions/operators';
 import type { InferSelectedModel, TableDefinition } from '../core/table';
-import { ENTITY_SYMBOLS } from '../constants';
+import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from '../constants';
 
 export class DynamoQueryBuilder<T extends TableDefinition<any>> {
 	private whereClause?: Condition;
@@ -43,10 +43,18 @@ export class DynamoQueryBuilder<T extends TableDefinition<any>> {
 
 		let pkPhisicalName: string | undefined;
 
-		for (const col of Object.values(columns) as any[]) {
-			if (col.config?.isPrimaryKey || col.isPrimaryKey) {
-				pkPhisicalName = col.name;
-				break;
+		// Optimization: Try to get PK from Physical Table definition directly
+		const physicalTable = table[ENTITY_SYMBOLS.PHYSICAL_TABLE];
+		if (physicalTable && physicalTable[TABLE_SYMBOLS.PARTITION_KEY]) {
+			pkPhisicalName = physicalTable[TABLE_SYMBOLS.PARTITION_KEY].name;
+		}
+
+		if (!pkPhisicalName) {
+			for (const col of Object.values(columns) as any[]) {
+				if (col.config?.isPrimaryKey || col.isPrimaryKey) {
+					pkPhisicalName = col.name;
+					break;
+				}
 			}
 		}
 
