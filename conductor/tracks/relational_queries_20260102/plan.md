@@ -1,0 +1,44 @@
+# Plan: Relational Query API Implementation
+
+## Phase 1: Core Architecture & Schema Types
+Establish the foundation for the relational schema and the new initialization logic.
+
+- [x] Task: Update `mizzle` entry point in `src/utils/db.ts` to support `mizzle({ client, relations })`. 3e502d1
+- [ ] Task: Implement `defineRelations` utility in `src/core/relations.ts`.
+- [ ] Task: Define internal metadata structures for mapping entities to relations.
+- [ ] Task: Create basic types for the `RelationalQueryBuilder` and query options (`where`, `with`, `include`).
+- [ ] Task: Conductor - User Manual Verification 'Core Architecture & Schema Types' (Protocol in workflow.md)
+
+## Phase 2: The Query Proxy & FindMany (TDD)
+Implement the high-level API access and basic query execution.
+
+- [ ] Task: Implement the `db.query` proxy to provide dynamic access to entities in the schema.
+- [ ] Task: Implement `RelationalQueryBuilder.findMany()` base logic.
+- [ ] Task: Write failing tests in `test/builders/relational.test.ts` for basic `findMany` without relations.
+- [ ] Task: Implement logic to translate `where` conditions inside `findMany` to DynamoDB expressions.
+- [ ] Task: Conductor - User Manual Verification 'The Query Proxy & FindMany' (Protocol in workflow.md)
+
+## Phase 3: Single-Table Mapping & Item Parsing (TDD)
+Implement the core optimization for Single-Table Design.
+
+- [ ] Task: Implement `ItemCollectionParser` to group raw DynamoDB items into structured objects based on relation metadata.
+- [ ] Task: Write failing integration tests in `test/builders/relational.integration.test.ts` for 1:N relations in a single table.
+- [ ] Task: Update `RelationalQueryBuilder` to fetch related items sharing a PK in a single `Query` command.
+- [ ] Task: Implement support for both `with` and `include` keywords in selection options.
+- [ ] Task: Conductor - User Manual Verification 'Single-Table Mapping & Item Parsing' (Protocol in workflow.md)
+
+## Phase 4: Advanced Relations (1:1, N:M, GSI)
+Extend the API to support complex relational patterns.
+
+- [ ] Task: Implement support for 1:1 relations and correctly picking the single related item.
+- [ ] Task: Implement Many-to-Many (N:M) resolution via bridge entities/GSI.
+- [ ] Task: Implement GSI-based relations (where the link exists on a GSI).
+- [ ] Task: Implement `findFirst()` with appropriate limits and parsing.
+- [ ] Task: Conductor - User Manual Verification 'Advanced Relations' (Protocol in workflow.md)
+
+## Phase 5: Final Verification & Type Safety
+Ensure the entire implementation is robust and follows the "Drizzle/Prisma" ergonomics.
+
+- [ ] Task: Run `bun run check` to verify deep type safety for nested `include` calls.
+- [ ] Task: Run full test suite `bun run test` to ensure no regressions in existing CRUD operations.
+- [ ] Task: Conductor - User Manual Verification 'Final Verification & Type Safety' (Protocol in workflow.md)
