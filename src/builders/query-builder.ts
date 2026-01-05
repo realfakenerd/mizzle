@@ -6,10 +6,10 @@ import {
 	type ScanCommandInput
 } from '@aws-sdk/lib-dynamodb';
 import type { Condition } from '../expressions/operators';
-import type { InferSelectedModel, TableDefinition } from '../core/table';
+import type { InferSelectedModel, Entity } from '../core/table';
 import { ENTITY_SYMBOLS } from '../constants';
 
-export class DynamoQueryBuilder<T extends TableDefinition<any>> {
+export class DynamoQueryBuilder<T extends Entity<any>> {
 	private whereClause?: Condition;
 	private limitVal?: number;
 	private projectionFields?: string[];

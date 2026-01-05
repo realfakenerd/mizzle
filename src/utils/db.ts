@@ -6,17 +6,52 @@ import { SelectBuilder, type SelectedFields } from "../builders/select";
 import type { Entity, InferInsertModel } from "../core/table";
 import { UpdateBuilder } from "../builders/update";
 import { DeleteBuilder } from "../builders/delete";
+import { extractMetadata, type InternalRelationalSchema } from "../core/relations";
+
+export type QuerySchema<TSchema extends Record<string, any>> = {
+    [K in keyof TSchema as TSchema[K] extends Entity ? K : never]: RelationnalQueryBuilder<TSchema[K]>;
+};
 
 /**
  * DynamoDB database instance.
  */
-export class DynamoDB {
+export class DynamoDB<TSchema extends Record<string, any> = Record<string, any>> {
     private docClient: DynamoDBDocumentClient;
-    private relations?: Record<string, any>;
+    private schema?: InternalRelationalSchema;
 
-    constructor(client: DynamoDBClient, relations?: Record<string, any>) {
+    /**
+     * Access relational queries for entities defined in the schema.
+     * 
+     * @example
+     * ```ts
+     * const users = await db.query.users.findMany();
+     * ```
+     */
+    public readonly query: QuerySchema<TSchema>;
+
+    constructor(client: DynamoDBClient, relations?: TSchema) {
         this.docClient = DynamoDBDocumentClient.from(client);
-        this.relations = relations;
+        
+        if (relations) {
+            this.schema = extractMetadata(relations);
+        }
+
+        this.query = new Proxy({} as any, {
+            get: (_, prop) => {
+                if (typeof prop !== 'string') return undefined;
+
+                if (!this.schema) {
+                    throw new Error("No relations defined. Initialize mizzle with a relations object to use db.query.");
+                }
+
+                const entityMetadata = this.schema.entities[prop];
+                if (!entityMetadata) {
+                    throw new Error(`Entity ${prop} not found in relations schema.`);
+                }
+
+                return new RelationnalQueryBuilder(this.docClient, entityMetadata.entity);
+            }
+        });
     }
 
     /**
@@ -36,9 +71,10 @@ export class DynamoDB {
     }
 
     /**
-     * Start a relational query.
+     * Start a relational query manually for a specific entity.
+     * @internal
      */
-    query<T extends Entity>(table: T) {
+    _query<T extends Entity>(table: T) {
         return new RelationnalQueryBuilder<any>(this.docClient, table as any);
     }
 
@@ -63,7 +99,7 @@ export class DynamoDB {
 /**
  * Configuration for initializing Mizzle.
  */
-export interface MizzleConfig {
+export interface MizzleConfig<TSchema extends Record<string, any> = Record<string, any>> {
     /**
      * AWS DynamoDB Client.
      */
@@ -71,7 +107,7 @@ export interface MizzleConfig {
     /**
      * Relational schema definition.
      */
-    relations?: Record<string, any>;
+    relations?: TSchema;
 }
 
 /**
@@ -84,7 +120,9 @@ export interface MizzleConfig {
  * const db = mizzle({ client, relations });
  * ```
  */
-export function mizzle(config: DynamoDBClient | MizzleConfig) {
+export function mizzle<TSchema extends Record<string, any> = Record<string, any>>(
+    config: DynamoDBClient | MizzleConfig<TSchema>
+): DynamoDB<TSchema> {
     if (config instanceof DynamoDBClient) {
         return new DynamoDB(config);
     }
