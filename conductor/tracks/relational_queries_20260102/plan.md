@@ -12,7 +12,7 @@ Establish the foundation for the relational schema and the new initialization lo
 ## Phase 2: The Query Proxy & FindMany (TDD)
 Implement the high-level API access and basic query execution.
 
-- [ ] Task: Implement the `db.query` proxy to provide dynamic access to entities in the schema.
+- [x] Task: Implement the `db.query` proxy to provide dynamic access to entities in the schema. 4f3a5c3
 - [ ] Task: Implement `RelationalQueryBuilder.findMany()` base logic.
 - [ ] Task: Write failing tests in `test/builders/relational.test.ts` for basic `findMany` without relations.
 - [ ] Task: Implement logic to translate `where` conditions inside `findMany` to DynamoDB expressions.
