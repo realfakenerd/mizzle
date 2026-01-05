@@ -92,3 +92,58 @@ export function defineRelations<TEntity extends Entity>(
         [RELATION_SYMBOLS.RELATION_CONFIG]: true
     } as any;
 }
+
+/**
+ * Metadata for an entity and its relationships.
+ */
+export interface EntityMetadata {
+    entity: Entity;
+    relations: Record<string, Relation>;
+}
+
+/**
+ * Internal relational schema mapping entity names to their metadata.
+ */
+export interface InternalRelationalSchema {
+    entities: Record<string, EntityMetadata>;
+}
+
+/**
+ * Extract metadata from a flat schema definition.
+ */
+export function extractMetadata(schema: Record<string, any>): InternalRelationalSchema {
+    const metadata: InternalRelationalSchema = {
+        entities: {},
+    };
+
+    // First pass: identify entities
+    for (const [key, value] of Object.entries(schema)) {
+        if (value instanceof Entity) {
+            metadata.entities[key] = {
+                entity: value,
+                relations: {},
+            };
+        }
+    }
+
+    // Second pass: identify relations
+    for (const [key, value] of Object.entries(schema)) {
+        if (value && value[RELATION_SYMBOLS.RELATION_CONFIG]) {
+            const definition = value as RelationsDefinition;
+            // Find the key for this entity in the metadata
+            const entityEntry = Object.entries(metadata.entities).find(
+                ([_, meta]) => meta.entity === definition.entity
+            );
+
+            if (entityEntry) {
+                const [entityName, meta] = entityEntry;
+                meta.relations = {
+                    ...meta.relations,
+                    ...definition.config,
+                };
+            }
+        }
+    }
+
+    return metadata;
+}
