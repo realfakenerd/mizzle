@@ -31,7 +31,7 @@ Implement the core optimization for Single-Table Design.
 Extend the API to support complex relational patterns.
 
 - [x] Task: Implement support for 1:1 relations and correctly picking the single related item. 3199e81
-- [ ] Task: Implement Many-to-Many (N:M) resolution via bridge entities/GSI.
+- [x] Task: Implement Many-to-Many (N:M) resolution via bridge entities/GSI. 15f2d0c
 - [ ] Task: Implement GSI-based relations (where the link exists on a GSI).
 - [ ] Task: Implement `findFirst()` with appropriate limits and parsing.
 - [ ] Task: Conductor - User Manual Verification 'Advanced Relations' (Protocol in workflow.md)
