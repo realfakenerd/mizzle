@@ -1,6 +1,9 @@
 #!/usr/bin/env bun
 import { Command } from "commander";
 import * as p from "@clack/prompts";
+import { loadConfig } from "./config";
+import { generateCommand } from "./cli/commands/generate";
+import { pushCommand } from "./cli/commands/push";
 
 const program = new Command();
 
@@ -12,17 +15,27 @@ program
 program
   .command("generate")
   .description("Generate a new migration snapshot and script")
-  .action(() => {
-    p.intro("Mizzle: Generate Migration");
-    p.outro("Coming soon!");
+  .action(async () => {
+    try {
+        const config = await loadConfig();
+        await generateCommand({ config });
+    } catch (e: any) {
+        p.log.error(e.message);
+        process.exit(1);
+    }
   });
 
 program
   .command("push")
   .description("Directly apply schema changes to the target DynamoDB environment")
-  .action(() => {
-    p.intro("Mizzle: Push Schema");
-    p.outro("Coming soon!");
+  .action(async () => {
+    try {
+        const config = await loadConfig();
+        await pushCommand({ config });
+    } catch (e: any) {
+        p.log.error(e.message);
+        process.exit(1);
+    }
   });
 
 program
@@ -42,4 +55,3 @@ program
   });
 
 program.parse();
-
