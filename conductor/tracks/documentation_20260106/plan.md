@@ -5,7 +5,7 @@ Initialize the documentation project and integrate it into the monorepo.
 
 - [x] Task: Initialize Astro project with Starlight template in `docs/` using `bun create astro@latest -- --template starlight` (fd8090a)
 - [x] Task: Add `docs` to workspaces in root `package.json` and run `bun install` (4a462ed)
-- [ ] Task: Configure `turbo.json` tasks for the `docs` workspace (`build`, `lint`, `check`)
+- [x] Task: Configure `turbo.json` tasks for the `docs` workspace (`build`, `lint`, `check`) (1781338)
 - [ ] Task: Implement basic linting and type checking in `docs/package.json`
 - [ ] Task: Conductor - User Manual Verification 'Foundation & Scaffolding' (Protocol in workflow.md)
 
