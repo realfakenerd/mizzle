@@ -23,13 +23,13 @@ Isolate the core ORM logic and configure it for modern subpath imports.
 - [x] Task: Update root tests to import from the new `mizzle` package locations cf159d9
 - [x] Task: Conductor - User Manual Verification 'Core Library Modularization' (Protocol in workflow.md) e231b88
 
-## Phase 4: CLI Modularization (`mizzling`)
+## Phase 4: CLI Modularization (`mizzling`) [checkpoint: 6de0a67]
 Separate the CLI tool into its own package and rename the binary to `mizzling`.
 
-- [~] Task: Move CLI code to `packages/mizzling` and configure the `mizzling` binary
-- [ ] Task: Update `packages/mizzling` to depend on `packages/mizzle` and `packages/shared`
-- [ ] Task: Update E2E and CLI tests to use the `mizzling` command
-- [ ] Task: Conductor - User Manual Verification 'CLI Modularization' (Protocol in workflow.md)
+- [x] Task: Move CLI code to `packages/mizzling` and configure the `mizzling` binary 4381831
+- [x] Task: Update `packages/mizzling` to depend on `packages/mizzle` and `packages/shared` 2db7541
+- [x] Task: Update E2E and CLI tests to use the `mizzling` command 2db7541
+- [x] Task: Conductor - User Manual Verification 'CLI Modularization' (Protocol in workflow.md) 6de0a67
 
 ## Phase 5: Task Orchestration & Caching
 Finalize the Turborepo pipeline and verify performance optimizations.
