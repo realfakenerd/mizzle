@@ -4,7 +4,7 @@ import { string, uuid, number, boolean } from "mizzle/columns";
 import { prefixKey, staticKey } from "mizzle";
 import { DynamoDBClient, CreateTableCommand, DeleteTableCommand } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
-import { mizzle } from "../../src/utils/db";
+import { mizzle } from "mizzle/db";
 import { eq, and } from "../../packages/mizzle/src/expressions/operators";
 
 const client = new DynamoDBClient({

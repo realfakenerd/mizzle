@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { mizzle, DynamoDB } from "../src/utils/db";
+import { mizzle, DynamoDB } from "mizzle/db";
 
 const client = new DynamoDBClient({
     region: "us-east-1",

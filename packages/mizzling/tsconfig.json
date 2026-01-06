@@ -1,0 +1,13 @@
+{
+  "extends": "@mizzle/tsconfig/base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "baseUrl": ".",
+    "paths": {
+      "@mizzle/shared": ["../shared/src/index.ts"],
+      "mizzle": ["../mizzle/src/index.ts"],
+      "mizzle/*": ["../mizzle/src/*"]
+    }
+  },
+  "include": ["src"]
+}

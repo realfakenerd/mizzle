@@ -1,5 +1,5 @@
 import { expect, test, describe, beforeEach, afterEach, mock, spyOn } from "bun:test";
-import { listCommand } from "../../src/cli/commands/list";
+import { listCommand } from "../../packages/mizzling/src/commands/list";
 
 // Mock Clack
 const mockClack = {

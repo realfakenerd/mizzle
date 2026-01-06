@@ -3,7 +3,7 @@ import { dynamoTable, dynamoEntity } from "mizzle/table";
 import { string, uuid } from "mizzle/columns";
 import { prefixKey, staticKey } from "mizzle";
 import { DynamoDBClient, CreateTableCommand, DeleteTableCommand } from "@aws-sdk/client-dynamodb";
-import { mizzle } from "../../src/utils/db";
+import { mizzle } from "mizzle/db";
 
 const client = new DynamoDBClient({
     endpoint: "http://localhost:8000",

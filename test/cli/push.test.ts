@@ -1,5 +1,5 @@
 import { expect, test, describe, beforeEach, afterEach, mock } from "bun:test";
-import { pushCommand } from "../../src/cli/commands/push";
+import { pushCommand } from "../../packages/mizzling/src/commands/push";
 import { PhysicalTable } from "mizzle/table";
 import { TABLE_SYMBOLS } from "@mizzle/shared";
 

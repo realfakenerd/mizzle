@@ -18,8 +18,8 @@ describe("CLI E2E Environment Overrides", () => {
         
         // Create a simple schema
         writeFileSync(SCHEMA_FILE, `
-import { dynamoTable } from "${join(process.cwd(), "src/core/table")}";
-import { string } from "${join(process.cwd(), "src/columns/all")}";
+import { dynamoTable } from "${join(process.cwd(), "packages/mizzle/src/core/table")}";
+import { string } from "${join(process.cwd(), "packages/mizzle/src/columns/all")}";
 
 export const testTable = dynamoTable("e2e_env_test_table", {
     pk: string("pk"),
@@ -28,7 +28,7 @@ export const testTable = dynamoTable("e2e_env_test_table", {
 
         // Create config pointing to MIGRATIONS_DIR
         writeFileSync(CONFIG_FILE, `
-import { defineConfig } from "${join(process.cwd(), "src/config")}";
+import { defineConfig } from "${join(process.cwd(), "packages/mizzling/src/config")}";
 export default defineConfig({
     schema: "${SCHEMA_FILE}",
     out: "${MIGRATIONS_DIR}",
@@ -44,7 +44,7 @@ export default defineConfig({
 
     test("MIZZLE_OUT should override config.out", async () => {
         // Run generate with MIZZLE_OUT pointing to ENV_MIGRATIONS_DIR
-        const generateProc = spawn(["bun", "src/cli.ts", "generate", "--name", "env_override"], {
+        const generateProc = spawn(["bun", "packages/mizzling/src/index.ts", "generate", "--name", "env_override"], {
             cwd: process.cwd(),
             env: { 
                 ...process.env, 

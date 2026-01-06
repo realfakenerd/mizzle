@@ -15,9 +15,9 @@ describe("CLI End-to-End Migration Lifecycle", () => {
         
         // Create a simple schema
         writeFileSync(SCHEMA_FILE, `
-import { dynamoTable, dynamoEntity } from "${join(process.cwd(), "src/core/table")}";
-import { string } from "${join(process.cwd(), "src/columns/all")}";
-import { staticKey } from "${join(process.cwd(), "src/core/strategies")}";
+import { dynamoTable, dynamoEntity } from "${join(process.cwd(), "packages/mizzle/src/core/table")}";
+import { string } from "${join(process.cwd(), "packages/mizzle/src/columns/all")}";
+import { staticKey } from "${join(process.cwd(), "packages/mizzle/src/core/strategies")}";
 
 export const testTable = dynamoTable("e2e_test_table", {
     pk: string("pk"),
@@ -30,7 +30,7 @@ export const testEntity = dynamoEntity(testTable, "Test", { name: string() }, (c
 
         // Create config
         writeFileSync(CONFIG_FILE, `
-import { defineConfig } from "${join(process.cwd(), "src/config")}";
+import { defineConfig } from "${join(process.cwd(), "packages/mizzling/src/config")}";
 export default defineConfig({
     schema: "${SCHEMA_FILE}",
     out: "${MIGRATIONS_DIR}",
@@ -46,7 +46,7 @@ export default defineConfig({
 
     test("Full lifecycle: generate -> push -> list -> drop", async () => {
         // 1. Generate
-        const generateProc = spawn(["bun", "src/cli.ts", "generate", "--name", "initial"], {
+        const generateProc = spawn(["bun", "packages/mizzling/src/index.ts", "generate", "--name", "initial"], {
             cwd: process.cwd(),
             env: { ...process.env, MIZZLE_CONFIG: CONFIG_FILE },
             stdout: "pipe",
@@ -67,7 +67,7 @@ export default defineConfig({
         expect(readdirSync(MIGRATIONS_DIR).some(f => f.endsWith("_initial.ts"))).toBe(true);
 
         // 2. Push
-        const pushProc = spawn(["bun", "src/cli.ts", "push", "--yes"], {
+        const pushProc = spawn(["bun", "packages/mizzling/src/index.ts", "push", "--yes"], {
             cwd: process.cwd(),
             env: { ...process.env, MIZZLE_CONFIG: CONFIG_FILE },
             stdout: "pipe",
@@ -83,7 +83,7 @@ export default defineConfig({
         expect(pushExit).toBe(0);
 
         // 3. List
-        const listProc = spawn(["bun", "src/cli.ts", "list"], {
+        const listProc = spawn(["bun", "packages/mizzling/src/index.ts", "list"], {
             cwd: process.cwd(),
             env: { ...process.env, MIZZLE_CONFIG: CONFIG_FILE },
             stdout: "pipe"

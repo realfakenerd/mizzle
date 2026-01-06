@@ -4,7 +4,7 @@ import { dynamoTable, dynamoEntity } from "mizzle/table";
 import { string, uuid } from "mizzle/columns";
 import { prefixKey, staticKey } from "mizzle";
 import { defineRelations } from "mizzle";
-import { mizzle } from "../../src/utils/db";
+import { mizzle } from "mizzle/db";
 import { gsi } from "../../packages/mizzle/src/indexes";
 
 const client = new DynamoDBClient({

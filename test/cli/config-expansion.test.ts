@@ -1,5 +1,5 @@
 import { expect, test, describe, beforeEach, afterEach, spyOn } from "bun:test";
-import { loadConfig, defineConfig, getClient } from "../../src/config";
+import { loadConfig, defineConfig, getClient } from "../../packages/mizzling/src/config";
 import { writeFileSync, mkdirSync, rmSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";

@@ -1,5 +1,5 @@
 import { expect, test, describe, beforeEach, afterEach, spyOn, mock } from "bun:test";
-import { dropCommand } from "../../src/cli/commands/drop";
+import { dropCommand } from "../../packages/mizzling/src/commands/drop";
 import * as prompts from "@clack/prompts";
 
 // Mock Console

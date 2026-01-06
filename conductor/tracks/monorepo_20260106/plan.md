@@ -26,7 +26,7 @@ Isolate the core ORM logic and configure it for modern subpath imports.
 ## Phase 4: CLI Modularization (`mizzling`)
 Separate the CLI tool into its own package and rename the binary to `mizzling`.
 
-- [ ] Task: Move CLI code to `packages/mizzling` and configure the `mizzling` binary
+- [~] Task: Move CLI code to `packages/mizzling` and configure the `mizzling` binary
 - [ ] Task: Update `packages/mizzling` to depend on `packages/mizzle` and `packages/shared`
 - [ ] Task: Update E2E and CLI tests to use the `mizzling` command
 - [ ] Task: Conductor - User Manual Verification 'CLI Modularization' (Protocol in workflow.md)

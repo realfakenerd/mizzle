@@ -1,5 +1,5 @@
 import { expect, test, describe, beforeEach, afterEach } from "bun:test";
-import { discoverSchema } from "../../src/utils/discovery";
+import { discoverSchema } from "../../packages/mizzling/src/discovery";
 import { PhysicalTable, Entity } from "mizzle/table";
 import { writeFileSync, mkdirSync, rmSync } from "fs";
 import { join } from "path";
@@ -20,7 +20,7 @@ describe("Schema Discovery", () => {
 
   test("should discover tables in a file", async () => {
     const schemaContent = `
-      import { dynamoTable } from "${join(originalCwd, "src/core/table")}"; 
+      import { dynamoTable } from "${join(originalCwd, "packages/mizzle/src/core/table")}"; 
       
       export const UsersTable = dynamoTable("users", {
         pk: { build: () => ({ _: { name: "id", type: "string" } }) }, // Mocking column builder
@@ -41,7 +41,7 @@ describe("Schema Discovery", () => {
 
   test("should discover entities in a file", async () => {
      const schemaContent = `
-      import { dynamoTable, dynamoEntity, Entity } from "${join(originalCwd, "src/core/table")}"; 
+      import { dynamoTable, dynamoEntity, Entity } from "${join(originalCwd, "packages/mizzle/src/core/table")}"; 
       
       const UsersTable = dynamoTable("users", {
         pk: { build: () => ({ _: { name: "id", type: "string" } }) },
@@ -81,7 +81,7 @@ describe("Schema Discovery", () => {
 
   test("should discover tables in a directory", async () => {
     const schemaContent = `
-      import { dynamoTable } from "${join(originalCwd, "src/core/table")}"; 
+      import { dynamoTable } from "${join(originalCwd, "packages/mizzle/src/core/table")}"; 
       export const UsersTable = dynamoTable("users_dir", { pk: { build: () => ({ _: { name: "id", type: "string" } }) } });
     `;
     mkdirSync(join(TEMP_DIR, "tables"), { recursive: true });

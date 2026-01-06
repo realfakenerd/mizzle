@@ -7,7 +7,11 @@
   "exports": {
     ".": "./src/index.ts",
     "./columns": "./src/columns/index.ts",
-    "./table": "./src/core/table.ts"
+    "./table": "./src/core/table.ts",
+    "./snapshot": "./src/core/snapshot.ts",
+    "./diff": "./src/core/diff.ts",
+    "./introspection": "./src/core/introspection.ts",
+    "./db": "./src/db.ts"
   },
   "scripts": {
     "check": "tsc --noEmit",

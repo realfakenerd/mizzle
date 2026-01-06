@@ -3,7 +3,7 @@ import { dynamoTable, dynamoEntity } from "mizzle/table";
 import { string, number } from "mizzle/columns";
 import { prefixKey, staticKey } from "mizzle";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { mizzle } from "../../src/utils/db";
+import { mizzle } from "mizzle/db";
 import { eq } from "../../packages/mizzle/src/expressions/operators";
 
 const client = new DynamoDBClient({

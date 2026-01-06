@@ -1,6 +1,6 @@
 import { expect, test, describe, beforeEach, afterEach, mock } from "bun:test";
-import { generateCommand } from "../../src/cli/commands/generate";
-import { pushCommand } from "../../src/cli/commands/push";
+import { generateCommand } from "../../packages/mizzling/src/commands/generate";
+import { pushCommand } from "../../packages/mizzling/src/commands/push";
 import { PhysicalTable } from "mizzle/table";
 import { TABLE_SYMBOLS } from "@mizzle/shared";
 import { mkdirSync, rmSync } from "fs";

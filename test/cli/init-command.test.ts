@@ -1,5 +1,5 @@
 import { expect, test, describe, beforeEach, afterEach, spyOn } from "bun:test";
-import { initCommand } from "../../src/cli/commands/init";
+import { initCommand } from "../../packages/mizzling/src/commands/init";
 import { writeFileSync, existsSync, rmSync, mkdirSync, readFileSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";
