@@ -18,7 +18,7 @@ Extract common utilities and constants into a dedicated package to be used by bo
 ## Phase 3: Core Library Modularization (`mizzle`)
 Isolate the core ORM logic and configure it for modern subpath imports.
 
-- [ ] Task: Move core logic (builders, columns, expressions, core) to `packages/mizzle`
+- [~] Task: Move core logic (builders, columns, expressions, core) to `packages/mizzle`
 - [ ] Task: Configure subpath `exports` in `packages/mizzle/package.json`
 - [ ] Task: Update root tests to import from the new `mizzle` package locations
 - [ ] Task: Conductor - User Manual Verification 'Core Library Modularization' (Protocol in workflow.md)

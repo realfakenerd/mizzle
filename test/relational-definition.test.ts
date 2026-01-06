@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { dynamoTable, dynamoEntity } from "../src/core/table";
-import { defineRelations } from "../src/core/relations";
-import { string, uuid } from "../src/columns/all";
+import { dynamoTable, dynamoEntity } from "../packages/mizzle/src/core/table";
+import { defineRelations } from "../packages/mizzle/src/core/relations";
+import { string, uuid } from "../packages/mizzle/src/columns/all";
 import { RELATION_SYMBOLS } from "@mizzle/shared";
 
 const table = dynamoTable("mizzle-test", {

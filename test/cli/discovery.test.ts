@@ -1,6 +1,6 @@
 import { expect, test, describe, beforeEach, afterEach } from "bun:test";
 import { discoverSchema } from "../../src/utils/discovery";
-import { PhysicalTable, Entity } from "../../src/core/table";
+import { PhysicalTable, Entity } from "../../packages/mizzle/src/core/table";
 import { writeFileSync, mkdirSync, rmSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";

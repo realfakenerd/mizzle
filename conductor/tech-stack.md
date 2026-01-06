@@ -8,12 +8,14 @@
 ## Data & Storage
 
 - **Database:** [Amazon DynamoDB](https://aws.amazon.com/dynamodb/) - The target NoSQL database.
-- **SDK:** [@aws-sdk/client-dynamodb](https://www.npmjs.com/package/@aws-sdk/client-dynamodb) & [@aws-sdk/lib-dynamodb](https://www.npmjs.com/package/@aws-sdk/lib-dynamodb) (v3) - Official AWS SDK for low-level and high-level (Document Client) interactions.
+- **SDK:** [@aws-sdk/client-dynamodb](https://www.npmjs.com/package/@aws-sdk/client-dynamodb), [@aws-sdk/lib-dynamodb](https://www.npmjs.com/package/@aws-sdk/lib-dynamodb), and [@aws-sdk/credential-provider-ini](https://www.npmjs.com/package/@aws-sdk/credential-provider-ini) (v3) - Official AWS SDK for low-level and high-level (Document Client) interactions.
 
 ## Development & Testing
 
 - **Testing:** [Vitest](https://vitest.dev/) - A Vite-native unit test framework, utilized for its speed and compatibility with TypeScript/Bun.
 - **ID Generation:** [uuid](https://www.npmjs.com/package/uuid) - Used for generating unique identifiers, including v7 UUIDs.
+- **CLI Framework:** [commander](https://www.npmjs.com/package/commander) - For parsing CLI arguments and commands.
+- **Interactive CLI UI:** [@clack/prompts](https://www.npmjs.com/package/clack) - For modern, interactive prompts and progress indicators.
 - **Static Analysis:** [TypeScript Compiler (tsc)](https://www.typescriptlang.org/) - Used with the `--noEmit` flag for continuous type-safety verification.
 
 ## Constraints

@@ -1,4 +1,4 @@
-import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "../constants";
+import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "./constants";
 
 export type Assume<T, U> = T extends U ? T : U;
 

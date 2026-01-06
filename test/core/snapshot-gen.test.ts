@@ -1,6 +1,6 @@
 import { expect, test, describe, beforeEach, afterEach } from "bun:test";
-import { generateSnapshot, getNextMigrationVersion, saveSnapshot, loadSnapshot, MizzleSnapshot } from "../../src/core/snapshot";
-import { PhysicalTable } from "../../src/core/table";
+import { generateSnapshot, getNextMigrationVersion, saveSnapshot, loadSnapshot, type MizzleSnapshot } from "../../packages/mizzle/src/core/snapshot";
+import { PhysicalTable } from "../../packages/mizzle/src/core/table";
 import { TABLE_SYMBOLS, ENTITY_SYMBOLS } from "@mizzle/shared";
 import { mkdirSync, rmSync, writeFileSync } from "fs";
 import { join } from "path";
@@ -78,8 +78,8 @@ describe("Snapshot Generation", () => {
         
         expect(snapshot.version).toBe("1");
         expect(snapshot.tables["users"]).toBeDefined();
-        expect(snapshot.tables["users"].TableName).toBe("users");
-        expect(snapshot.tables["users"].AttributeDefinitions).toEqual([{ AttributeName: "id", AttributeType: "S" }]);
+        expect(snapshot.tables["users"]!.TableName).toBe("users");
+        expect(snapshot.tables["users"]!.AttributeDefinitions).toEqual([{ AttributeName: "id", AttributeType: "S" }]);
     });
 
     test("should include indexes in snapshot", () => {
@@ -97,7 +97,7 @@ describe("Snapshot Generation", () => {
         });
 
         const snapshot = generateSnapshot({ tables: [table], entities: [entity] });
-        const userTable = snapshot.tables["users"];
+        const userTable = snapshot.tables["users"]!;
 
         expect(userTable.GlobalSecondaryIndexes).toHaveLength(1);
         expect(userTable.GlobalSecondaryIndexes![0].IndexName).toBe("byEmail");

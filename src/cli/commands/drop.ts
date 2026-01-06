@@ -1,4 +1,4 @@
-import { MizzleConfig, getClient } from "../../config";
+import { type MizzleConfig, getClient } from "../../config";
 import { DynamoDBClient, ListTablesCommand, DeleteTableCommand } from "@aws-sdk/client-dynamodb";
 import { intro, outro, multiselect, confirm, isCancel, cancel, spinner } from "@clack/prompts";
 

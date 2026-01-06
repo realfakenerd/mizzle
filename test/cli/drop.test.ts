@@ -11,7 +11,7 @@ const outroSpy = spyOn(prompts, "outro").mockImplementation(() => {});
 const multiselectSpy = spyOn(prompts, "multiselect");
 const confirmSpy = spyOn(prompts, "confirm");
 const cancelSpy = spyOn(prompts, "cancel").mockImplementation(() => {});
-const isCancelSpy = spyOn(prompts, "isCancel").mockImplementation((val) => val === Symbol("clack:cancel"));
+const isCancelSpy = spyOn(prompts, "isCancel").mockImplementation((val): val is symbol => val === Symbol("clack:cancel"));
 const spinnerSpy = spyOn(prompts, "spinner").mockImplementation(() => ({
     start: () => {},
     stop: () => {},
@@ -68,7 +68,7 @@ describe("Drop Command", () => {
         });
 
         // Verify ListTables was called
-        expect(sendSpy.mock.calls[0][0].constructor.name).toBe("ListTablesCommand");
+        expect((sendSpy.mock.calls[0]![0] as any).constructor.name).toBe("ListTablesCommand");
         
         // Verify multiselect was called with options
         expect(multiselectSpy).toHaveBeenCalled();
@@ -78,8 +78,8 @@ describe("Drop Command", () => {
 
         // Verify DeleteTable was called for 'users'
         // Note: The order of calls depends on implementation, but we expect at least one DeleteTableCommand
-        const calls = sendSpy.mock.calls;
-        const deleteCall = calls.find(call => call[0].constructor.name === "DeleteTableCommand");
+        const calls = sendSpy.mock.calls as any[];
+        const deleteCall = calls.find(call => (call[0] as any).constructor.name === "DeleteTableCommand");
         expect(deleteCall).toBeDefined();
         expect(deleteCall![0].input.TableName).toBe("users");
         
@@ -101,7 +101,7 @@ describe("Drop Command", () => {
 
         // Verify DeleteTable was NOT called
         const calls = sendSpy.mock.calls;
-        const deleteCall = calls.find(call => call[0].constructor.name === "DeleteTableCommand");
+        const deleteCall = calls.find(call => (call[0] as any).constructor.name === "DeleteTableCommand");
         expect(deleteCall).toBeUndefined();
         
         expect(console.log).toHaveBeenCalledWith(expect.stringContaining("Operation cancelled"));

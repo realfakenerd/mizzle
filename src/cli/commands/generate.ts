@@ -1,7 +1,7 @@
-import { MizzleConfig } from "../../config";
+import { type MizzleConfig } from "../../config";
 import { discoverSchema } from "../../utils/discovery";
-import { loadSnapshot, saveSnapshot, generateSnapshot, getNextMigrationVersion, MizzleSnapshot, SchemaCurrent } from "../../core/snapshot";
-import { compareSchema, SchemaChange } from "../../core/diff";
+import { loadSnapshot, saveSnapshot, generateSnapshot, getNextMigrationVersion, type MizzleSnapshot, type SchemaCurrent } from "../../../packages/mizzle/src/core/snapshot";
+import { compareSchema, type SchemaChange } from "../../../packages/mizzle/src/core/diff";
 import { join } from "path";
 import { writeFile, mkdir } from "fs/promises";
 import { existsSync } from "fs";

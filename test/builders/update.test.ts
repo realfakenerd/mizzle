@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { dynamoTable, dynamoEntity } from "../../src/core/table";
-import { string, number } from "../../src/columns/all";
-import { prefixKey, staticKey } from "../../src/core/strategies";
+import { dynamoTable, dynamoEntity } from "../../packages/mizzle/src/core/table";
+import { string, number } from "../../packages/mizzle/src/columns/all";
+import { prefixKey, staticKey } from "../../packages/mizzle/src/core/strategies";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { mizzle } from "../../src/utils/db";
-import { eq } from "../../src/expressions/operators";
+import { eq } from "../../packages/mizzle/src/expressions/operators";
 
 const client = new DynamoDBClient({
     endpoint: "http://localhost:8000",

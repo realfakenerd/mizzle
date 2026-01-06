@@ -1,5 +1,5 @@
-import { expect, test, describe } from "bun:test";
-import { getRemoteSnapshot } from "../../src/core/introspection";
+import { expect, test, describe, it } from "bun:test";
+import { getRemoteSnapshot } from "../../packages/mizzle/src/core/introspection";
 
 const createMockClient = (tables: any[]) => {
     return {
@@ -19,24 +19,19 @@ const createMockClient = (tables: any[]) => {
 };
 
 describe("Introspection", () => {
-    test("should list and describe tables", async () => {
+    it("should describe tables and return a snapshot", async () => {
         const mockTables = [{
             TableName: "users",
             AttributeDefinitions: [{ AttributeName: "id", AttributeType: "S" }],
             KeySchema: [{ AttributeName: "id", KeyType: "HASH" }],
-            GlobalSecondaryIndexes: [{
-                IndexName: "byEmail",
-                KeySchema: [{ AttributeName: "email", KeyType: "HASH" }],
-                Projection: { ProjectionType: "ALL" }
-            }]
+            GlobalSecondaryIndexes: [{ IndexName: "byEmail", KeySchema: [], Projection: { ProjectionType: "ALL" } }]
         }];
-        
         const client = createMockClient(mockTables);
         const snapshot = await getRemoteSnapshot(client);
-        
-        expect(snapshot.tables["users"]).toBeDefined();
-        expect(snapshot.tables["users"].TableName).toBe("users");
-        expect(snapshot.tables["users"].GlobalSecondaryIndexes).toHaveLength(1);
-        expect(snapshot.tables["users"].GlobalSecondaryIndexes![0].IndexName).toBe("byEmail");
+
+        expect(snapshot.version).toBe("remote");
+        expect(snapshot.tables["users"]!.TableName).toBe("users");
+        expect(snapshot.tables["users"]!.GlobalSecondaryIndexes).toHaveLength(1);
+        expect(snapshot.tables["users"]!.GlobalSecondaryIndexes![0].IndexName).toBe("byEmail");
     });
 });

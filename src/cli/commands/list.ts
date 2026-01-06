@@ -1,5 +1,5 @@
-import { MizzleConfig, getClient } from "../../config";
-import { getRemoteSnapshot } from "../../core/introspection";
+import { type MizzleConfig, getClient } from "../../config";
+import { getRemoteSnapshot } from "../../../packages/mizzle/src/core/introspection";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { intro, outro, spinner } from "@clack/prompts";
 

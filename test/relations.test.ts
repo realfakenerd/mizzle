@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { dynamoTable, dynamoEntity } from "../src/core/table";
-import { string } from "../src/columns/string";
-import { defineRelations, Relation } from "../src/core/relations";
+import { dynamoTable, dynamoEntity } from "../packages/mizzle/src/core/table";
+import { string } from "../packages/mizzle/src/columns/string";
+import { defineRelations, Relation } from "../packages/mizzle/src/core/relations";
 
 describe("defineRelations", () => {
     const table = dynamoTable("test", { pk: string("pk") });

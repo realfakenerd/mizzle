@@ -23,6 +23,8 @@ Mizzle is a light and type-safe ORM for DynamoDB built with TypeScript. It is de
 - **Relational Query API:** A high-level `db.query` API for fetching related entities with nested results, optimized for Single-Table Design performance (fetching collections in a single round-trip).
 - **Smart Key Management:** Automatic UUID generation (v7) and flexible key prefixing strategies to handle complex partition and sort key requirements.
 - **Entity Mapping:** Seamlessly map application-level entities to physical DynamoDB tables.
+- **Migration CLI:** Manage DynamoDB schema with a robust CLI, supporting snapshots, automated migration scripts, interactive initialization (`mizzle init`), and table management.
+- **Flexible Configuration:** Enhanced support for multiple environments via AWS Profiles, explicit credentials, and environment variable overrides (`MIZZLE_REGION`, `MIZZLE_ENDPOINT`, etc.).
 
 ## Constraints & Requirements
 

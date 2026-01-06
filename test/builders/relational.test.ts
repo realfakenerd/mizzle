@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { dynamoTable, dynamoEntity } from "../../src/core/table";
+import { dynamoTable, dynamoEntity } from "../../packages/mizzle/src/core/table";
 import { mizzle } from "../../src/utils/db";
-import { string, uuid } from "../../src/columns/all";
-import { eq } from "../../src/expressions/operators";
+import { string, uuid } from "../../packages/mizzle/src/columns/all";
+import { eq } from "../../packages/mizzle/src/expressions/operators";
 
 const client = new DynamoDBClient({
     region: "us-east-1",

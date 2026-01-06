@@ -1,7 +1,7 @@
 import { expect, test, describe } from "bun:test";
-import { compareSchema } from "../../src/core/diff";
-import { PhysicalTable } from "../../src/core/table";
-import { type MizzleSnapshot } from "../../src/core/snapshot";
+import { compareSchema } from "../../packages/mizzle/src/core/diff";
+import { PhysicalTable } from "../../packages/mizzle/src/core/table";
+import { type MizzleSnapshot } from "../../packages/mizzle/src/core/snapshot";
 import { TABLE_SYMBOLS, ENTITY_SYMBOLS } from "@mizzle/shared";
 
 // Mock helpers
@@ -44,7 +44,7 @@ describe("Schema Diffing", () => {
     const changes = compareSchema({ tables: [table], entities: [] }, snapshot);
     
     expect(changes).toHaveLength(1);
-    expect(changes[0].type).toBe("create");
+    expect(changes[0]!.type).toBe("create");
     expect((changes[0] as any).table.TableName).toBe("users");
     expect((changes[0] as any).table.AttributeDefinitions).toEqual([{ AttributeName: "id", AttributeType: "S" }]);
   });
@@ -61,12 +61,11 @@ describe("Schema Diffing", () => {
         } 
     };
     
-    const changes = compareSchema({ tables: [], entities: [] }, snapshot);
-    
-    expect(changes).toHaveLength(1);
-    expect(changes[0].type).toBe("delete");
-    expect((changes[0] as any).tableName).toBe("users");
-  });
+        const currentSchema = { tables: [], entities: [] };
+        const changes = compareSchema(currentSchema, snapshot);
+        expect(changes).toHaveLength(1);
+        expect(changes[0]!.type).toBe("delete");
+        expect((changes[0] as any).tableName).toBe("users");  });
 
   test("should return empty array if no changes", () => {
     const table = mockTable("users", "id", "S");
@@ -100,7 +99,7 @@ describe("Schema Diffing", () => {
 
     const changes = compareSchema({ tables: [table], entities: [] }, snapshot);
     expect(changes).toHaveLength(1);
-    expect(changes[0].type).toBe("update");
+    expect(changes[0]!.type).toBe("update");
   });
 
   test("should resolve index types from entities", () => {
