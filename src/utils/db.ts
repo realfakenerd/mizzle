@@ -49,7 +49,7 @@ export class DynamoDB<TSchema extends Record<string, any> = Record<string, any>>
                     throw new Error(`Entity ${prop} not found in relations schema.`);
                 }
 
-                return new RelationnalQueryBuilder(this.docClient, entityMetadata.entity);
+                return new RelationnalQueryBuilder(this.docClient, entityMetadata.entity, this.schema, prop);
             }
         });
     }
