@@ -1,0 +1,39 @@
+# Plan: Monorepo Transformation with Turborepo
+
+## Phase 1: Foundation & Scaffolding
+Set up the monorepo structure, workspace configuration, and shared base configurations.
+
+- [x] Task: Initialize Bun Workspaces and Turborepo configuration (`turbo.json`) de43096
+- [ ] Task: Create and configure `packages/tsconfig` for shared TypeScript settings
+- [ ] Task: Create and configure `packages/eslint-config` for shared linting rules
+- [ ] Task: Conductor - User Manual Verification 'Foundation & Scaffolding' (Protocol in workflow.md)
+
+## Phase 2: Shared Package Extraction
+Extract common utilities and constants into a dedicated package to be used by both the library and CLI.
+
+- [ ] Task: Create `packages/shared` and migrate code from `src/utils` and `src/constants`
+- [ ] Task: Update internal imports in `src/` to use `@mizzle/shared`
+- [ ] Task: Conductor - User Manual Verification 'Shared Package Extraction' (Protocol in workflow.md)
+
+## Phase 3: Core Library Modularization (`mizzle`)
+Isolate the core ORM logic and configure it for modern subpath imports.
+
+- [ ] Task: Move core logic (builders, columns, expressions, core) to `packages/mizzle`
+- [ ] Task: Configure subpath `exports` in `packages/mizzle/package.json`
+- [ ] Task: Update root tests to import from the new `mizzle` package locations
+- [ ] Task: Conductor - User Manual Verification 'Core Library Modularization' (Protocol in workflow.md)
+
+## Phase 4: CLI Modularization (`mizzling`)
+Separate the CLI tool into its own package and rename the binary to `mizzling`.
+
+- [ ] Task: Move CLI code to `packages/mizzling` and configure the `mizzling` binary
+- [ ] Task: Update `packages/mizzling` to depend on `packages/mizzle` and `packages/shared`
+- [ ] Task: Update E2E and CLI tests to use the `mizzling` command
+- [ ] Task: Conductor - User Manual Verification 'CLI Modularization' (Protocol in workflow.md)
+
+## Phase 5: Task Orchestration & Caching
+Finalize the Turborepo pipeline and verify performance optimizations.
+
+- [ ] Task: Define `turbo.json` pipelines for `build`, `test`, `lint`, and `check`
+- [ ] Task: Verify build and test caching across the monorepo
+- [ ] Task: Conductor - User Manual Verification 'Task Orchestration & Caching' (Protocol in workflow.md)
