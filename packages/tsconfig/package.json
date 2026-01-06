@@ -4,5 +4,9 @@
   "private": true,
   "files": [
     "base.json"
-  ]
+  ],
+  "scripts": {
+    "check": "echo 'no-op'",
+    "lint": "echo 'no-op'"
+  }
 }

@@ -10,5 +10,9 @@
   },
   "peerDependencies": {
     "eslint": ">=8.0.0"
+  },
+  "scripts": {
+    "check": "echo 'no-op'",
+    "lint": "echo 'no-op'"
   }
 }

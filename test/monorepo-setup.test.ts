@@ -10,9 +10,11 @@ describe("Monorepo Setup", () => {
     expect(packageJson.workspaces).toContain("packages/*");
   });
 
-  it("should have a turbo.json configuration file", () => {
+  it("should have a turbo.json configuration file with tasks", () => {
     const turboJsonPath = join(process.cwd(), "turbo.json");
     expect(existsSync(turboJsonPath)).toBe(true);
+    const turboJson = JSON.parse(readFileSync(turboJsonPath, "utf-8"));
+    expect(turboJson.tasks).toBeDefined();
   });
 
   it("should have a packages directory", () => {
@@ -32,5 +34,14 @@ describe("Monorepo Setup", () => {
     expect(existsSync(eslintConfigPath)).toBe(true);
     expect(existsSync(join(eslintConfigPath, "package.json"))).toBe(true);
     expect(existsSync(join(eslintConfigPath, "index.cjs"))).toBe(true);
+  });
+
+  it("should have root configs extending shared configs", () => {
+    const tsconfig = JSON.parse(readFileSync(join(process.cwd(), "tsconfig.json"), "utf-8"));
+    expect(tsconfig.extends).toBeDefined();
+    expect(tsconfig.extends).toMatch(/tsconfig\/base.json/);
+
+    const eslintConfig = readFileSync(join(process.cwd(), ".eslintrc.cjs"), "utf-8");
+    expect(eslintConfig).toContain("@mizzle/eslint-config");
   });
 });

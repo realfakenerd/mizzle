@@ -1,6 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "pipeline": {
+  "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
@@ -12,8 +12,15 @@
     "lint": {
       "cache": true
     },
+    "lint:root": {
+      "cache": true
+    },
     "check": {
       "cache": true
+    },
+    "check:root": {
+      "cache": true
     }
-  }
+  },
+  "globalPassThroughEnv": ["MIZZLE_CONFIG", "MIZZLE_REGION", "MIZZLE_ENDPOINT", "MIZZLE_SCHEMA", "MIZZLE_OUT", "AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY", "AWS_REGION"]
 }
