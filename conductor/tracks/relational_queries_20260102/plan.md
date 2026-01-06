@@ -24,7 +24,7 @@ Implement the core optimization for Single-Table Design.
 - [x] Task: Implement `ItemCollectionParser` to group raw DynamoDB items into structured objects based on relation metadata. 371cafb
 - [x] Task: Write failing integration tests in `test/builders/relational.integration.test.ts` for 1:N relations in a single table. 65720db
 - [x] Task: Update `RelationalQueryBuilder` to fetch related items sharing a PK in a single `Query` command. 24c5d3d
-- [ ] Task: Implement support for both `with` and `include` keywords in selection options.
+- [x] Task: Implement support for both `with` and `include` keywords in selection options. 3de5eac
 - [ ] Task: Conductor - User Manual Verification 'Single-Table Mapping & Item Parsing' (Protocol in workflow.md)
 
 ## Phase 4: Advanced Relations (1:1, N:M, GSI)
