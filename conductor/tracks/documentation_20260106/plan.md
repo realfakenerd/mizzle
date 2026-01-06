@@ -9,7 +9,7 @@ Initialize the documentation project and integrate it into the monorepo.
 - [x] Task: Implement basic linting and type checking in `docs/package.json` (cb9be35)
 - [ ] Task: Conductor - User Manual Verification 'Foundation & Scaffolding' (Protocol in workflow.md)
 
-## Phase 2: Core Guides & Conceptual Content
+## Phase 2: Core Guides & Conceptual Content [checkpoint: 46ae78c]
 Establish the foundational narrative and usage guides.
 
 - [x] Task: Create "Introduction & Vision" content based on `product.md` (d7d5302)
