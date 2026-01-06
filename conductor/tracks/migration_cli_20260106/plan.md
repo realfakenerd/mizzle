@@ -14,7 +14,7 @@ Setup the core CLI structure, configuration loading, and schema discovery logic.
 Implement the logic for tracking schema state and detecting changes.
 
 - [x] Task: Define JSON Snapshot schema and storage logic [d6f9e7a]
-- [ ] Task: Implement Schema Diffing engine (comparing code definitions vs. snapshots)
+- [x] Task: Implement Schema Diffing engine (comparing code definitions vs. snapshots) [90ee79d]
 - [ ] Task: Implement Snapshot generation and versioning logic
 - [ ] Task: Conductor - User Manual Verification 'State Management' (Protocol in workflow.md)
 
