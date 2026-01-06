@@ -19,4 +19,11 @@ describe("Monorepo Setup", () => {
     const packagesPath = join(process.cwd(), "packages");
     expect(existsSync(packagesPath)).toBe(true);
   });
+
+  it("should have a packages/tsconfig directory with package.json and base.json", () => {
+    const tsconfigPath = join(process.cwd(), "packages", "tsconfig");
+    expect(existsSync(tsconfigPath)).toBe(true);
+    expect(existsSync(join(tsconfigPath, "package.json"))).toBe(true);
+    expect(existsSync(join(tsconfigPath, "base.json"))).toBe(true);
+  });
 });
