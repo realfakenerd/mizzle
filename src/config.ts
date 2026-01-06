@@ -69,7 +69,14 @@ export async function loadConfig(configName = "mizzle.config.ts"): Promise<Mizzl
       throw new Error("Invalid config: missing 'out' directory");
     }
 
-    return config as MizzleConfig;
+    const finalConfig = { ...config } as MizzleConfig;
+
+    if (process.env.MIZZLE_REGION) finalConfig.region = process.env.MIZZLE_REGION;
+    if (process.env.MIZZLE_ENDPOINT) finalConfig.endpoint = process.env.MIZZLE_ENDPOINT;
+    if (process.env.MIZZLE_SCHEMA) finalConfig.schema = process.env.MIZZLE_SCHEMA;
+    if (process.env.MIZZLE_OUT) finalConfig.out = process.env.MIZZLE_OUT;
+
+    return finalConfig;
   } catch (error: any) {
     if (error.message.startsWith("Invalid config")) {
         throw error;

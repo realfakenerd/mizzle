@@ -121,4 +121,32 @@ describe("Config Expansion", () => {
     expect(fromIniSpy).toHaveBeenCalledWith({ profile: "my-profile" });
     fromIniSpy.mockRestore();
   });
+
+  test("loadConfig should support environment variable overrides", async () => {
+    const originalEnv = { ...process.env };
+    process.env.MIZZLE_REGION = "us-east-1-env";
+    process.env.MIZZLE_ENDPOINT = "http://env:8000";
+    process.env.MIZZLE_SCHEMA = "./src/schema-env";
+    process.env.MIZZLE_OUT = "./migrations-env";
+
+    try {
+      const configName = "mizzle.config.env.ts";
+      const configContent = `
+        export default {
+          schema: "./src/schema",
+          out: "./migrations",
+          region: "us-west-2"
+        };
+      `;
+      writeFileSync(join(TEMP_DIR, configName), configContent);
+      
+      const config = await loadConfig(configName);
+      expect(config.region).toBe("us-east-1-env");
+      expect(config.endpoint).toBe("http://env:8000");
+      expect(config.schema).toBe("./src/schema-env");
+      expect(config.out).toBe("./migrations-env");
+    } finally {
+      process.env = originalEnv;
+    }
+  });
 });
