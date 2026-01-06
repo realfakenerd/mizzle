@@ -13,8 +13,8 @@ Initialize the documentation project and integrate it into the monorepo.
 Establish the foundational narrative and usage guides.
 
 - [x] Task: Create "Introduction & Vision" content based on `product.md` (d7d5302)
-- [ ] Task: Create "Getting Started" guide (Installation, Config, First Query)
-- [ ] Task: Create "Single-Table Design" guide (Prefixing, Static Keys, Composite Keys)
+- [x] Task: Create "Getting Started" guide (Installation, Config, First Query) (f0c8db2)
+- [x] Task: Create "Single-Table Design" guide (Prefixing, Static Keys, Composite Keys) (45a2050)
 - [ ] Task: Conductor - User Manual Verification 'Core Guides & Conceptual Content' (Protocol in workflow.md)
 
 ## Phase 3: API & CLI Reference
