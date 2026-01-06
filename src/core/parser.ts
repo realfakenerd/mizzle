@@ -43,13 +43,12 @@ export class ItemCollectionParser {
                 // In Single-Table Design Query, these items usually share the same PK
                 const relatedItems = otherItems.filter(item => this.isEntity(item, targetEntity));
 
-                // TODO: More advanced matching for cases where multiple primary items are in the collection
-                // For now, we assume a single collection for a single PK (standard findMany/findFirst behavior)
-                
-                if (relConfig.type === "many") {
-                    primaryItem[relName] = relatedItems;
-                } else if (relConfig.type === "one") {
-                    primaryItem[relName] = relatedItems[0] || null;
+                if (relatedItems.length > 0) {
+                    if (relConfig.type === "many") {
+                        primaryItem[relName] = relatedItems;
+                    } else if (relConfig.type === "one") {
+                        primaryItem[relName] = relatedItems[0] || null;
+                    }
                 }
             }
         }

@@ -64,7 +64,7 @@ export type RelationsCallback<TEntity extends Entity = Entity> = (helpers: {
     /**
      * Define a one-to-many relationship.
      */
-    many: (to: Entity, config?: { relationName?: string }) => Relation<"many">;
+    many: (to: Entity, config?: Omit<RelationConfig, "to">) => Relation<"many">;
 }) => Record<string, Relation>;
 
 /**

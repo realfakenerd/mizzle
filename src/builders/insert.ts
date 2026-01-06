@@ -1,5 +1,5 @@
 import { PutCommand, type DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
-import { ENTITY_SYMBOLS } from "../constants";
+import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "../constants";
 import { Entity, type InferInsertModel } from "../core/table";
 import { BaseBuilder } from "./base";
 
@@ -37,8 +37,33 @@ class InsertBase<
 
     override async execute(): Promise<TResult> {
         const itemToSave = this.processValues(this.valuesData);
-        const key = this.resolveKeys(undefined, itemToSave);
-        const finalItem = { ...itemToSave, ...key.keys };
+        const resolution = this.resolveKeys(undefined, itemToSave);
+        
+        let finalItem = { ...itemToSave, ...resolution.keys };
+
+        // Also resolve GSI keys if they are defined in strategies but not in resolution.keys
+        // resolveStrategies only returns PK/SK for main table or a specific index.
+        // We need all of them for PutItem.
+        const strategies = this.entity[ENTITY_SYMBOLS.ENTITY_STRATEGY] as Record<string, any>;
+        const physicalTable = this.entity[ENTITY_SYMBOLS.PHYSICAL_TABLE] as any;
+        const indexes = physicalTable[TABLE_SYMBOLS.INDEXES] || {};
+
+        for (const [indexName, strategy] of Object.entries(strategies)) {
+            if (indexName === "pk" || indexName === "sk") continue;
+
+            const indexBuilder = indexes[indexName];
+            if (indexBuilder) {
+                // It's an index strategy
+                if (strategy.pk && indexBuilder.config.pk) {
+                    const pkValue = this.resolveStrategyValue(strategy.pk, itemToSave);
+                    if (pkValue) finalItem[indexBuilder.config.pk] = pkValue;
+                }
+                if (strategy.sk && indexBuilder.config.sk) {
+                    const skValue = this.resolveStrategyValue(strategy.sk, itemToSave);
+                    if (skValue) finalItem[indexBuilder.config.sk] = skValue;
+                }
+            }
+        }
 
         const command = new PutCommand({
             TableName: this.tableName,
@@ -49,6 +74,28 @@ class InsertBase<
         if (this.shouldReturnValues) return finalItem as unknown as TResult;
 
         return undefined as unknown as TResult;
+    }
+
+    private resolveStrategyValue(strategy: any, availableValues: Record<string, any>): string | undefined {
+        if (strategy.type === "static") {
+            return strategy.segments[0] as string;
+        }
+
+        const resolvedParts: string[] = [];
+
+        for (const segment of strategy.segments) {
+            if (typeof segment === "string") {
+                resolvedParts.push(segment);
+            } else {
+                const val = availableValues[segment.name];
+                if (val === undefined || val === null) return undefined;
+                resolvedParts.push(String(val));
+            }
+        }
+
+        if (strategy.type === "prefix") return resolvedParts.join("");
+        if (strategy.type === "composite") return resolvedParts.join(strategy.separator || "#");
+        return undefined;
     }
 
     private processValues(
