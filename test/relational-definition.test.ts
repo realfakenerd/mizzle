@@ -28,12 +28,12 @@ describe("defineRelations", () => {
 
         expect(usersRelations.entity).toBe(users);
         expect(usersRelations.config.posts).toBeDefined();
-        expect(usersRelations.config.posts.type).toBe("many");
-        expect(usersRelations.config.posts.config.to).toBe(posts);
-        expect(usersRelations[RELATION_SYMBOLS.RELATION_CONFIG]).toBe(true);
+        expect(usersRelations.config.posts!.type).toBe("many");
+        expect(usersRelations.config.posts!.config.to).toBe(posts);
+        expect((usersRelations as any)[RELATION_SYMBOLS.RELATION_CONFIG]).toBe(true);
     });
 
-    it("should define one-to-one relationship", () => {
+    it("should define a one-to-one relationship", () => {
         const postsRelations = defineRelations(posts, ({ one }) => ({
             author: one(users, {
                 fields: [posts.userId],
@@ -43,9 +43,9 @@ describe("defineRelations", () => {
 
         expect(postsRelations.entity).toBe(posts);
         expect(postsRelations.config.author).toBeDefined();
-        expect(postsRelations.config.author.type).toBe("one");
-        expect(postsRelations.config.author.config.to).toBe(users);
-        expect(postsRelations.config.author.config.fields).toContain(posts.userId);
-        expect(postsRelations.config.author.config.references).toContain(users.id);
+        expect(postsRelations.config.author!.type).toBe("one");
+        expect(postsRelations.config.author!.config.to).toBe(users);
+        expect(postsRelations.config.author!.config.fields).toContain(posts.userId);
+        expect(postsRelations.config.author!.config.references).toContain(users.id);
     });
 });

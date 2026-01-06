@@ -29,11 +29,11 @@ describe("Update Integration", () => {
             id: uuid(),
             name: string(),
             age: number(),
-            roles: list(string()),
+            roles: list(),
         },
         (cols) => ({
             pk: prefixKey("USER#", cols.id),
-            sk: staticKey("PROFILE"),
+            sk: staticKey("METADATA"),
         }),
     );
 

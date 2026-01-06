@@ -31,10 +31,8 @@ describe("End-to-End Integration", () => {
             description: string(),
             stars: number(),
             isPublic: boolean(),
-            tags: list(string()),
-            config: map({
-                version: string(),
-            }),
+            tags: list(),
+            config: map(),
         },
         (cols) => ({
             pk: prefixKey("PROJ#", cols.id),
@@ -81,7 +79,7 @@ describe("End-to-End Integration", () => {
             config: { version: "1.0.0" },
         } as any; // Cast to any because 'id' is generated but usually required by type
 
-        const inserted = await db.insert(project).values(newProject).returning().execute();
+        const inserted = await db.insert(project).values(newProject).returning().execute() as any;
         
         expect(inserted.id).toBeDefined();
         expect(inserted.pk).toBe(`PROJ#${inserted.id}`);

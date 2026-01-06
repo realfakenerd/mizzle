@@ -20,6 +20,7 @@ Mizzle is a light and type-safe ORM for DynamoDB built with TypeScript. It is de
 ## Key Features
 
 - **Fluent Query Builder:** A familiar `db.select()`, `db.update()`, and `db.delete()` API for intuitive data access and modification, mirroring the ergonomics of Drizzle ORM.
+- **Relational Query API:** A high-level `db.query` API for fetching related entities with nested results, optimized for Single-Table Design performance (fetching collections in a single round-trip).
 - **Smart Key Management:** Automatic UUID generation (v7) and flexible key prefixing strategies to handle complex partition and sort key requirements.
 - **Entity Mapping:** Seamlessly map application-level entities to physical DynamoDB tables.
 

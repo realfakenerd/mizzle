@@ -34,10 +34,8 @@ describe("Insert Command", () => {
             active: boolean(),
             tags: stringSet(),
             scores: numberSet(),
-            metadata: map({
-                lastLogin: string(),
-            }),
-            items: list(string()),
+            metadata: map(),
+            items: list(),
         },
         (cols) => ({
             pk: prefixKey("USER#", cols.id),
@@ -82,7 +80,7 @@ describe("Insert Command", () => {
             active: true,
         };
 
-        const result = await insertBuilder.values(data).returning().execute();
+        const result = await insertBuilder.values(data).returning().execute() as any;
 
         expect(result).toMatchObject({
             pk: "USER#123e4567-e89b-12d3-a456-426614174000",
@@ -101,15 +99,15 @@ describe("Insert Command", () => {
             name: "Dave",
             age: 25,
             active: false,
-            tags: ["typescript", "dynamodb"],
-            scores: [10, 20, 30],
+            tags: new Set(["typescript", "dynamodb"]),
+            scores: new Set([10, 20, 30]),
             metadata: {
                 lastLogin: "2025-12-23",
             },
             items: ["item1", "item2"],
-        };
+        } as any;
 
-        const result = await insertBuilder.values(data).returning().execute();
+        const result = await insertBuilder.values(data).returning().execute() as any;
 
         expect(result).toMatchObject({
             pk: "USER#223e4567-e89b-12d3-a456-426614174000",
@@ -150,7 +148,7 @@ describe("Insert Command", () => {
             active: true,
         } as any; // Cast to any to skip required id check for test
 
-        const result = await insertBuilder.values(data).returning().execute();
+        const result = await insertBuilder.values(data).returning().execute() as any;
 
         expect(result.id).toBeDefined();
         expect(result.pk).toBe(`USER#${result.id}`);
@@ -179,9 +177,9 @@ describe("Insert Command", () => {
             age: 20,
             active: true,
             tags: [], // Empty set
-        };
+        } as any;
 
-        const result = await insertBuilder.values(data).returning().execute();
+        const result = await insertBuilder.values(data).returning().execute() as any;
 
         expect(result.tags).toBeUndefined();
 

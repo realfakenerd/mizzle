@@ -42,13 +42,13 @@ describe("extractMetadata", () => {
         const metadata = extractMetadata(schema);
 
         expect(metadata.entities.users).toBeDefined();
-        expect(metadata.entities.users.entity).toBe(users);
-        expect(metadata.entities.users.relations.posts).toBeDefined();
-        expect(metadata.entities.users.relations.posts.type).toBe("many");
+        expect(metadata.entities.users!.entity).toBe(users);
+        expect(metadata.entities.users!.relations.posts).toBeDefined();
+        expect(metadata.entities.users!.relations.posts!.type).toBe("many");
 
         expect(metadata.entities.posts).toBeDefined();
-        expect(metadata.entities.posts.entity).toBe(posts);
-        expect(metadata.entities.posts.relations.author).toBeDefined();
-        expect(metadata.entities.posts.relations.author.type).toBe("one");
+        expect(metadata.entities.posts!.entity).toBe(posts);
+        expect(metadata.entities.posts!.relations.author).toBeDefined();
+        expect(metadata.entities.posts!.relations.author!.type).toBe("one");
     });
 });
