@@ -17,7 +17,7 @@ Establish the foundational narrative and usage guides.
 - [x] Task: Create "Single-Table Design" guide (Prefixing, Static Keys, Composite Keys) (7b99582)
 - [ ] Task: Conductor - User Manual Verification 'Core Guides & Conceptual Content' (Protocol in workflow.md)
 
-## Phase 3: API & CLI Reference
+## Phase 3: API & CLI Reference [checkpoint: 8e87e6a]
 Detailed documentation of the technical interfaces.
 
 - [x] Task: Create API Reference pages for `select`, `insert`, `update`, `delete`, and `query` (a01dea6)
