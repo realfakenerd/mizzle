@@ -1,6 +1,6 @@
 # Plan: Documentation with Astro and Starlight
 
-## Phase 1: Foundation & Scaffolding
+## Phase 1: Foundation ## Phase 1: Foundation & Scaffolding Scaffolding [checkpoint: 8fc475f]
 Initialize the documentation project and integrate it into the monorepo.
 
 - [x] Task: Initialize Astro project with Starlight template in `docs/` using `bun create astro@latest -- --template starlight` (fd8090a)
