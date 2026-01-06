@@ -3,24 +3,34 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**"]
+      "outputs": ["dist/**"],
+      "inputs": ["src/**", "package.json", "tsconfig.json"]
     },
     "test": {
       "dependsOn": ["^build"],
-      "cache": true
+      "inputs": ["src/**", "test/**", "package.json", "tsconfig.json", "vitest.config.ts"],
+      "passThroughEnv": [
+        "MIZZLE_CONFIG",
+        "MIZZLE_REGION",
+        "MIZZLE_ENDPOINT",
+        "MIZZLE_SCHEMA",
+        "MIZZLE_OUT",
+        "AWS_ACCESS_KEY_ID",
+        "AWS_SECRET_ACCESS_KEY",
+        "AWS_REGION"
+      ]
     },
     "lint": {
-      "cache": true
+      "inputs": ["src/**", "test/**", ".eslintrc.cjs", "package.json", "tsconfig.json"]
     },
     "lint:root": {
-      "cache": true
+      "inputs": ["src/**", "test/**", ".eslintrc.cjs", "package.json", "tsconfig.json"]
     },
     "check": {
-      "cache": true
+      "inputs": ["src/**", "test/**", "package.json", "tsconfig.json"]
     },
     "check:root": {
-      "cache": true
+      "inputs": ["src/**", "test/**", "package.json", "tsconfig.json"]
     }
-  },
-  "globalPassThroughEnv": ["MIZZLE_CONFIG", "MIZZLE_REGION", "MIZZLE_ENDPOINT", "MIZZLE_SCHEMA", "MIZZLE_OUT", "AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY", "AWS_REGION"]
+  }
 }
