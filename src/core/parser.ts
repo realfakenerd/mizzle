@@ -1,6 +1,6 @@
 import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "../constants";
 import type { InternalRelationalSchema } from "./relations";
-import { KeyStrategy } from "./strategies";
+import type { KeyStrategy } from "./strategies";
 
 /**
  * Parser for DynamoDB item collections (Single-Table Design).

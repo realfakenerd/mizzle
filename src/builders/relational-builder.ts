@@ -40,6 +40,15 @@ export type RelationalQueryOptions<T extends Entity> = {
 	include?: Record<string, IncludeOptions>;
 };
 
+export type InferRelationalModel<
+    T extends Entity,
+    TOptions extends RelationalQueryOptions<T> = {}
+> = InferSelectedModel<T> & {
+    [K in keyof TOptions['with'] & string]: any; 
+} & {
+    [K in keyof TOptions['include'] & string]: any;
+};
+
 export class RelationnalQueryBuilder<T extends Entity> {
 	constructor(
 		private client: DynamoDBDocumentClient,
@@ -48,7 +57,9 @@ export class RelationnalQueryBuilder<T extends Entity> {
 		private entityName?: string
 	) {}
 
-	async findMany(options: RelationalQueryOptions<T> = {}): Promise<InferSelectedModel<T>[]> {
+	async findMany<TOptions extends RelationalQueryOptions<T>>(
+        options: TOptions = {} as any
+    ): Promise<InferRelationalModel<T, TOptions>[]> {
 		const qb = new DynamoQueryBuilder<T>(this.client, this.table);
 
 		if (options.orderBy) {
@@ -60,9 +71,9 @@ export class RelationnalQueryBuilder<T extends Entity> {
 
 		if (options.where) {
 			if (typeof options.where === 'function') {
-				condition = options.where(columns, operators);
+				condition = (options.where as any)(columns, operators);
 			} else {
-				condition = options.where;
+				condition = options.where as any;
 			}
 		}
 
@@ -75,19 +86,20 @@ export class RelationnalQueryBuilder<T extends Entity> {
 			const pkName = Object.keys(resolution.keys).find(k => {
 				const pt = this.table._?.table || (this.table as any)[ENTITY_SYMBOLS.PHYSICAL_TABLE];
 				const ptMeta = pt?._ || pt;
-				return k === (ptMeta.partitionKey?.name || ptMeta[TABLE_SYMBOLS.PARTITION_KEY]?.name);
+				const physicalPKName = ptMeta.partitionKey?.name || (ptMeta as any)[TABLE_SYMBOLS.PARTITION_KEY]?.name;
+                return k === physicalPKName;
 			}) || Object.keys(resolution.keys)[0];
-			const pkValue = resolution.keys[pkName];
+			const pkValue = resolution.keys[pkName!];
 
 			// Override where to ONLY use the PK to get related items in the same collection
-			qb.where(eq({ name: pkName } as any, pkValue));
+			qb.where(eq({ name: pkName! } as any, pkValue));
 
 			// NOTE: We DON'T apply options.limit here because we need the related items.
 			// Instead, we fetch the whole collection and limit the results later.
 
 			const rawItems = await qb.execute();
 			const parser = new ItemCollectionParser(this.schema);
-			results = parser.parse(rawItems, this.entityName, options.with || options.include);
+			results = parser.parse(rawItems, this.entityName, (options.with || options.include) as any);
 			
 			if (options.limit) {
 				results = results.slice(0, options.limit);
@@ -104,83 +116,89 @@ export class RelationnalQueryBuilder<T extends Entity> {
 
 		// Secondary relations (GSI or Cross-Partition)
 		if (this.schema && this.entityName && (options.with || options.include)) {
-			const relationsToFetch = options.with || options.include || {};
+			const relationsToFetch = (options.with || options.include || {}) as Record<string, IncludeOptions>;
 			const entityMeta = this.schema.entities[this.entityName];
 
-			for (const result of results) {
-				for (const [relName, relOption] of Object.entries(relationsToFetch)) {
-					if (!relOption) continue;
-					
-					// If it's already an array with items or a non-null object, it was likely fetched via optimization
-					const currentValue = result[relName];
-					const isPopulated = currentValue !== undefined && (
-						(Array.isArray(currentValue) && currentValue.length > 0) || 
-						(typeof currentValue === "object" && currentValue !== null && !Array.isArray(currentValue))
-					);
+            if (entityMeta) {
+                for (const result of results) {
+                    for (const [relName, relOption] of Object.entries(relationsToFetch)) {
+                        if (!relOption) continue;
+                        
+                        // If it's already an array with items or a non-null object, it was fetched via optimization
+                        const currentValue = result[relName];
+                        const isPopulated = currentValue !== undefined && (
+                            (Array.isArray(currentValue) && currentValue.length > 0) || 
+                            (typeof currentValue === "object" && currentValue !== null && !Array.isArray(currentValue))
+                        );
 
-					if (isPopulated) continue;
+                        if (isPopulated) continue;
 
-					const relConfig = entityMeta.relations[relName];
-					if (!relConfig) continue;
+                        const relConfig = entityMeta.relations[relName];
+                        if (!relConfig) continue;
 
-					// Map fields from the current item to the target entity's columns
-					const targetValues: Record<string, any> = { ...result };
-					if (relConfig.config.fields && relConfig.config.references) {
-						for (let i = 0; i < relConfig.config.fields.length; i++) {
-							const sourceCol = relConfig.config.fields[i];
-							const targetCol = relConfig.config.references[i];
-							targetValues[targetCol.name] = result[sourceCol.name];
-						}
-					}
+                        // Map fields from the current item to the target entity's columns
+                        const targetValues: Record<string, any> = { ...result };
+                        if (relConfig.config.fields && relConfig.config.references) {
+                            for (let i = 0; i < relConfig.config.fields.length; i++) {
+                                const sourceCol = relConfig.config.fields[i];
+                                const targetCol = relConfig.config.references[i];
+                                if (sourceCol && targetCol) {
+                                    targetValues[targetCol.name] = result[sourceCol.name];
+                                }
+                            }
+                        }
 
-					// Try to resolve keys for the related entity using mapped fields
-					const targetEntity = relConfig.config.to;
-					const targetRes = resolveStrategies(targetEntity, undefined, targetValues);
+                        // Try to resolve keys for the related entity using mapped fields
+                        const targetEntity = relConfig.config.to;
+                        const targetRes = resolveStrategies(targetEntity, undefined, targetValues);
 
-					if (targetRes.hasPartitionKey) {
-						// We can fetch this relation!
-						const targetQb = new DynamoQueryBuilder(this.client, targetEntity);
-						
-						if (targetRes.indexName) {
-							targetQb.index(targetRes.indexName);
-						}
+                        if (targetRes.hasPartitionKey) {
+                            // We can fetch this relation!
+                            const targetQb = new DynamoQueryBuilder(this.client, targetEntity);
+                            
+                            if (targetRes.indexName) {
+                                targetQb.index(targetRes.indexName);
+                            }
 
-						const pkNameInTarget = Object.keys(targetRes.keys).find(k => {
-							const pt = targetEntity._?.table || (targetEntity as any)[ENTITY_SYMBOLS.PHYSICAL_TABLE];
-							const ptMeta = pt?._ || pt;
-							const pkFromMeta = ptMeta.partitionKey?.name || ptMeta[TABLE_SYMBOLS.PARTITION_KEY]?.name;
-							
-							if (targetRes.indexName) {
-								const index = ptMeta.config?.indexes?.[targetRes.indexName] || ptMeta[TABLE_SYMBOLS.INDEXES]?.[targetRes.indexName];
-								return k === index.config.pk;
-							}
-							
-							return k === pkFromMeta;
-						}) || Object.keys(targetRes.keys)[0];
+                            const pkNameInTarget = Object.keys(targetRes.keys).find(k => {
+                                const pt = targetEntity._?.table || (targetEntity as any)[ENTITY_SYMBOLS.PHYSICAL_TABLE];
+                                const ptMeta = pt?._ || pt;
+                                const pkFromMeta = ptMeta.partitionKey?.name || (ptMeta as any)[TABLE_SYMBOLS.PARTITION_KEY]?.name;
+                                
+                                if (targetRes.indexName) {
+                                    const index = ptMeta.config?.indexes?.[targetRes.indexName] || (ptMeta as any)[TABLE_SYMBOLS.INDEXES]?.[targetRes.indexName];
+                                    return k === index.config.pk;
+                                }
+                                
+                                return k === pkFromMeta;
+                            }) || Object.keys(targetRes.keys)[0];
 
-						// Use the actual target entity column if we can find it
-						const targetColumns = targetEntity._?.columns || (targetEntity as any).columns || targetEntity;
-						const pkColumn = Object.values(targetColumns).find((c: any) => c.name === pkNameInTarget) || { name: pkNameInTarget };
+                            // Use the actual target entity column if we can find it
+                            const targetColumns = targetEntity._?.columns || (targetEntity as any).columns || targetEntity;
+                            const pkColumn = Object.values(targetColumns).find((c: any) => c.name === pkNameInTarget) || { name: pkNameInTarget };
 
-						const targetCondition = eq(pkColumn as any, targetRes.keys[pkNameInTarget]);
-						targetQb.where(targetCondition);
+                            const targetCondition = eq(pkColumn as any, targetRes.keys[pkNameInTarget!]);
+                            targetQb.where(targetCondition);
 
-						const relatedItems = await targetQb.execute();
-						
-						if (relConfig.type === "many") {
-							result[relName] = relatedItems;
-						} else {
-							result[relName] = relatedItems[0] || null;
-						}
-					}
-				}
-			}
+                            const relatedItems = await targetQb.execute();
+                            
+                            if (relConfig.type === "many") {
+                                result[relName] = relatedItems;
+                            } else {
+                                result[relName] = relatedItems[0] || null;
+                            }
+                        }
+                    }
+                }
+            }
 		}
 
-		return results;
+		return results as any;
 	}
 
-	async findFirst(options: RelationalQueryOptions<T> = {}): Promise<InferSelectedModel<T> | undefined> {
+	async findFirst<TOptions extends RelationalQueryOptions<T>>(
+        options: TOptions = {} as any
+    ): Promise<InferRelationalModel<T, TOptions> | undefined> {
 		const res = await this.findMany({ ...options, limit: 1 });
 		return res[0];
 	}

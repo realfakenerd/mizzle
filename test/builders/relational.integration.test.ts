@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { DynamoDBClient, CreateTableCommand, DeleteTableCommand, ListTablesCommand } from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient, CreateTableCommand, DeleteTableCommand } from "@aws-sdk/client-dynamodb";
 import { dynamoTable, dynamoEntity } from "../../src/core/table";
 import { string, uuid } from "../../src/columns/all";
 import { prefixKey, staticKey } from "../../src/core/strategies";
@@ -100,9 +100,7 @@ describe("Relational Query Integration", () => {
             })),
             projectsRelations: defineRelations(projects, ({ many }) => ({
                 members: many(members, {
-                    // @ts-ignore - many needs updated types to support fields/references
                     fields: [projects.id],
-                    // @ts-ignore
                     references: [members.projectId],
                 }),
             })),
@@ -171,304 +169,106 @@ describe("Relational Query Integration", () => {
 
     it("should fetch user with their posts in a single query", async () => {
         const userId = "user-1";
-        
-        // Seed data
         await db.insert(users).values({ id: userId, name: "Alice" }).execute();
         await db.insert(posts).values({ id: "post-1", userId, content: "Hello" }).execute();
         await db.insert(posts).values({ id: "post-2", userId, content: "World" }).execute();
 
-        // Query with relations
         const results = await db.query.users.findMany({
             where: (cols, { eq }) => eq(cols.id, userId),
-            with: {
-                posts: true
-            }
-        });
-
-                expect(results[0].posts).toHaveLength(2);
-
-            });
-
-        
-
-            it("should fetch user with their posts using 'include' keyword", async () => {
-
-                const userId = "user-2";
-
-                
-
-                // Seed data
-
-                await db.insert(users).values({ id: userId, name: "Bob" }).execute();
-
-                await db.insert(posts).values({ id: "post-3", userId, content: "Hello from Bob" }).execute();
-
-        
-
-                // Query with 'include'
-
-                const results = await db.query.users.findMany({
-
-                    where: (cols, { eq }) => eq(cols.id, userId),
-
-                    include: {
-
-                        posts: true
-
-                    }
-
-                });
-
-        
-
-                expect(results).toHaveLength(1);
-
-                expect(results[0].name).toBe("Bob");
-
-                expect(results[0].posts).toBeDefined();
-
-                        expect(results[0].posts).toHaveLength(1);
-
-                        expect(results[0].posts[0].content).toBe("Hello from Bob");
-
-                    });
-
-                
-
-                    it("should fetch post with its author (1:1 relation)", async () => {
-
-                        const userId = "user-3";
-
-                        const postId = "post-4";
-
-                        
-
-                        // Seed data
-
-                        await db.insert(users).values({ id: userId, name: "Charlie" }).execute();
-
-                        await db.insert(posts).values({ id: postId, userId, content: "Charlie's Post" }).execute();
-
-                
-
-                                // Query post with author (one-to-one)
-
-                
-
-                                const results = await db.query.posts.findMany({
-
-                
-
-                                    where: (cols, { eq, and }) => and(
-
-                
-
-                                        eq(cols.id, postId),
-
-                
-
-                                        eq(cols.userId, userId)
-
-                
-
-                                    ),
-
-                
-
-                                    include: {
-
-                
-
-                                        author: true
-
-                
-
-                                    }
-
-                
-
-                                });
-
-                
-
-                        
-
-                
-
-                        expect(results).toHaveLength(1);
-
-                        expect(results[0].content).toBe("Charlie's Post");
-
-                        expect(results[0].author).toBeDefined();
-
-                                expect(results[0].author.name).toBe("Charlie");
-
-                                expect(Array.isArray(results[0].author)).toBe(false);
-
-                            });
-
-                        
-
-                            it("should fetch user with their projects via bridge entity (N:M)", async () => {
-
-                                const userId = "user-4";
-
-                                const projId1 = "proj-1";
-
-                                const projId2 = "proj-2";
-
-                        
-
-                                // Seed data
-
-                                await db.insert(users).values({ id: userId, name: "David" }).execute();
-
-                                await db.insert(projects).values({ id: projId1, name: "Project Alpha" }).execute();
-
-                                await db.insert(projects).values({ id: projId2, name: "Project Beta" }).execute();
-
-                                
-
-                                // Memberships (Bridge items in the User's partition)
-
-                                await db.insert(members).values({ userId, projectId: projId1, role: "owner" }).execute();
-
-                                await db.insert(members).values({ userId, projectId: projId2, role: "admin" }).execute();
-
-                        
-
-                                // Query user with memberships
-
-                                const results = await db.query.users.findMany({
-
-                                    where: (cols, { eq }) => eq(cols.id, userId),
-
-                                    with: {
-
-                                        memberships: true
-
-                                    }
-
-                                });
-
-                        
-
-                                expect(results).toHaveLength(1);
-
-                                expect(results[0].name).toBe("David");
-
-                                        expect(results[0].memberships).toHaveLength(2);
-
-                                        expect(results[0].memberships.map((m: any) => m.role)).toContain("owner");
-
-                                        expect(results[0].memberships.map((m: any) => m.role)).toContain("admin");
-
-                                    });
-
-                                
-
-                                    it("should fetch project with its members via GSI", async () => {
-
-                                        const userId1 = "user-5";
-
-                                        const userId2 = "user-6";
-
-                                        const projId = "proj-3";
-
-                                
-
-                                        // Seed data
-
-                                        await db.insert(users).values({ id: userId1, name: "Eve" }).execute();
-
-                                        await db.insert(users).values({ id: userId2, name: "Frank" }).execute();
-
-                                        await db.insert(projects).values({ id: projId, name: "Project Gamma" }).execute();
-
-                                        
-
-                                        // Memberships (Co-located with users in main table, but queryable by project via GSI)
-
-                                        await db.insert(members).values({ userId: userId1, projectId: projId, role: "lead" }).execute();
-
-                                        await db.insert(members).values({ userId: userId2, projectId: projId, role: "dev" }).execute();
-
-                                
-
-                                        // Query project with members
-
-                                        // RelationalQueryBuilder needs to be smart enough to know members of a project 
-
-                                        // are resolved via GSI because members.pk != projects.pk
-
-                                        const results = await db.query.projects.findMany({
-
-                                            where: (cols, { eq }) => eq(cols.id, projId),
-
-                                            with: {
-
-                                                members: true
-
-                                            }
-
-                                        });
-
-                                
-
-                                        expect(results).toHaveLength(1);
-
-                                                expect(results[0].name).toBe("Project Gamma");
-
-                                                expect(results[0].members).toBeDefined();
-
-                                                expect(results[0].members).toHaveLength(2);
-
-                                            });
-
-                                        
-
-                                            it("should use findFirst to fetch a single item with relations", async () => {
-
-                                                const userId = "user-7";
-
-                                                await db.insert(users).values({ id: userId, name: "Grace" }).execute();
-
-                                                await db.insert(posts).values({ id: "post-5", userId, content: "First Post" }).execute();
-
-                                        
-
-                                                const result = await db.query.users.findFirst({
-
-                                                    where: (cols, { eq }) => eq(cols.id, userId),
-
-                                                    with: {
-
-                                                        posts: true
-
-                                                    }
-
-                                                });
-
-                                        
-
-                                                expect(result).toBeDefined();
-
-                                                expect(result!.name).toBe("Grace");
-
-                                                expect(result!.posts).toHaveLength(1);
-
-                                                expect(Array.isArray(result)).toBe(false);
-
-                                            });
-
-                                        });
-
-                                        
-
-                                
-
-                        
-
-                
-
-        
+            with: { posts: true }
+        }) as any[];
+
+        expect(results).toHaveLength(1);
+        expect(results[0].name).toBe("Alice");
+        expect(results[0].posts).toHaveLength(2);
+    });
+
+    it("should fetch user with their posts using 'include' keyword", async () => {
+        const userId = "user-2";
+        await db.insert(users).values({ id: userId, name: "Bob" }).execute();
+        await db.insert(posts).values({ id: "post-3", userId, content: "Hello from Bob" }).execute();
+
+        const results = await db.query.users.findMany({
+            where: (cols, { eq }) => eq(cols.id, userId),
+            include: { posts: true }
+        }) as any[];
+
+        expect(results).toHaveLength(1);
+        expect(results[0].name).toBe("Bob");
+        expect(results[0].posts).toHaveLength(1);
+    });
+
+    it("should fetch post with its author (1:1 relation)", async () => {
+        const userId = "user-3";
+        const postId = "post-4";
+        await db.insert(users).values({ id: userId, name: "Charlie" }).execute();
+        await db.insert(posts).values({ id: postId, userId, content: "Charlie's Post" }).execute();
+
+        const results = await db.query.posts.findMany({
+            where: (cols, { eq, and }) => and(
+                eq(cols.id, postId),
+                eq(cols.userId, userId)
+            ),
+            include: { author: true }
+        }) as any[];
+
+        expect(results).toHaveLength(1);
+        expect(results[0].content).toBe("Charlie's Post");
+        expect(results[0].author).toBeDefined();
+        expect(results[0].author.name).toBe("Charlie");
+    });
+
+    it("should fetch user with their projects via bridge entity (N:M)", async () => {
+        const userId = "user-4";
+        const projId1 = "proj-1";
+        const projId2 = "proj-2";
+        await db.insert(users).values({ id: userId, name: "David" }).execute();
+        await db.insert(projects).values({ id: projId1, name: "Project Alpha" }).execute();
+        await db.insert(projects).values({ id: projId2, name: "Project Beta" }).execute();
+        await db.insert(members).values({ userId, projectId: projId1, role: "owner" }).execute();
+        await db.insert(members).values({ userId, projectId: projId2, role: "admin" }).execute();
+
+        const results = await db.query.users.findMany({
+            where: (cols, { eq }) => eq(cols.id, userId),
+            with: { memberships: true }
+        }) as any[];
+
+        expect(results).toHaveLength(1);
+        expect(results[0].memberships).toHaveLength(2);
+    });
+
+    it("should fetch project with its members via GSI", async () => {
+        const userId1 = "user-5";
+        const userId2 = "user-6";
+        const projId = "proj-3";
+        await db.insert(users).values({ id: userId1, name: "Eve" }).execute();
+        await db.insert(users).values({ id: userId2, name: "Frank" }).execute();
+        await db.insert(projects).values({ id: projId, name: "Project Gamma" }).execute();
+        await db.insert(members).values({ userId: userId1, projectId: projId, role: "lead" }).execute();
+        await db.insert(members).values({ userId: userId2, projectId: projId, role: "dev" }).execute();
+
+        const results = await db.query.projects.findMany({
+            where: (cols, { eq }) => eq(cols.id, projId),
+            with: { members: true }
+        }) as any[];
+
+        expect(results).toHaveLength(1);
+        expect(results[0].name).toBe("Project Gamma");
+        expect(results[0].members).toHaveLength(2);
+    });
+
+    it("should use findFirst to fetch a single item with relations", async () => {
+        const userId = "user-7";
+        await db.insert(users).values({ id: userId, name: "Grace" }).execute();
+        await db.insert(posts).values({ id: "post-5", userId, content: "First Post" }).execute();
+
+        const result = await db.query.users.findFirst({
+            where: (cols, { eq }) => eq(cols.id, userId),
+            with: { posts: true }
+        }) as any;
+
+        expect(result).toBeDefined();
+        expect(result!.name).toBe("Grace");
+        expect(result!.posts).toHaveLength(1);
+    });
+});
