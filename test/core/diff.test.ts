@@ -2,7 +2,7 @@ import { expect, test, describe } from "bun:test";
 import { compareSchema } from "../../src/core/diff";
 import { PhysicalTable } from "../../src/core/table";
 import { type MizzleSnapshot } from "../../src/core/snapshot";
-import { TABLE_SYMBOLS, ENTITY_SYMBOLS } from "../../src/constants";
+import { TABLE_SYMBOLS, ENTITY_SYMBOLS } from "@mizzle/shared";
 
 // Mock helpers
 const mockColumn = (name: string, type: string) => ({

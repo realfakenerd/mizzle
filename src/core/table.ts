@@ -1,4 +1,5 @@
-import { ENTITY_SYMBOLS, INFER_MODE, TABLE_SYMBOLS } from "../constants";
+import { ENTITY_SYMBOLS, INFER_MODE, TABLE_SYMBOLS } from "@mizzle/shared";
+import type { Simplify, Update } from "@mizzle/shared";
 import { Column, type GetColumnData } from "./column";
 import type {
     BuildColumns,
@@ -9,7 +10,6 @@ import { getColumnBuilders, type ColumnsBuilder } from "../columns/all";
 import type { IndexBuilder } from "../indexes";
 import type { OpitionalKeyOnly, RequiredKeyOnly } from "./operations";
 import type { KeyStrategy } from "./strategies";
-import type { Simplify, Update } from "../utils/utils";
 
 type IndexStrategyConfig<TIndex extends IndexBuilder> =
     TIndex["type"] extends "lsi"

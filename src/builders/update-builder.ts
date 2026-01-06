@@ -4,7 +4,7 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import type { Condition } from "../expressions/operators";
 import type { InferInsertModel, TableDefinition, InferSelectedModel, AtomicValues } from "../core/table";
-import { ENTITY_SYMBOLS } from "../constants";
+import { ENTITY_SYMBOLS } from "@mizzle/shared";
 
 export class UpdateBuilder<T extends TableDefinition<any>> {
     #key?: Record<string, any>;

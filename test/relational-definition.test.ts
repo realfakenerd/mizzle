@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { dynamoTable, dynamoEntity } from "../src/core/table";
 import { defineRelations } from "../src/core/relations";
 import { string, uuid } from "../src/columns/all";
-import { RELATION_SYMBOLS } from "../src/constants";
+import { RELATION_SYMBOLS } from "@mizzle/shared";
 
 const table = dynamoTable("mizzle-test", {
     pk: string("pk"),

@@ -6,7 +6,7 @@ import type { Entity, InferSelectedModel } from '../core/table';
 import { ItemCollectionParser } from '../core/parser';
 import type { InternalRelationalSchema } from '../core/relations';
 import { resolveStrategies } from '../core/strategies';
-import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from '../constants';
+import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from '@mizzle/shared';
 
 type WhereCallback<T extends Entity> = (
 	fields: T['_']['columns'],

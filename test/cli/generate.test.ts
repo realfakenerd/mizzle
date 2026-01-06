@@ -1,7 +1,7 @@
 import { expect, test, describe, beforeEach, afterEach, mock, spyOn } from "bun:test";
 import { generateCommand } from "../../src/cli/commands/generate";
 import { PhysicalTable } from "../../src/core/table";
-import { TABLE_SYMBOLS } from "../../src/constants";
+import { TABLE_SYMBOLS } from "@mizzle/shared";
 import { mkdirSync, rmSync, writeFileSync, existsSync, readFileSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";

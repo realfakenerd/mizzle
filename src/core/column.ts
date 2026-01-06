@@ -1,11 +1,11 @@
-import { INFER_MODE, NULLS, ORDER } from "../constants";
+import { INFER_MODE, NULLS, ORDER } from "@mizzle/shared";
+import type { Update } from "@mizzle/shared";
 import type {
     ColumnBuilderBaseConfig,
     ColumnBuilderRuntimeConfig,
     ColumnDataType,
 } from "./column-builder";
 import type { PhysicalTable } from "./table";
-import type { Update } from "../utils/utils";
 
 export type AnyColumn<
     TPartial extends Partial<ColumnBaseConfig<string, ColumnDataType>> = {},

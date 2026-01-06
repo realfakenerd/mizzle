@@ -7,8 +7,7 @@ import {
 } from '@aws-sdk/lib-dynamodb';
 import type { Condition } from '../expressions/operators';
 import type { InferSelectedModel, Entity } from '../core/table';
-import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from '../constants';
-import { resolveTableName } from '../utils/utils';
+import { ENTITY_SYMBOLS, TABLE_SYMBOLS, resolveTableName } from '@mizzle/shared';
 import { resolveStrategies } from '../core/strategies';
 
 export class DynamoQueryBuilder<T extends Entity<any>> {

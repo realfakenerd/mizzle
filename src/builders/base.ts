@@ -1,10 +1,10 @@
 import { type DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import { Entity } from "../core/table";
 import { QueryPromise } from "./query-promise";
-import { resolveTableName } from "../utils/utils";
+import { resolveTableName } from "@mizzle/shared";
 import { resolveStrategies, type StrategyResolution } from "../core/strategies";
 import { type Expression } from "../expressions/operators";
-import { ENTITY_SYMBOLS } from "../constants";
+import { ENTITY_SYMBOLS } from "@mizzle/shared";
 
 export abstract class BaseBuilder<
     TEntity extends Entity,

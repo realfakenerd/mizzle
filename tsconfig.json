@@ -2,6 +2,10 @@
     "extends": "./packages/tsconfig/base.json",
     "include": ["src", "test"],
     "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@mizzle/shared": ["packages/shared/src/index.ts"]
+        },
         "noUnusedLocals": false,
         "noUnusedParameters": false,
         "noPropertyAccessFromIndexSignature": false

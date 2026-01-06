@@ -1,7 +1,7 @@
 import { expect, test, describe, beforeEach, afterEach } from "bun:test";
 import { generateSnapshot, getNextMigrationVersion, saveSnapshot, loadSnapshot, MizzleSnapshot } from "../../src/core/snapshot";
 import { PhysicalTable } from "../../src/core/table";
-import { TABLE_SYMBOLS, ENTITY_SYMBOLS } from "../../src/constants";
+import { TABLE_SYMBOLS, ENTITY_SYMBOLS } from "@mizzle/shared";
 import { mkdirSync, rmSync, writeFileSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";

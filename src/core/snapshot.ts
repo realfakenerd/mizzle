@@ -2,7 +2,7 @@ import { join } from "path";
 import { writeFile, readFile, mkdir, readdir } from "fs/promises";
 import { existsSync } from "fs";
 import { PhysicalTable, Entity } from "./table";
-import { TABLE_SYMBOLS, ENTITY_SYMBOLS } from "../constants";
+import { TABLE_SYMBOLS, ENTITY_SYMBOLS } from "@mizzle/shared";
 
 export interface TableSnapshot {
   TableName: string;

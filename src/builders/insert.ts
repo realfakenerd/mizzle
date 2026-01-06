@@ -1,5 +1,5 @@
 import { PutCommand, type DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
-import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "../constants";
+import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "@mizzle/shared";
 import { Entity, type InferInsertModel } from "../core/table";
 import { BaseBuilder } from "./base";
 

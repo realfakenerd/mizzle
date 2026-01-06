@@ -1,7 +1,7 @@
 import { expect, test, describe, beforeEach, afterEach, mock } from "bun:test";
 import { pushCommand } from "../../src/cli/commands/push";
 import { PhysicalTable } from "../../src/core/table";
-import { TABLE_SYMBOLS } from "../../src/constants";
+import { TABLE_SYMBOLS } from "@mizzle/shared";
 
 // Mock Clack
 const mockClack = {

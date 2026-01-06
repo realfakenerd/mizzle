@@ -1,5 +1,6 @@
 import { MizzleConfig } from "../config";
 import { PhysicalTable, Entity } from "../core/table";
+import { ENTITY_SYMBOLS } from "@mizzle/shared";
 import { Glob } from "bun";
 import { stat } from "fs/promises";
 import { resolve } from "path";
