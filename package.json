@@ -22,6 +22,7 @@
         "@aws-sdk/client-dynamodb": "^3.948.0",
         "@aws-sdk/lib-dynamodb": "^3.948.0",
         "@mizzle/eslint-config": "workspace:*",
+        "@mizzle/shared": "workspace:*",
         "@mizzle/tsconfig": "workspace:*",
         "@types/bun": "latest",
         "@typescript-eslint/eslint-plugin": "^8.0.0",

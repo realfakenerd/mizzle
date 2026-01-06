@@ -1,0 +1,15 @@
+{
+  "name": "@mizzle/shared",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "scripts": {
+    "check": "tsc --noEmit",
+    "lint": "eslint \"src/**/*.ts\""
+  },
+  "devDependencies": {
+    "@mizzle/tsconfig": "workspace:*",
+    "@mizzle/eslint-config": "workspace:*"
+  }
+}
