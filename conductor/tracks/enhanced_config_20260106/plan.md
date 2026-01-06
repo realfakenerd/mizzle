@@ -14,7 +14,7 @@ Enhance the configuration schema and client utility.
 Implement the interactive initialization command.
 
 - [x] Task: Create `src/cli/commands/init.ts` with Clack prompts (8c67649)
-- [ ] Task: Wire up the `init` command in `src/cli.ts`
+- [~] Task: Wire up the `init` command in `src/cli.ts`
 - [ ] Task: Add tests for the `init` command
 
 ## Phase 3: Validation & Testing

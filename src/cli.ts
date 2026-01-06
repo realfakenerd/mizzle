@@ -3,6 +3,7 @@ import { Command } from "commander";
 import * as p from "@clack/prompts";
 import { loadConfig } from "./config";
 import { generateCommand } from "./cli/commands/generate";
+import { initCommand } from "./cli/commands/init";
 import { pushCommand } from "./cli/commands/push";
 import { listCommand } from "./cli/commands/list";
 import { dropCommand } from "./cli/commands/drop";
@@ -13,6 +14,18 @@ program
   .name("mizzle")
   .description("Mizzle Migration CLI")
   .version("0.0.1");
+
+program
+  .command("init")
+  .description("Initialize Mizzle configuration")
+  .action(async () => {
+    try {
+        await initCommand();
+    } catch (e: any) {
+        p.log.error(e.message);
+        process.exit(1);
+    }
+  });
 
 program
   .command("generate")
