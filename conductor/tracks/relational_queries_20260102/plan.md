@@ -33,7 +33,7 @@ Extend the API to support complex relational patterns.
 - [x] Task: Implement support for 1:1 relations and correctly picking the single related item. 3199e81
 - [x] Task: Implement Many-to-Many (N:M) resolution via bridge entities/GSI. 15f2d0c
 - [x] Task: Implement GSI-based relations (where the link exists on a GSI). 15f2d0c
-- [ ] Task: Implement `findFirst()` with appropriate limits and parsing.
+- [x] Task: Implement `findFirst()` with appropriate limits and parsing. 57f5dfb
 - [ ] Task: Conductor - User Manual Verification 'Advanced Relations' (Protocol in workflow.md)
 
 ## Phase 5: Final Verification & Type Safety
