@@ -40,5 +40,5 @@ Extend the API to support complex relational patterns.
 Ensure the entire implementation is robust and follows the "Drizzle/Prisma" ergonomics.
 
 - [x] Task: Run `bun run check` to verify deep type safety for nested `include` calls. 33556f4
-- [ ] Task: Run full test suite `bun run test` to ensure no regressions in existing CRUD operations.
+- [~] Task: Run full test suite `bun run test` to ensure no regressions in existing CRUD operations.
 - [ ] Task: Conductor - User Manual Verification 'Final Verification & Type Safety' (Protocol in workflow.md)

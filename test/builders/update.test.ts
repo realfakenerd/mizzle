@@ -48,7 +48,7 @@ describe("Update Builder", () => {
             send: vi.fn().mockResolvedValue({ Attributes: { name: "John", id: "123" } }),
         } as any;
 
-        const db = mizzle({ config: {} } as any);
+        const db = mizzle(client);
         (db as any).docClient = mockDocClient;
 
         await db.update(user)
@@ -81,7 +81,7 @@ describe("Update Builder", () => {
             send: vi.fn().mockResolvedValue({ Attributes: { age: 31 } }),
         } as any;
 
-        const db = mizzle({ config: {} } as any);
+        const db = mizzle(client);
         (db as any).docClient = mockDocClient;
 
         await db.update(user)
@@ -101,7 +101,7 @@ describe("Update Builder", () => {
             send: vi.fn().mockResolvedValue({ Attributes: {} }),
         } as any;
 
-        const db = mizzle({ config: {} } as any);
+        const db = mizzle(client);
         (db as any).docClient = mockDocClient;
 
         await db.update(user)
@@ -123,7 +123,7 @@ describe("Update Builder", () => {
             send: vi.fn().mockResolvedValue({ Attributes: {} }),
         } as any;
 
-        const db = mizzle({ config: {} } as any);
+        const db = mizzle(client);
         (db as any).docClient = mockDocClient;
 
         await db.update(user)
@@ -143,7 +143,7 @@ describe("Update Builder", () => {
             send: vi.fn().mockResolvedValue({ Attributes: { name: "John", age: 30 } }),
         } as any;
 
-        const db = mizzle({ config: {} } as any);
+        const db = mizzle(client);
         (db as any).docClient = mockDocClient;
 
         const result = await db.update(user)
@@ -163,7 +163,7 @@ describe("Update Builder", () => {
             send: vi.fn().mockResolvedValue({ Attributes: {} }),
         } as any;
 
-        const db = mizzle({ config: {} } as any);
+        const db = mizzle(client);
         (db as any).docClient = mockDocClient;
 
         await db.update(user)
