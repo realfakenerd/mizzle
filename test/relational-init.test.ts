@@ -19,7 +19,9 @@ describe("Relational Initialization", () => {
 
     it("should initialize with relations", () => {
         const relations = {
-            users: { /* mock entity */ }
+            users: {
+                /* mock entity */
+            },
         };
         const db = mizzle({ client, relations });
         expect(db).toBeInstanceOf(DynamoDB);
