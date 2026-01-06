@@ -12,7 +12,7 @@ Initialize the documentation project and integrate it into the monorepo.
 ## Phase 2: Core Guides & Conceptual Content
 Establish the foundational narrative and usage guides.
 
-- [ ] Task: Create "Introduction & Vision" content based on `product.md`
+- [x] Task: Create "Introduction & Vision" content based on `product.md` (d7d5302)
 - [ ] Task: Create "Getting Started" guide (Installation, Config, First Query)
 - [ ] Task: Create "Single-Table Design" guide (Prefixing, Static Keys, Composite Keys)
 - [ ] Task: Conductor - User Manual Verification 'Core Guides & Conceptual Content' (Protocol in workflow.md)
