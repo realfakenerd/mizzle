@@ -1,6 +1,6 @@
 import { type MizzleConfig } from "../config";
 import { discoverSchema } from "../discovery";
-import { loadSnapshot, saveSnapshot, generateSnapshot, getNextMigrationVersion, type MizzleSnapshot, type SchemaCurrent } from "mizzle/snapshot";
+import { loadSnapshot, saveSnapshot, generateSnapshot, getNextMigrationVersion } from "mizzle/snapshot";
 import { compareSchema, type SchemaChange } from "mizzle/diff";
 import { join } from "path";
 import { writeFile, mkdir } from "fs/promises";

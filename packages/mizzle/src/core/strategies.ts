@@ -5,7 +5,7 @@ import {
     LogicalExpression,
     type Expression,
 } from "../expressions/operators";
-import { Entity, PhysicalTable } from "./table";
+import { Entity } from "./table";
 
 export type KeyStrategyType = "static" | "prefix" | "composite";
 

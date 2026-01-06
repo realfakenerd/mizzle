@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, beforeAll, afterAll } from "vitest";
+import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { dynamoTable, dynamoEntity } from "mizzle/table";
 import { string, uuid, number, boolean, list, map, stringSet, numberSet } from "mizzle/columns";
 import { prefixKey, staticKey } from "mizzle";
@@ -60,7 +60,7 @@ describe("Insert Command", () => {
                     WriteCapacityUnits: 5,
                 },
             }));
-        } catch (e) {
+        } catch {
             // Table might already exist
         }
     });
@@ -68,7 +68,7 @@ describe("Insert Command", () => {
     afterAll(async () => {
         try {
             await client.send(new DeleteTableCommand({ TableName: tableName }));
-        } catch (e) {}
+        } catch { /* ignore */ }
     });
 
     it("should correctly resolve keys and insert data", async () => {

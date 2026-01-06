@@ -17,9 +17,7 @@ const mockTable = (name: string, pkName: string, pkType: string) => {
     const table = new PhysicalTable(name, {
         pk: { build: () => mockColumn(pkName, pkType) } as any
     });
-    // @ts-ignore
     table[TABLE_SYMBOLS.TABLE_NAME] = name;
-    // @ts-ignore
     table[TABLE_SYMBOLS.PARTITION_KEY] = mockColumn(pkName, pkType);
     return table;
 };
@@ -84,7 +82,6 @@ describe("Snapshot Generation", () => {
 
     test("should include indexes in snapshot", () => {
         const table = mockTable("users", "id", "S");
-        // @ts-ignore
         table[TABLE_SYMBOLS.INDEXES] = {
             "byEmail": { type: "gsi", config: { pk: "email" } },
             "byDate": { type: "lsi", config: { sk: "date" } }

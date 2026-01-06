@@ -121,50 +121,46 @@ describe("Relational Query Integration", () => {
         // Delete if exists
         try {
             await client.send(new DeleteTableCommand({ TableName: tableName }));
-        } catch (e) {}
+        } catch { /* ignore */ }
 
         // Create
-        try {
-            await client.send(new CreateTableCommand({
-                TableName: tableName,
-                KeySchema: [
-                    { AttributeName: "pk", KeyType: "HASH" },
-                    { AttributeName: "sk", KeyType: "RANGE" },
-                ],
-                AttributeDefinitions: [
-                    { AttributeName: "pk", AttributeType: "S" },
-                    { AttributeName: "sk", AttributeType: "S" },
-                    { AttributeName: "gsi1pk", AttributeType: "S" },
-                    { AttributeName: "gsi1sk", AttributeType: "S" },
-                ],
-                GlobalSecondaryIndexes: [
-                    {
-                        IndexName: "gsi1",
-                        KeySchema: [
-                            { AttributeName: "gsi1pk", KeyType: "HASH" },
-                            { AttributeName: "gsi1sk", KeyType: "RANGE" },
-                        ],
-                        Projection: { ProjectionType: "ALL" },
-                        ProvisionedThroughput: {
-                            ReadCapacityUnits: 5,
-                            WriteCapacityUnits: 5,
-                        },
-                    }
-                ],
-                ProvisionedThroughput: {
-                    ReadCapacityUnits: 5,
-                    WriteCapacityUnits: 5,
-                },
-            }));
-        } catch (e: any) {
-            throw e;
-        }
+        await client.send(new CreateTableCommand({
+            TableName: tableName,
+            KeySchema: [
+                { AttributeName: "pk", KeyType: "HASH" },
+                { AttributeName: "sk", KeyType: "RANGE" },
+            ],
+            AttributeDefinitions: [
+                { AttributeName: "pk", AttributeType: "S" },
+                { AttributeName: "sk", AttributeType: "S" },
+                { AttributeName: "gsi1pk", AttributeType: "S" },
+                { AttributeName: "gsi1sk", AttributeType: "S" },
+            ],
+            GlobalSecondaryIndexes: [
+                {
+                    IndexName: "gsi1",
+                    KeySchema: [
+                        { AttributeName: "gsi1pk", KeyType: "HASH" },
+                        { AttributeName: "gsi1sk", KeyType: "RANGE" },
+                    ],
+                    Projection: { ProjectionType: "ALL" },
+                    ProvisionedThroughput: {
+                        ReadCapacityUnits: 5,
+                        WriteCapacityUnits: 5,
+                    },
+                }
+            ],
+            ProvisionedThroughput: {
+                ReadCapacityUnits: 5,
+                WriteCapacityUnits: 5,
+            },
+        }));
     });
 
     afterAll(async () => {
         try {
             await client.send(new DeleteTableCommand({ TableName: tableName }));
-        } catch (e) {}
+        } catch { /* ignore */ }
     });
 
     it("should fetch user with their posts in a single query", async () => {

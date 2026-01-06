@@ -39,7 +39,7 @@ class InsertBase<
         const itemToSave = this.processValues(this.valuesData);
         const resolution = this.resolveKeys(undefined, itemToSave);
         
-        let finalItem = { ...itemToSave, ...resolution.keys };
+        const finalItem = { ...itemToSave, ...resolution.keys };
 
         // Also resolve GSI keys if they are defined in strategies but not in resolution.keys
         // resolveStrategies only returns PK/SK for main table or a specific index.

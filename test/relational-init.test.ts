@@ -25,7 +25,6 @@ describe("Relational Initialization", () => {
         };
         const db = mizzle({ client, relations });
         expect(db).toBeInstanceOf(DynamoDB);
-        // @ts-ignore - query will be tested later
         expect(db.query).toBeDefined();
     });
 });

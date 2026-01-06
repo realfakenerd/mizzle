@@ -16,7 +16,7 @@
         "lint": "turbo run lint && bun run lint:root",
         "check:turbo": "turbo run check check:root",
         "lint:turbo": "turbo run lint lint:root",
-        "lint:root": "eslint \"src/**/*.ts\" \"test/**/*.ts\""
+        "lint:root": "eslint \"test/**/*.ts\""
     },
     "packageManager": "bun@1.3.5",
     "devDependencies": {

@@ -20,11 +20,11 @@ const posts = dynamoEntity(table, "posts", {
     content: string("content"),
 });
 
-const usersRelations = defineRelations(users, ({ many }) => ({
+defineRelations(users, ({ many }) => ({
     posts: many(posts),
 }));
 
-const postsRelations = defineRelations(posts, ({ one }) => ({
+defineRelations(posts, ({ one }) => ({
     author: one(users),
 }));
 

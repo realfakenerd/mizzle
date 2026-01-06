@@ -1,11 +1,11 @@
-import { describe, it, expect, beforeEach, beforeAll, afterAll } from "vitest";
+import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { dynamoTable, dynamoEntity } from "mizzle/table";
 import { string, uuid, number, boolean } from "mizzle/columns";
 import { prefixKey, staticKey } from "mizzle";
 import { DynamoDBClient, CreateTableCommand, DeleteTableCommand } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { mizzle } from "mizzle/db";
-import { eq, and } from "../../packages/mizzle/src/expressions/operators";
+import { eq } from "../../packages/mizzle/src/expressions/operators";
 
 const client = new DynamoDBClient({
     endpoint: "http://localhost:8000",
@@ -81,7 +81,7 @@ describe("Select Command", () => {
 
             await docClient.send(new PutCommand({ TableName: tableName, Item: testUser1 }));
             await docClient.send(new PutCommand({ TableName: tableName, Item: testUser2 }));
-        } catch (e) {
+        } catch {
             // Table might already exist
         }
     });
@@ -89,7 +89,7 @@ describe("Select Command", () => {
     afterAll(async () => {
         try {
             await client.send(new DeleteTableCommand({ TableName: tableName }));
-        } catch (e) {}
+        } catch { /* ignore */ }
     });
 
     it("should query by primary key", async () => {
@@ -207,7 +207,7 @@ describe("Select Command with GSI", () => {
                 } 
             }));
 
-        } catch (e) {
+        } catch {
             // Table might already exist
         }
     });
@@ -215,7 +215,7 @@ describe("Select Command with GSI", () => {
     afterAll(async () => {
         try {
              await client.send(new DeleteTableCommand({ TableName: tableName }));
-        } catch (e) {}
+        } catch { /* ignore */ }
     });
 
     it("should query using GSI (static PK)", async () => {

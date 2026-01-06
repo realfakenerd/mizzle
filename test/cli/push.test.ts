@@ -1,4 +1,4 @@
-import { expect, test, describe, beforeEach, afterEach, mock } from "bun:test";
+import { expect, test, describe, mock } from "bun:test";
 import { pushCommand } from "../../packages/mizzling/src/commands/push";
 import { PhysicalTable } from "mizzle/table";
 import { TABLE_SYMBOLS } from "@mizzle/shared";
@@ -19,9 +19,7 @@ const mockTable = (name: string) => {
     const table = new PhysicalTable(name, {
         pk: { build: () => ({ _: { name: "id", type: "string" }, getDynamoType: () => "S", name: "id" }) } as any
     });
-    // @ts-ignore
     table[TABLE_SYMBOLS.TABLE_NAME] = name;
-    // @ts-ignore
     table[TABLE_SYMBOLS.PARTITION_KEY] = { name: "id", getDynamoType: () => "S" };
     return table;
 };

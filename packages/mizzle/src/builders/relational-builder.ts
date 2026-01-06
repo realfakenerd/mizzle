@@ -42,7 +42,7 @@ export type RelationalQueryOptions<T extends Entity> = {
 
 export type InferRelationalModel<
     T extends Entity,
-    TOptions extends RelationalQueryOptions<T> = {}
+    TOptions extends RelationalQueryOptions<T> = Record<string, never>
 > = InferSelectedModel<T> & {
     [K in keyof TOptions['with'] & string]: any; 
 } & {

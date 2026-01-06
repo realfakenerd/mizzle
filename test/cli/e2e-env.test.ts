@@ -1,6 +1,6 @@
 import { expect, test, describe, beforeAll, afterAll } from "bun:test";
 import { spawn } from "bun";
-import { mkdirSync, rmSync, existsSync, readdirSync, writeFileSync } from "fs";
+import { mkdirSync, rmSync, readdirSync, writeFileSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";
 

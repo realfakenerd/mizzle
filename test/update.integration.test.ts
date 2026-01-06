@@ -54,13 +54,13 @@ describe("Update Integration", () => {
                     WriteCapacityUnits: 5,
                 },
             }));
-        } catch (e) {}
+        } catch { /* ignore */ }
     });
 
     afterAll(async () => {
         try {
             await client.send(new DeleteTableCommand({ TableName: tableName }));
-        } catch (e) {}
+        } catch { /* ignore */ }
     });
 
     it("should perform a full update lifecycle", async () => {

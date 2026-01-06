@@ -53,13 +53,13 @@ describe("Delete Command Integration", () => {
                     WriteCapacityUnits: 5,
                 },
             }));
-        } catch (e) {}
+        } catch { /* ignore */ }
     });
 
     afterAll(async () => {
         try {
             await client.send(new DeleteTableCommand({ TableName: tableName }));
-        } catch (e) {}
+        } catch { /* ignore */ }
     });
 
     it("should correctly delete an item by its primary key", async () => {

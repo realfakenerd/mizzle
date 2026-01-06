@@ -35,7 +35,7 @@ describe("Schema Discovery", () => {
     
     expect(result.tables).toHaveLength(1);
     expect(result.tables[0]).toBeInstanceOf(PhysicalTable);
-    // @ts-ignore
+    // @ts-expect-error test-internal
     expect(result.tables[0][Symbol.for("mizzle:TableName")]).toBe("users");
   });
 
@@ -60,7 +60,7 @@ describe("Schema Discovery", () => {
     
     expect(result.entities).toHaveLength(1);
     expect(result.entities[0]).toBeInstanceOf(Entity);
-    // @ts-ignore
+    // @ts-expect-error test-internal
     expect(result.entities[0][Symbol.for("mizzle:EntityName")]).toBe("User");
   });
 
@@ -93,7 +93,7 @@ describe("Schema Discovery", () => {
     });
     
     expect(result.tables).toHaveLength(1);
-    // @ts-ignore
+    // @ts-expect-error test-internal
     expect(result.tables[0][Symbol.for("mizzle:TableName")]).toBe("users_dir");
   });
 

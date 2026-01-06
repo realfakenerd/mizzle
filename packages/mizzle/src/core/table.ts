@@ -24,7 +24,7 @@ type IndexesStrategy<
 > =
     TIndexes extends Record<string, IndexBuilder>
         ? { [K in keyof TIndexes]?: IndexStrategyConfig<TIndexes[K]> }
-        : {};
+        : object;
 
 export type StrategyCallback<
     TColumns extends Record<string, Column>,
@@ -186,7 +186,7 @@ export type UpdateTableConfig<
     TUpdate extends Partial<PhysicalTableConfig>,
 > = Required<Update<T, TUpdate>>;
 
-export type AnyTable<TPartial extends Partial<PhysicalTableConfig> = {}> =
+export type AnyTable<TPartial extends Partial<PhysicalTableConfig> = object> =
     PhysicalTable<UpdateTableConfig<PhysicalTableConfig, TPartial>>;
 
 export function dynamoEntity<

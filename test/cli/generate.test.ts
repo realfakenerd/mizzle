@@ -2,7 +2,7 @@ import { expect, test, describe, beforeEach, afterEach, mock, spyOn } from "bun:
 import { generateCommand } from "../../packages/mizzling/src/commands/generate";
 import { PhysicalTable } from "mizzle/table";
 import { TABLE_SYMBOLS } from "@mizzle/shared";
-import { mkdirSync, rmSync, writeFileSync, existsSync, readFileSync } from "fs";
+import { mkdirSync, rmSync, existsSync, readFileSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";
 
@@ -22,9 +22,7 @@ const mockTable = (name: string) => {
     const table = new PhysicalTable(name, {
         pk: { build: () => ({ _: { name: "id", type: "string" }, getDynamoType: () => "S", name: "id" }) } as any
     });
-    // @ts-ignore
     table[TABLE_SYMBOLS.TABLE_NAME] = name;
-    // @ts-ignore
     table[TABLE_SYMBOLS.PARTITION_KEY] = { name: "id", getDynamoType: () => "S" };
     return table;
 };

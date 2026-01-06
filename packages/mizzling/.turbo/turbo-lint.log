@@ -1,12 +1,2 @@
 
 [0m[2m[35m$[0m [2m[1meslint "src/**/*.ts"[0m
-[0m[0m
-[0m[4m/home/luke/programs/mizzle/packages/mizzling/src/commands/generate.ts[24m[0m
-[0m  [2m3:86[22m   [33mwarning[39m  'MizzleSnapshot' is defined but never used  [2m@typescript-eslint/no-unused-vars[22m[0m
-[0m  [2m3:107[22m  [33mwarning[39m  'SchemaCurrent' is defined but never used   [2m@typescript-eslint/no-unused-vars[22m[0m
-[0m[0m
-[0m[4m/home/luke/programs/mizzle/packages/mizzling/src/discovery.ts[24m[0m
-[0m  [2m3:10[22m  [33mwarning[39m  'ENTITY_SYMBOLS' is defined but never used  [2m@typescript-eslint/no-unused-vars[22m[0m
-[0m[0m
-[0m[33m[1m✖ 3 problems (0 errors, 3 warnings)[22m[39m[0m
-[0m[33m[1m[22m[39m[0m

@@ -22,9 +22,7 @@ const mockTable = (name: string) => {
     const table = new PhysicalTable(name, {
         pk: { build: () => ({ _: { name: "id", type: "string" }, getDynamoType: () => "S", name: "id" }) } as any
     });
-    // @ts-ignore
     table[TABLE_SYMBOLS.TABLE_NAME] = name;
-    // @ts-ignore
     table[TABLE_SYMBOLS.PARTITION_KEY] = { name: "id", getDynamoType: () => "S" };
     return table;
 };

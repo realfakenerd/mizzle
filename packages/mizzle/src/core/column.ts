@@ -8,7 +8,7 @@ import type {
 import type { PhysicalTable } from "./table";
 
 export type AnyColumn<
-    TPartial extends Partial<ColumnBaseConfig<string, ColumnDataType>> = {},
+    TPartial extends Partial<ColumnBaseConfig<string, ColumnDataType>> = Record<string, never>,
 > = Column<
     Required<Update<ColumnBaseConfig<string, ColumnDataType>, TPartial>>
 >;

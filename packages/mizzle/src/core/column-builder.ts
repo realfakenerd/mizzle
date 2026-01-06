@@ -25,9 +25,8 @@ export interface ColumnBuilderBaseConfig<
 }
 
 export type BuildExtraConfigColumns<
-    _TTableName extends string,
     TConfigMap extends Record<string, ColumnBuilderBase>,
-> = { [Key in keyof TConfigMap]: ExtraConfigColumn } & {};
+> = Simplify<{ [Key in keyof TConfigMap]: ExtraConfigColumn }>;
 
 export type MakeColumnConfig<
     T extends ColumnBuilderBaseConfig<string, ColumnDataType>,
@@ -44,7 +43,7 @@ export type MakeColumnConfig<
     hasRuntimeDefault: T extends { hasRuntimeDefault: true } ? true : false;
     isPartitionKey: T extends { isPartitionKey: true } ? true : false;
     isSortKey: T extends { isSortKey: true } ? true : false;
-} & {};
+} & object;
 
 export type ColumnBuilderRuntimeConfig<
     TData,
@@ -135,7 +134,7 @@ export type BuildColumn<
     TBuilder extends ColumnBuilderBase,
 > = Column<
     MakeColumnConfig<TBuilder["_"], TTableName>,
-    {},
+    object,
     Simplify<
         Omit<TBuilder["_"], keyof MakeColumnConfig<TBuilder["_"], TTableName>>
     >
@@ -144,7 +143,7 @@ export type BuildColumn<
 export type BuildColumns<
     TTableName extends string,
     TConfigMap extends Record<string, ColumnBuilderBase>,
-> = {
+> = Simplify<{
     [Key in keyof TConfigMap]: BuildColumn<
         TTableName,
         {
@@ -155,7 +154,7 @@ export type BuildColumns<
             };
         }
     >;
-} & {};
+}>;
 
 export abstract class ColumnBuider<
     T extends ColumnBuilderBaseConfig<

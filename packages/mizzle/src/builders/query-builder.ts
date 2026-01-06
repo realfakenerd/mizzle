@@ -52,7 +52,6 @@ export class DynamoQueryBuilder<T extends Entity<any>> {
 	async execute(): Promise<InferSelectedModel<T>[]> {
 		const table = this.table as any;
 		const tableName = resolveTableName(this.table);
-		const entityName = table[ENTITY_SYMBOLS.ENTITY_NAME] || (table as any).tableName;
 		
 		const resolution = resolveStrategies(this.table, this.whereClause, undefined, this.indexName);
 
@@ -76,45 +75,45 @@ export class DynamoQueryBuilder<T extends Entity<any>> {
 		const getColName = (colRef: string | { name: string }) =>
 			typeof colRef === 'string' ? colRef : colRef.name;
 
-		        // Função recursiva para transformar Condition -> String do Dynamo
-				const buildExpression = (cond: Condition): string => {
-					const c = cond as any;
-					if (c.type === 'logical' && c.conditions) {
-						const parts = c.conditions.map(buildExpression);
-						return `(${parts.join(` ${c.operator} `)})`;
-					}
-		
-					if (c.type === 'binary' && c.column) {
-						const colNameStr = getColName(c.column);
-						const colName = addName(colNameStr);
+		// Função recursiva para transformar Condition -> String do Dynamo
+		const buildExpression = (cond: Condition): string => {
+			const c = cond as any;
+			if (c.type === 'logical' && c.conditions) {
+				const parts = c.conditions.map(buildExpression);
+				return `(${parts.join(` ${c.operator} `)})`;
+			}
 
-						if (c.operator === 'begins_with') {
-							const valKey = addValue(c.value);
-							return `begins_with(${colName}, ${valKey})`;
-						}
+			if (c.type === 'binary' && c.column) {
+				const colNameStr = getColName(c.column);
+				const colName = addName(colNameStr);
 
-						if (c.operator === 'between') {
-							const valKey1 = addValue(c.value[0]);
-							const valKey2 = addValue(c.value[1]);
-							return `${colName} BETWEEN ${valKey1} AND ${valKey2}`;
-						}
+				if (c.operator === 'begins_with') {
+					const valKey = addValue(c.value);
+					return `begins_with(${colName}, ${valKey})`;
+				}
 
-						if (c.operator === 'in') {
-							const valKeys = (c.value as any[]).map(val => addValue(val));
-							return `${colName} IN (${valKeys.join(', ')})`;
-						}
+				if (c.operator === 'between') {
+					const valKey1 = addValue(c.value[0]);
+					const valKey2 = addValue(c.value[1]);
+					return `${colName} BETWEEN ${valKey1} AND ${valKey2}`;
+				}
 
-						const valKey = addValue(c.value);
-						return `${colName} ${c.operator} ${valKey}`;
-					}
-					return '';
-				};
-		
-				// --- Lógica de Decisão: Query vs Scan ---
-		
-				let keyConditionExpression = '';
-				let filterExpression = '';
-				let isQuery = resolution.hasPartitionKey;
+				if (c.operator === 'in') {
+					const valKeys = (c.value as any[]).map(val => addValue(val));
+					return `${colName} IN (${valKeys.join(', ')})`;
+				}
+
+				const valKey = addValue(c.value);
+				return `${colName} ${c.operator} ${valKey}`;
+			}
+			return '';
+		};
+
+		// --- Lógica de Decisão: Query vs Scan ---
+
+		let keyConditionExpression = '';
+		let filterExpression = '';
+		const isQuery = resolution.hasPartitionKey;
 		
 				if (isQuery) {
                     let pkName: string;

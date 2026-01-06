@@ -1,4 +1,4 @@
-import { expect, test, describe, beforeEach, afterEach, spyOn, mock } from "bun:test";
+import { expect, test, describe, beforeEach, spyOn } from "bun:test";
 import { dropCommand } from "../../packages/mizzling/src/commands/drop";
 import * as prompts from "@clack/prompts";
 
@@ -12,7 +12,7 @@ const multiselectSpy = spyOn(prompts, "multiselect");
 const confirmSpy = spyOn(prompts, "confirm");
 const cancelSpy = spyOn(prompts, "cancel").mockImplementation(() => {});
 const isCancelSpy = spyOn(prompts, "isCancel").mockImplementation((val): val is symbol => val === Symbol("clack:cancel"));
-const spinnerSpy = spyOn(prompts, "spinner").mockImplementation(() => ({
+spyOn(prompts, "spinner").mockImplementation(() => ({
     start: () => {},
     stop: () => {},
     message: () => {}

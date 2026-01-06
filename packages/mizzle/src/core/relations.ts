@@ -56,7 +56,7 @@ export interface RelationsDefinition<TEntity extends Entity = Entity> {
 /**
  * Callback function to define relations.
  */
-export type RelationsCallback<TEntity extends Entity = Entity> = (helpers: {
+export type RelationsCallback = (helpers: {
     /**
      * Define a one-to-one relationship.
      */
@@ -79,7 +79,7 @@ export type RelationsCallback<TEntity extends Entity = Entity> = (helpers: {
  */
 export function defineRelations<TEntity extends Entity>(
     entity: TEntity,
-    relations: RelationsCallback<TEntity>
+    relations: RelationsCallback
 ): RelationsDefinition<TEntity> {
     const config = relations({
         one: (to, config) => new Relation("one", { to, ...config }),
@@ -127,7 +127,7 @@ export function extractMetadata(schema: Record<string, any>): InternalRelational
     }
 
     // Second pass: identify relations
-    for (const [key, value] of Object.entries(schema)) {
+    for (const [, value] of Object.entries(schema)) {
         if (value && value[RELATION_SYMBOLS.RELATION_CONFIG]) {
             const definition = value as RelationsDefinition;
             // Find the key for this entity in the metadata
@@ -136,7 +136,7 @@ export function extractMetadata(schema: Record<string, any>): InternalRelational
             );
 
             if (entityEntry) {
-                const [entityName, meta] = entityEntry;
+                const [, meta] = entityEntry;
                 meta.relations = {
                     ...meta.relations,
                     ...definition.config,

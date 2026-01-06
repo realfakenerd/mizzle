@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { dynamoTable, dynamoEntity } from "mizzle/table";
 import { string, number } from "mizzle/columns";
 import { prefixKey, staticKey } from "mizzle";

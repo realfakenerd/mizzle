@@ -15,12 +15,9 @@ const mockTable = (name: string, pkName: string, pkType: string, skName?: string
     const table = new PhysicalTable(name, {
         pk: { build: () => mockColumn(pkName, pkType) } as any
     });
-    // @ts-ignore
     table[TABLE_SYMBOLS.TABLE_NAME] = name;
-    // @ts-ignore
     table[TABLE_SYMBOLS.PARTITION_KEY] = mockColumn(pkName, pkType);
     if (skName && skType) {
-        // @ts-ignore
         table[TABLE_SYMBOLS.SORT_KEY] = mockColumn(skName, skType);
     }
     return table;
@@ -105,7 +102,6 @@ describe("Schema Diffing", () => {
   test("should resolve index types from entities", () => {
     const table = mockTable("users", "id", "S");
     // Add index definition manually
-    // @ts-ignore
     table[TABLE_SYMBOLS.INDEXES] = {
         "byEmail": { type: "gsi", config: { pk: "email" } }
     };
@@ -132,7 +128,6 @@ describe("Schema Diffing", () => {
 
   test("should throw if index column type cannot be resolved", () => {
     const table = mockTable("users", "id", "S");
-    // @ts-ignore
     table[TABLE_SYMBOLS.INDEXES] = {
         "byEmail": { type: "gsi", config: { pk: "email" } }
     };

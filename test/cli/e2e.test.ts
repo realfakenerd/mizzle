@@ -1,8 +1,9 @@
 import { expect, test, describe, beforeAll, afterAll } from "bun:test";
 import { spawn } from "bun";
-import { mkdirSync, rmSync, existsSync, readdirSync, readFileSync } from "fs";
+import { mkdirSync, rmSync, existsSync, readdirSync, writeFileSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";
+import { DynamoDBClient, DeleteTableCommand } from "@aws-sdk/client-dynamodb";
 
 const TEMP_DIR = join(tmpdir(), "mizzle-e2e-test-" + Date.now());
 const MIGRATIONS_DIR = join(TEMP_DIR, "migrations");
@@ -93,7 +94,6 @@ export default defineConfig({
         expect(listOutput).toContain("e2e_test_table");
 
         // 4. Cleanup: Drop the table manually to leave clean state
-        const { DynamoDBClient, DeleteTableCommand } = require("@aws-sdk/client-dynamodb");
         const client = new DynamoDBClient({
             region: "us-east-1",
             endpoint: "http://localhost:8000",
@@ -102,7 +102,3 @@ export default defineConfig({
         await client.send(new DeleteTableCommand({ TableName: "e2e_test_table" }));
     }, 20000); // Higher timeout for spawning
 });
-
-function writeFileSync(path: string, content: string) {
-    require("fs").writeFileSync(path, content);
-}

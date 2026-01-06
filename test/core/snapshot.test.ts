@@ -1,6 +1,6 @@
 import { expect, test, describe, beforeEach, afterEach } from "bun:test";
 import { saveSnapshot, loadSnapshot, type MizzleSnapshot } from "mizzle/snapshot";
-import { mkdirSync, rmSync, existsSync, readFileSync } from "fs";
+import { mkdirSync, rmSync, existsSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";
 
@@ -8,8 +8,6 @@ const TEMP_DIR = join(tmpdir(), "mizzle-snapshot-test-" + Date.now());
 const MIGRATIONS_DIR = join(TEMP_DIR, "migrations");
 
 describe("Snapshot Storage", () => {
-  const originalCwd = process.cwd();
-
   beforeEach(() => {
     mkdirSync(MIGRATIONS_DIR, { recursive: true });
   });

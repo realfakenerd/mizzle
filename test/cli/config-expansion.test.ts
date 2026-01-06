@@ -3,7 +3,6 @@ import { loadConfig, defineConfig, getClient } from "../../packages/mizzling/src
 import { writeFileSync, mkdirSync, rmSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import * as credentialProviders from "@aws-sdk/credential-provider-ini";
 
 const TEMP_DIR = join(tmpdir(), "mizzle-config-expansion-test-" + Date.now());

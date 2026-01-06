@@ -1,4 +1,4 @@
-import { expect, test, describe, it } from "bun:test";
+import { expect, describe, it } from "bun:test";
 import { getRemoteSnapshot } from "mizzle/introspection";
 
 const createMockClient = (tables: any[]) => {
