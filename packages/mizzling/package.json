@@ -7,6 +7,7 @@
   },
   "scripts": {
     "check": "tsc --noEmit",
+    "build": "tsc --noEmit false --allowImportingTsExtensions false",
     "lint": "eslint \"src/**/*.ts\""
   },
   "dependencies": {
