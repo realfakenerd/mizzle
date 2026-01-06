@@ -6,19 +6,24 @@ import starlight from '@astrojs/starlight';
 export default defineConfig({
 	integrations: [
 		starlight({
-			title: 'My Docs',
-			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/withastro/starlight' }],
+			title: 'Mizzle',
+			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/lukewarlow/mizzle' }],
 			sidebar: [
 				{
 					label: 'Guides',
 					items: [
-						// Each item here is one entry in the navigation menu.
-						{ label: 'Example Guide', slug: 'guides/example' },
+						{ label: 'Introduction', slug: 'guides/introduction' },
+						{ label: 'Getting Started', slug: 'guides/getting-started' },
+						{ label: 'Single-Table Design', slug: 'guides/single-table-design' },
 					],
 				},
 				{
-					label: 'Reference',
+					label: 'API Reference',
 					autogenerate: { directory: 'reference' },
+				},
+				{
+					label: 'CLI Reference',
+					slug: 'cli-reference',
 				},
 			],
 		}),
