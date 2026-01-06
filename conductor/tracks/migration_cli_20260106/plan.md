@@ -30,7 +30,7 @@ Build the core commands for creating migrations and syncing with DynamoDB.
 Add helper commands for environment inspection and cleanup.
 
 - [x] Task: Implement list command: Fetch and display remote DynamoDB table metadata [6016526]
-- [ ] Task: Implement `drop` command: Interactive table deletion with confirmation
+- [x] Task: Implement `drop` command: Interactive table deletion with confirmation [65831ff]
 - [ ] Task: Refine CLI output and error handling for all commands
 - [ ] Task: Conductor - User Manual Verification 'Utilities' (Protocol in workflow.md)
 
