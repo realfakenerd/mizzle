@@ -1,6 +1,6 @@
 import { expect, test, describe, beforeEach, afterEach } from "bun:test";
 import { discoverSchema } from "../../src/utils/discovery";
-import { PhysicalTable } from "../../src/core/table";
+import { PhysicalTable, Entity } from "../../src/core/table";
 import { writeFileSync, mkdirSync, rmSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";
@@ -28,15 +28,40 @@ describe("Schema Discovery", () => {
     `;
     writeFileSync(join(TEMP_DIR, "schema.ts"), schemaContent);
 
-    const tables = await discoverSchema({ 
+    const result = await discoverSchema({ 
       schema: join(TEMP_DIR, "schema.ts"),
       out: "./migrations" 
     });
     
-    expect(tables).toHaveLength(1);
-    expect(tables[0]).toBeInstanceOf(PhysicalTable);
+    expect(result.tables).toHaveLength(1);
+    expect(result.tables[0]).toBeInstanceOf(PhysicalTable);
     // @ts-ignore
-    expect(tables[0][Symbol.for("mizzle:TableName")]).toBe("users");
+    expect(result.tables[0][Symbol.for("mizzle:TableName")]).toBe("users");
+  });
+
+  test("should discover entities in a file", async () => {
+     const schemaContent = `
+      import { dynamoTable, dynamoEntity, Entity } from "${join(originalCwd, "src/core/table")}"; 
+      
+      const UsersTable = dynamoTable("users", {
+        pk: { build: () => ({ _: { name: "id", type: "string" } }) },
+      });
+
+      export const UserEntity = dynamoEntity(UsersTable, "User", {
+         id: { build: () => ({ _: { name: "id", type: "string" } }), setName: () => {} } as any
+      });
+    `;
+    writeFileSync(join(TEMP_DIR, "entity.ts"), schemaContent);
+
+    const result = await discoverSchema({ 
+      schema: join(TEMP_DIR, "entity.ts"),
+      out: "./migrations" 
+    });
+    
+    expect(result.entities).toHaveLength(1);
+    expect(result.entities[0]).toBeInstanceOf(Entity);
+    // @ts-ignore
+    expect(result.entities[0][Symbol.for("mizzle:EntityName")]).toBe("User");
   });
 
   test("should ignore non-table exports", async () => {
@@ -45,12 +70,13 @@ describe("Schema Discovery", () => {
     `;
     writeFileSync(join(TEMP_DIR, "other.ts"), schemaContent);
 
-    const tables = await discoverSchema({ 
+    const result = await discoverSchema({ 
       schema: join(TEMP_DIR, "other.ts"),
       out: "./migrations" 
     });
     
-    expect(tables).toHaveLength(0);
+    expect(result.tables).toHaveLength(0);
+    expect(result.entities).toHaveLength(0);
   });
 
   test("should discover tables in a directory", async () => {
@@ -61,14 +87,14 @@ describe("Schema Discovery", () => {
     mkdirSync(join(TEMP_DIR, "tables"), { recursive: true });
     writeFileSync(join(TEMP_DIR, "tables/users.ts"), schemaContent);
 
-    const tables = await discoverSchema({ 
+    const result = await discoverSchema({ 
       schema: join(TEMP_DIR, "tables"), // Directory path
       out: "./migrations" 
     });
     
-    expect(tables).toHaveLength(1);
+    expect(result.tables).toHaveLength(1);
     // @ts-ignore
-    expect(tables[0][Symbol.for("mizzle:TableName")]).toBe("users_dir");
+    expect(result.tables[0][Symbol.for("mizzle:TableName")]).toBe("users_dir");
   });
 
   test("should handle import failures gracefully", async () => {
@@ -77,10 +103,10 @@ describe("Schema Discovery", () => {
     `;
     writeFileSync(join(TEMP_DIR, "broken.ts"), schemaContent);
     
-    const tables = await discoverSchema({ 
+    const result = await discoverSchema({ 
         schema: join(TEMP_DIR, "broken.ts"),
         out: "./migrations" 
     });
-    expect(tables).toHaveLength(0);
+    expect(result.tables).toHaveLength(0);
   });
 });

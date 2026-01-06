@@ -1,11 +1,12 @@
 import { MizzleConfig } from "../config";
-import { PhysicalTable } from "../core/table";
+import { PhysicalTable, Entity } from "../core/table";
 import { Glob } from "bun";
 import { stat } from "fs/promises";
 
-export async function discoverSchema(config: MizzleConfig): Promise<PhysicalTable[]> {
+export async function discoverSchema(config: MizzleConfig): Promise<{ tables: PhysicalTable[], entities: Entity[] }> {
   const schemaPatterns = Array.isArray(config.schema) ? config.schema : [config.schema];
   const tables: PhysicalTable[] = [];
+  const entities: Entity[] = [];
   const scannedFiles = new Set<string>();
 
   const processFile = async (file: string) => {
@@ -18,6 +19,8 @@ export async function discoverSchema(config: MizzleConfig): Promise<PhysicalTabl
             const exportVal = imported[key];
             if (exportVal instanceof PhysicalTable) {
                 tables.push(exportVal);
+            } else if (exportVal instanceof Entity) {
+                entities.push(exportVal);
             }
         }
     } catch (e) {
@@ -51,5 +54,5 @@ export async function discoverSchema(config: MizzleConfig): Promise<PhysicalTabl
     }
   }
 
-  return tables;
+  return { tables, entities };
 }
