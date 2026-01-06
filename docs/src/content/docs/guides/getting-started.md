@@ -107,5 +107,5 @@ const user = await db.select()
 ## Next Steps
 
 - Explore [Single-Table Design](/guides/single-table-design/) patterns.
-- Check the [API Reference](/reference/example/) for detailed method documentation.
+- Check the [API Reference](/reference/select/) for detailed method documentation.
 - Learn about the [CLI Reference](/cli-reference/) for managing migrations.
