@@ -25,9 +25,9 @@ Detailed documentation of the technical interfaces.
 - [x] Task: Verify all internal documentation links and code examples (51d8b35)
 - [ ] Task: Conductor - User Manual Verification 'API & CLI Reference' (Protocol in workflow.md)
 
-## Phase 4: Deployment & Polish
+## Phase 4: Deployment & Polish [checkpoint: 9960f97]
 Finalize the site for production and host on Vercel.
 
 - [x] Task: Configure `vercel.json` and project settings for documentation hosting (5fc3540)
 - [x] Task: Perform a production build and audit performance/accessibility (d58ce3d)
-- [ ] Task: Conductor - User Manual Verification 'Deployment & Polish' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Deployment & Polish' (Protocol in workflow.md) (9960f97)
