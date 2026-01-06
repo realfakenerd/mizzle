@@ -22,7 +22,7 @@ Implement the logic for tracking schema state and detecting changes.
 Build the core commands for creating migrations and syncing with DynamoDB.
 
 - [x] Task: Implement generate command: Create snapshots and TS migration scripts [a8ad09e]
-- [ ] Task: Implement `push` command: Execute AWS SDK commands to sync schema to DB
+- [x] Task: Implement push command: Execute AWS SDK commands to sync schema to DB [33e3d02]
 - [ ] Task: Add interactive prompts using Clack for these commands
 - [ ] Task: Conductor - User Manual Verification 'Core Commands' (Protocol in workflow.md)
 
