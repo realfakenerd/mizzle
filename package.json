@@ -2,6 +2,9 @@
     "name": "mizzle",
     "module": "src/index.ts",
     "type": "module",
+    "bin": {
+        "mizzle": "src/cli.ts"
+    },
     "scripts": {
         "test": "bun test",
         "check": "tsc --noEmit"
@@ -17,6 +20,8 @@
         "typescript": "^5.9.3"
     },
     "dependencies": {
+        "@clack/prompts": "^0.11.0",
+        "commander": "^14.0.2",
         "uuid": "^13.0.0"
     }
 }
