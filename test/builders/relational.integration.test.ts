@@ -57,6 +57,9 @@ describe("Relational Query Integration", () => {
             usersRelations: defineRelations(users, ({ many }) => ({
                 posts: many(posts),
             })),
+            postsRelations: defineRelations(posts, ({ one }) => ({
+                author: one(users),
+            })),
         }
     });
 
@@ -152,12 +155,88 @@ describe("Relational Query Integration", () => {
 
                 expect(results[0].posts).toBeDefined();
 
-                expect(results[0].posts).toHaveLength(1);
+                        expect(results[0].posts).toHaveLength(1);
 
-                expect(results[0].posts[0].content).toBe("Hello from Bob");
+                        expect(results[0].posts[0].content).toBe("Hello from Bob");
 
-            });
+                    });
 
-        });
+                
+
+                    it("should fetch post with its author (1:1 relation)", async () => {
+
+                        const userId = "user-3";
+
+                        const postId = "post-4";
+
+                        
+
+                        // Seed data
+
+                        await db.insert(users).values({ id: userId, name: "Charlie" }).execute();
+
+                        await db.insert(posts).values({ id: postId, userId, content: "Charlie's Post" }).execute();
+
+                
+
+                                // Query post with author (one-to-one)
+
+                
+
+                                const results = await db.query.posts.findMany({
+
+                
+
+                                    where: (cols, { eq, and }) => and(
+
+                
+
+                                        eq(cols.id, postId),
+
+                
+
+                                        eq(cols.userId, userId)
+
+                
+
+                                    ),
+
+                
+
+                                    include: {
+
+                
+
+                                        author: true
+
+                
+
+                                    }
+
+                
+
+                                });
+
+                
+
+                        
+
+                
+
+                        expect(results).toHaveLength(1);
+
+                        expect(results[0].content).toBe("Charlie's Post");
+
+                        expect(results[0].author).toBeDefined();
+
+                        expect(results[0].author.name).toBe("Charlie");
+
+                        expect(Array.isArray(results[0].author)).toBe(false);
+
+                    });
+
+                });
+
+                
 
         
