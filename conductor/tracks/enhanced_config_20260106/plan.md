@@ -21,4 +21,4 @@ Implement the interactive initialization command.
 Ensure the new configuration system works across different scenarios.
 
 - [x] Task: Add unit tests for `getClient` with various configuration combinations (8806ba5)
-- [ ] Task: Update E2E tests to verify environment variable overrides
+- [~] Task: Update E2E tests to verify environment variable overrides
