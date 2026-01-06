@@ -36,9 +36,9 @@ Extend the API to support complex relational patterns.
 - [x] Task: Implement `findFirst()` with appropriate limits and parsing. 57f5dfb
 - [x] Task: Conductor - User Manual Verification 'Advanced Relations' (Protocol in workflow.md)
 
-## Phase 5: Final Verification & Type Safety
+## Phase 5: Final Verification & Type Safety [checkpoint: afc0c10]
 Ensure the entire implementation is robust and follows the "Drizzle/Prisma" ergonomics.
 
 - [x] Task: Run `bun run check` to verify deep type safety for nested `include` calls. 33556f4
-- [~] Task: Run full test suite `bun run test` to ensure no regressions in existing CRUD operations.
-- [ ] Task: Conductor - User Manual Verification 'Final Verification & Type Safety' (Protocol in workflow.md)
+- [x] Task: Run full test suite `bun run test` to ensure no regressions in existing CRUD operations. 33556f4
+- [x] Task: Conductor - User Manual Verification 'Final Verification & Type Safety' (Protocol in workflow.md)
