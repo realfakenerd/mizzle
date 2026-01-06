@@ -1,6 +1,7 @@
 import { join } from "path";
 import { existsSync } from "fs";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { fromIni } from "@aws-sdk/credential-provider-ini";
 
 export interface MizzleConfig {
   schema: string | string[];
@@ -21,14 +22,27 @@ export function defineConfig(config: MizzleConfig): MizzleConfig {
 }
 
 export function getClient(config: MizzleConfig): DynamoDBClient {
-    return new DynamoDBClient({
-        region: config.region || "us-east-1",
-        endpoint: config.endpoint,
-        credentials: {
-            accessKeyId: "local",
-            secretAccessKey: "local",
-        },
-    });
+  const clientConfig: any = {
+    region: config.region || "us-east-1",
+    endpoint: config.endpoint,
+    maxAttempts: config.maxAttempts,
+  };
+
+  if (config.credentials) {
+    clientConfig.credentials = config.credentials;
+  } else if (config.profile) {
+    clientConfig.credentials = fromIni({ profile: config.profile });
+  } else if (
+    config.endpoint &&
+    (config.endpoint.includes("localhost") || config.endpoint.includes("127.0.0.1"))
+  ) {
+    clientConfig.credentials = {
+      accessKeyId: "local",
+      secretAccessKey: "local",
+    };
+  }
+
+  return new DynamoDBClient(clientConfig);
 }
 
 export async function loadConfig(configName = "mizzle.config.ts"): Promise<MizzleConfig> {
