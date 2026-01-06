@@ -26,7 +26,7 @@ Build the core commands for creating migrations and syncing with DynamoDB.
 - [x] Task: Add interactive prompts using Clack for these commands [40296cd]
 - [ ] Task: Conductor - User Manual Verification 'Core Commands' (Protocol in workflow.md)
 
-## Phase 4: Utilities - `list` & `drop`
+## Phase 4: Utilities - `list` & `drop` [checkpoint: 6d5d3a5]
 Add helper commands for environment inspection and cleanup.
 
 - [x] Task: Implement list command: Fetch and display remote DynamoDB table metadata [6016526]
