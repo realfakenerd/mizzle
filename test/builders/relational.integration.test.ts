@@ -110,10 +110,54 @@ describe("Relational Query Integration", () => {
             }
         });
 
-        expect(results).toHaveLength(1);
-        expect(results[0].name).toBe("Alice");
-        expect(results[0].posts).toBeDefined();
-        // Since we haven't implemented the logic, this will fail here (or return empty posts)
-        expect(results[0].posts).toHaveLength(2);
-    });
-});
+                expect(results[0].posts).toHaveLength(2);
+
+            });
+
+        
+
+            it("should fetch user with their posts using 'include' keyword", async () => {
+
+                const userId = "user-2";
+
+                
+
+                // Seed data
+
+                await db.insert(users).values({ id: userId, name: "Bob" }).execute();
+
+                await db.insert(posts).values({ id: "post-3", userId, content: "Hello from Bob" }).execute();
+
+        
+
+                // Query with 'include'
+
+                const results = await db.query.users.findMany({
+
+                    where: (cols, { eq }) => eq(cols.id, userId),
+
+                    include: {
+
+                        posts: true
+
+                    }
+
+                });
+
+        
+
+                expect(results).toHaveLength(1);
+
+                expect(results[0].name).toBe("Bob");
+
+                expect(results[0].posts).toBeDefined();
+
+                expect(results[0].posts).toHaveLength(1);
+
+                expect(results[0].posts[0].content).toBe("Hello from Bob");
+
+            });
+
+        });
+
+        
