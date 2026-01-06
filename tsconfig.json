@@ -4,7 +4,13 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "@mizzle/shared": ["packages/shared/src/index.ts"]
+            "@mizzle/shared": ["packages/shared/src/index.ts"],
+            "mizzle": ["packages/mizzle/src/index.ts"],
+            "mizzle/columns": ["packages/mizzle/src/columns/index.ts"],
+            "mizzle/table": ["packages/mizzle/src/core/table.ts"],
+            "mizzle/snapshot": ["packages/mizzle/src/core/snapshot.ts"],
+            "mizzle/diff": ["packages/mizzle/src/core/diff.ts"],
+            "mizzle/introspection": ["packages/mizzle/src/core/introspection.ts"]
         },
         "noUnusedLocals": false,
         "noUnusedParameters": false,

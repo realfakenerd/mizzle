@@ -1,7 +1,7 @@
 import { expect, test, describe } from "bun:test";
-import { compareSchema } from "../../packages/mizzle/src/core/diff";
-import { PhysicalTable } from "../../packages/mizzle/src/core/table";
-import { type MizzleSnapshot } from "../../packages/mizzle/src/core/snapshot";
+import { compareSchema } from "mizzle/diff";
+import { PhysicalTable } from "mizzle/table";
+import { type MizzleSnapshot } from "mizzle/snapshot";
 import { TABLE_SYMBOLS, ENTITY_SYMBOLS } from "@mizzle/shared";
 
 // Mock helpers

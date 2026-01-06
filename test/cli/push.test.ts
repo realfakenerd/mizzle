@@ -1,6 +1,6 @@
 import { expect, test, describe, beforeEach, afterEach, mock } from "bun:test";
 import { pushCommand } from "../../src/cli/commands/push";
-import { PhysicalTable } from "../../packages/mizzle/src/core/table";
+import { PhysicalTable } from "mizzle/table";
 import { TABLE_SYMBOLS } from "@mizzle/shared";
 
 // Mock Clack

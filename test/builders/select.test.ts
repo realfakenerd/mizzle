@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, beforeAll, afterAll } from "vitest";
-import { dynamoTable, dynamoEntity } from "../../packages/mizzle/src/core/table";
-import { string, uuid, number, boolean } from "../../packages/mizzle/src/columns/all";
-import { prefixKey, staticKey } from "../../packages/mizzle/src/core/strategies";
+import { dynamoTable, dynamoEntity } from "mizzle/table";
+import { string, uuid, number, boolean } from "mizzle/columns";
+import { prefixKey, staticKey } from "mizzle";
 import { DynamoDBClient, CreateTableCommand, DeleteTableCommand } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { mizzle } from "../../src/utils/db";

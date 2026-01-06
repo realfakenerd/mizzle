@@ -1,12 +1,12 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
-import { InsertBuilder } from "../../packages/mizzle/src/builders/insert";
-import { RelationnalQueryBuilder } from "../../packages/mizzle/src/builders/relational-builder";
-import { SelectBuilder, type SelectedFields } from "../../packages/mizzle/src/builders/select";
-import type { Entity, InferInsertModel } from "../../packages/mizzle/src/core/table";
-import { UpdateBuilder } from "../../packages/mizzle/src/builders/update";
-import { DeleteBuilder } from "../../packages/mizzle/src/builders/delete";
-import { extractMetadata, type InternalRelationalSchema } from "../../packages/mizzle/src/core/relations";
+import { InsertBuilder } from "mizzle";
+import { RelationnalQueryBuilder } from "mizzle";
+import { SelectBuilder, type SelectedFields } from "mizzle";
+import type { Entity, InferInsertModel } from "mizzle/table";
+import { UpdateBuilder } from "mizzle";
+import { DeleteBuilder } from "mizzle";
+import { extractMetadata, type InternalRelationalSchema } from "mizzle";
 
 export type QuerySchema<TSchema extends Record<string, any>> = {
     [K in keyof TSchema as TSchema[K] extends Entity ? K : never]: RelationnalQueryBuilder<TSchema[K]>;

@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { dynamoTable, dynamoEntity } from "../../packages/mizzle/src/core/table";
-import { string, number } from "../../packages/mizzle/src/columns/all";
-import { prefixKey, staticKey } from "../../packages/mizzle/src/core/strategies";
+import { dynamoTable, dynamoEntity } from "mizzle/table";
+import { string, number } from "mizzle/columns";
+import { prefixKey, staticKey } from "mizzle";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { mizzle } from "../../src/utils/db";
 import { eq } from "../../packages/mizzle/src/expressions/operators";

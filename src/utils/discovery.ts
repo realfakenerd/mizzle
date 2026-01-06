@@ -1,5 +1,5 @@
 import { type MizzleConfig } from "../config";
-import { PhysicalTable, Entity } from "../../packages/mizzle/src/core/table";
+import { PhysicalTable, Entity } from "mizzle/table";
 import { ENTITY_SYMBOLS } from "@mizzle/shared";
 import { Glob } from "bun";
 import { stat } from "fs/promises";

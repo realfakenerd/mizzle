@@ -1,6 +1,6 @@
 import { expect, test, describe, beforeEach, afterEach } from "bun:test";
-import { generateSnapshot, getNextMigrationVersion, saveSnapshot, loadSnapshot, type MizzleSnapshot } from "../../packages/mizzle/src/core/snapshot";
-import { PhysicalTable } from "../../packages/mizzle/src/core/table";
+import { generateSnapshot, getNextMigrationVersion, saveSnapshot, loadSnapshot, type MizzleSnapshot } from "mizzle/snapshot";
+import { PhysicalTable } from "mizzle/table";
 import { TABLE_SYMBOLS, ENTITY_SYMBOLS } from "@mizzle/shared";
 import { mkdirSync, rmSync, writeFileSync } from "fs";
 import { join } from "path";

@@ -1,7 +1,7 @@
 import { type MizzleConfig, getClient } from "../../config";
 import { discoverSchema } from "../../utils/discovery";
-import { compareSchema } from "../../../packages/mizzle/src/core/diff";
-import { getRemoteSnapshot } from "../../../packages/mizzle/src/core/introspection";
+import { compareSchema } from "mizzle/diff";
+import { getRemoteSnapshot } from "mizzle/introspection";
 import { DynamoDBClient, CreateTableCommand, DeleteTableCommand } from "@aws-sdk/client-dynamodb";
 import { confirm, isCancel, cancel, intro, outro, spinner } from "@clack/prompts";
 

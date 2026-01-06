@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { dynamoTable, dynamoEntity } from "../packages/mizzle/src/core/table";
+import { dynamoTable, dynamoEntity } from "mizzle/table";
 import { mizzle } from "../src/utils/db";
-import { string } from "../packages/mizzle/src/columns/all";
-import { RelationnalQueryBuilder } from "../packages/mizzle/src/builders/relational-builder";
+import { string } from "mizzle/columns";
+import { RelationnalQueryBuilder } from "mizzle";
 
 const client = new DynamoDBClient({
     region: "us-east-1",

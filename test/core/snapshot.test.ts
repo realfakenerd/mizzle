@@ -1,5 +1,5 @@
 import { expect, test, describe, beforeEach, afterEach } from "bun:test";
-import { saveSnapshot, loadSnapshot, type MizzleSnapshot } from "../../packages/mizzle/src/core/snapshot";
+import { saveSnapshot, loadSnapshot, type MizzleSnapshot } from "mizzle/snapshot";
 import { mkdirSync, rmSync, existsSync, readFileSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";
