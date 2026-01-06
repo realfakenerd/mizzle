@@ -21,7 +21,7 @@ Establish the foundational narrative and usage guides.
 Detailed documentation of the technical interfaces.
 
 - [x] Task: Create API Reference pages for `select`, `insert`, `update`, `delete`, and `query` (a01dea6)
-- [ ] Task: Create CLI Guide for the `mizzling` tool (Migrations, Init, List, Push, Drop)
+- [x] Task: Create CLI Guide for the `mizzling` tool (Migrations, Init, List, Push, Drop) (fa7588a)
 - [ ] Task: Verify all internal documentation links and code examples
 - [ ] Task: Conductor - User Manual Verification 'API & CLI Reference' (Protocol in workflow.md)
 
