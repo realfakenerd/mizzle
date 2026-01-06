@@ -417,17 +417,53 @@ describe("Relational Query Integration", () => {
 
                                         expect(results).toHaveLength(1);
 
-                                        expect(results[0].name).toBe("Project Gamma");
+                                                expect(results[0].name).toBe("Project Gamma");
 
-                                        expect(results[0].members).toBeDefined();
+                                                expect(results[0].members).toBeDefined();
 
-                                        // This will currently fail because members are in different partitions and we haven't implemented GSI-following
+                                                expect(results[0].members).toHaveLength(2);
 
-                                        expect(results[0].members).toHaveLength(2);
+                                            });
 
-                                    });
+                                        
 
-                                });
+                                            it("should use findFirst to fetch a single item with relations", async () => {
+
+                                                const userId = "user-7";
+
+                                                await db.insert(users).values({ id: userId, name: "Grace" }).execute();
+
+                                                await db.insert(posts).values({ id: "post-5", userId, content: "First Post" }).execute();
+
+                                        
+
+                                                const result = await db.query.users.findFirst({
+
+                                                    where: (cols, { eq }) => eq(cols.id, userId),
+
+                                                    with: {
+
+                                                        posts: true
+
+                                                    }
+
+                                                });
+
+                                        
+
+                                                expect(result).toBeDefined();
+
+                                                expect(result!.name).toBe("Grace");
+
+                                                expect(result!.posts).toHaveLength(1);
+
+                                                expect(Array.isArray(result)).toBe(false);
+
+                                            });
+
+                                        });
+
+                                        
 
                                 
 

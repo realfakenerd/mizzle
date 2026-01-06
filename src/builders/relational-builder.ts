@@ -51,10 +51,6 @@ export class RelationnalQueryBuilder<T extends Entity> {
 	async findMany(options: RelationalQueryOptions<T> = {}): Promise<InferSelectedModel<T>[]> {
 		const qb = new DynamoQueryBuilder<T>(this.client, this.table);
 
-		if (options.limit) {
-			qb.limit(options.limit);
-		}
-
 		if (options.orderBy) {
 			qb.sort(options.orderBy === 'asc');
 		}
@@ -78,17 +74,28 @@ export class RelationnalQueryBuilder<T extends Entity> {
 		if (this.schema && this.entityName && (options.with || options.include) && resolution.hasPartitionKey && !resolution.indexName) {
 			const pkName = Object.keys(resolution.keys).find(k => {
 				const pt = this.table._?.table || (this.table as any)[ENTITY_SYMBOLS.PHYSICAL_TABLE];
-				return k === (pt?._?.partitionKey?.name || pt?.[TABLE_SYMBOLS.PARTITION_KEY]?.name);
+				const ptMeta = pt?._ || pt;
+				return k === (ptMeta.partitionKey?.name || ptMeta[TABLE_SYMBOLS.PARTITION_KEY]?.name);
 			}) || Object.keys(resolution.keys)[0];
 			const pkValue = resolution.keys[pkName];
 
 			// Override where to ONLY use the PK to get related items in the same collection
 			qb.where(eq({ name: pkName } as any, pkValue));
 
+			// NOTE: We DON'T apply options.limit here because we need the related items.
+			// Instead, we fetch the whole collection and limit the results later.
+
 			const rawItems = await qb.execute();
 			const parser = new ItemCollectionParser(this.schema);
 			results = parser.parse(rawItems, this.entityName, options.with || options.include);
+			
+			if (options.limit) {
+				results = results.slice(0, options.limit);
+			}
 		} else {
+			if (options.limit) {
+				qb.limit(options.limit);
+			}
 			if (condition) {
 				qb.where(condition);
 			}
