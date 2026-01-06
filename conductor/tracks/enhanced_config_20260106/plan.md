@@ -10,12 +10,12 @@ Enhance the configuration schema and client utility.
 - [x] Task: Implement environment variable override logic in `loadConfig` (0264bef)
 - [x] Task: Add JSDoc documentation for `MizzleConfig` and configuration utilities (b8fa422)
 
-## Phase 2: `init` Command
+## Phase 2: `init` Command [checkpoint: 7a37c16]
 Implement the interactive initialization command.
 
 - [x] Task: Create `src/cli/commands/init.ts` with Clack prompts (8c67649)
 - [x] Task: Wire up the `init` command in `src/cli.ts` (569d378)
-- [~] Task: Add tests for the `init` command
+- [x] Task: Add tests for the `init` command (42e2b92)
 
 ## Phase 3: Validation & Testing
 Ensure the new configuration system works across different scenarios.
