@@ -18,12 +18,12 @@ Implement the logic for tracking schema state and detecting changes.
 - [x] Task: Implement Snapshot generation and versioning logic [238a594]
 - [ ] Task: Conductor - User Manual Verification 'State Management' (Protocol in workflow.md)
 
-## Phase 3: Command Implementation - `generate` & `push`
+## Phase 3: Command Implementation - `generate` & `push` [checkpoint: 40296cd]
 Build the core commands for creating migrations and syncing with DynamoDB.
 
 - [x] Task: Implement generate command: Create snapshots and TS migration scripts [a8ad09e]
 - [x] Task: Implement push command: Execute AWS SDK commands to sync schema to DB [33e3d02]
-- [ ] Task: Add interactive prompts using Clack for these commands
+- [x] Task: Add interactive prompts using Clack for these commands [40296cd]
 - [ ] Task: Conductor - User Manual Verification 'Core Commands' (Protocol in workflow.md)
 
 ## Phase 4: Utilities - `list` & `drop`
