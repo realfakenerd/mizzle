@@ -15,7 +15,7 @@ Implement the interactive initialization command.
 
 - [x] Task: Create `src/cli/commands/init.ts` with Clack prompts (8c67649)
 - [x] Task: Wire up the `init` command in `src/cli.ts` (569d378)
-- [ ] Task: Add tests for the `init` command
+- [~] Task: Add tests for the `init` command
 
 ## Phase 3: Validation & Testing
 Ensure the new configuration system works across different scenarios.

@@ -53,4 +53,16 @@ describe("Init Command", () => {
     expect(logSpy).toHaveBeenCalledWith(expect.stringContaining("already exists"));
     logSpy.mockRestore();
   });
+
+  test("should abort if user cancels", async () => {
+    const CANCEL = Symbol("clack:cancel");
+    const cancelSpy = spyOn(prompts, "text").mockImplementation(async () => CANCEL);
+    const isCancelSpy = spyOn(prompts, "isCancel").mockImplementation((val) => val === CANCEL);
+    
+    await initCommand();
+    
+    expect(existsSync(join(TEMP_DIR, "mizzle.config.ts"))).toBe(false);
+    cancelSpy.mockRestore();
+    isCancelSpy.mockRestore();
+  });
 });
