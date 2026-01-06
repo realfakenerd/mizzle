@@ -5,7 +5,7 @@ Set up the monorepo structure, workspace configuration, and shared base configur
 
 - [x] Task: Initialize Bun Workspaces and Turborepo configuration (`turbo.json`) de43096
 - [x] Task: Create and configure `packages/tsconfig` for shared TypeScript settings bce88b1
-- [ ] Task: Create and configure `packages/eslint-config` for shared linting rules
+- [x] Task: Create and configure `packages/eslint-config` for shared linting rules 8d0fd2c
 - [ ] Task: Conductor - User Manual Verification 'Foundation & Scaffolding' (Protocol in workflow.md)
 
 ## Phase 2: Shared Package Extraction
