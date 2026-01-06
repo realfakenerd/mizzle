@@ -38,5 +38,5 @@ Add helper commands for environment inspection and cleanup.
 Ensure all components work together and the user experience is seamless.
 
 - [x] Task: Perform end-to-end testing of the full migration lifecycle [a608ed3]
-- [ ] Task: Update project documentation/README with CLI usage instructions
+- [x] Task: Update project documentation/README with CLI usage instructions [7e656b7]
 - [ ] Task: Conductor - User Manual Verification 'Integration & Polishing' (Protocol in workflow.md)
