@@ -2,7 +2,7 @@
 
 This plan details the steps to enhance the Mizzle CLI configuration and AWS integration.
 
-## Phase 1: Configuration Expansion
+## Phase 1: Configuration Expansion [checkpoint: 553e95d]
 Enhance the configuration schema and client utility.
 
 - [x] Task: Update `MizzleConfig` interface and `defineConfig` helper in `src/config.ts` (d806913)
