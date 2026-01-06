@@ -1,6 +1,6 @@
 # Plan: Monorepo Transformation with Turborepo
 
-## Phase 1: Foundation & Scaffolding
+## Phase 1: Foundation & Scaffolding [checkpoint: 24e9c21]
 Set up the monorepo structure, workspace configuration, and shared base configurations.
 
 - [x] Task: Initialize Bun Workspaces and Turborepo configuration (`turbo.json`) de43096
