@@ -163,6 +163,44 @@ Mizzle supports a wide range of DynamoDB types:
 *   `binarySet()`: `BS`
 *   `json()`: `S` (Serialized JSON)
 
+## CLI & Migrations
+
+Mizzle includes a CLI to manage your DynamoDB schema and track changes over time using snapshots and migration scripts.
+
+### 1. Configuration
+
+Create a `mizzle.config.ts` in your project root:
+
+```ts
+import { defineConfig } from "mizzle";
+
+export default defineConfig({
+  schema: "./schema.ts",      // Path to your schema definitions
+  out: "./migrations",       // Where to store snapshots and scripts
+  region: "us-east-1",       // Optional: Target AWS region
+  endpoint: "http://localhost:8000" // Optional: For local development
+});
+```
+
+### 2. Commands
+
+- **`generate`**: Scans your schema and creates a new migration if changes are detected.
+  ```bash
+  bun x mizzle generate --name add_users_table
+  ```
+- **`push`**: Directly syncs your local schema with the remote DynamoDB environment.
+  ```bash
+  bun x mizzle push --yes
+  ```
+- **`list`**: Lists all tables in your DynamoDB environment with their keys and indexes.
+  ```bash
+  bun x mizzle list
+  ```
+- **`drop`**: Interactively select and delete tables from the remote environment.
+  ```bash
+  bun x mizzle drop
+  ```
+
 ## Roadmap
 
 - [x] **Core Types:** String, Number, Boolean, UUID, List, Map, Sets.
@@ -173,5 +211,5 @@ Mizzle supports a wide range of DynamoDB types:
 - [x] **Update Operation:** Fluent builder for `UpdateItem`.
 - [x] **Delete Operation:** Fluent builder for `DeleteItem`.
 - [x] **Relational Queries:** `db.query.users.findMany({ with: { posts: true } })`.
+- [x] **Migration Tools:** CLI for managing table creation/updates.
 - [ ] **Transactions:** `TransactWriteItems` support.
-- [ ] **Migration Tools:** CLI for managing table creation/updates.
