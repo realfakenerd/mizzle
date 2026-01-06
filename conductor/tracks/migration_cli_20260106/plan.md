@@ -7,7 +7,7 @@ Setup the core CLI structure, configuration loading, and schema discovery logic.
 
 - [x] Task: Initialize CLI Package Structure and Dependencies (Clack, etc.) [01d6ea7]
 - [x] Task: Implement `mizzle.config.ts` loading and validation [f764c67]
-- [ ] Task: Create Schema Discovery utility to scan and parse Mizzle table definitions
+- [x] Task: Create Schema Discovery utility to scan and parse Mizzle table definitions [727bf59]
 - [ ] Task: Conductor - User Manual Verification 'Foundation & Configuration' (Protocol in workflow.md)
 
 ## Phase 2: State Management (Snapshots & Diffing)
