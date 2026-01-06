@@ -2,7 +2,7 @@
 
 This plan outlines the development of the Mizzle Migration CLI, providing a robust way to manage DynamoDB infrastructure using a Drizzle-like experience.
 
-## Phase 1: Foundation & Configuration
+## Phase 1: Foundation & Configuration [checkpoint: cc6dbec]
 Setup the core CLI structure, configuration loading, and schema discovery logic.
 
 - [x] Task: Initialize CLI Package Structure and Dependencies (Clack, etc.) [01d6ea7]
