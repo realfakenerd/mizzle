@@ -9,6 +9,7 @@ import type { Condition } from '../expressions/operators';
 import type { InferSelectedModel, Entity } from '../core/table';
 import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from '../constants';
 import { resolveTableName } from '../utils/utils';
+import { resolveStrategies } from '../core/strategies';
 
 export class DynamoQueryBuilder<T extends Entity<any>> {
 	private whereClause?: Condition;
@@ -48,12 +49,7 @@ export class DynamoQueryBuilder<T extends Entity<any>> {
 		const tableName = resolveTableName(this.table);
 		const entityName = table[ENTITY_SYMBOLS.ENTITY_NAME] || (table as any).tableName;
 		
-		const physicalTable = table._?.table || table[ENTITY_SYMBOLS.PHYSICAL_TABLE];
-		const pkPhisicalName = physicalTable?._?.partitionKey?.name || physicalTable?.[TABLE_SYMBOLS.PARTITION_KEY]?.name;
-
-		if (!pkPhisicalName) {
-			throw new Error(`Entity ${entityName} does not have an Partition Key defined`);
-		}
+		const resolution = resolveStrategies(this.table, this.whereClause);
 
 		// Estado para montar a query do Dynamo
 		const expressionAttributeNames: Record<string, string> = {};
@@ -113,54 +109,35 @@ export class DynamoQueryBuilder<T extends Entity<any>> {
 		
 				let keyConditionExpression = '';
 				let filterExpression = '';
-				let isQuery = false;
+				let isQuery = resolution.hasPartitionKey;
 		
-				// Simplification: If it is a simple 'eq' in the PK, it is Query.
-				// If it is an 'and', we check if one of the children is PK.
-				// (A full implementation would traverse the condition tree recursively)
-		
-				if (this.whereClause) {
-					const cond = this.whereClause;
-		
-					// Verifica se é uma igualdade simples na PK
-					const isPkEquality = (c: Condition) => {
-						const cc = c as any;
-						return cc.type === 'binary' && cc.operator === '=' && getColName(cc.column!) === pkPhisicalName;
-					};
-		
-					if (isPkEquality(cond)) {
-						isQuery = true;
-						keyConditionExpression = buildExpression(cond);
-					} else if ((cond as any).type === 'logical' && (cond as any).operator === 'AND' && (cond as any).conditions) {
-						// Procura a condição da PK dentro do AND
-						const pkCondIndex = (cond as any).conditions.findIndex(isPkEquality);
-		
-						if (pkCondIndex !== -1) {
-							isQuery = true;
-							const pkCond = (cond as any).conditions[pkCondIndex];
-							keyConditionExpression = buildExpression(pkCond);
-		
-							// O resto vira FilterExpression
-							const otherConds = (cond as any).conditions.filter((_: any, i: number) => i !== pkCondIndex);
-							if (otherConds.length > 0) {
-								filterExpression = buildExpression({
-									type: 'logical',
-									operator: 'AND',
-									conditions: otherConds
-								} as any);
-							}
-						} else {
-							filterExpression = buildExpression(cond);
-						}
-					} else {
-						filterExpression = buildExpression(cond);
-					}
-				}
+				if (isQuery) {
+                    const pkName = Object.keys(resolution.keys).find(k => {
+                        const pt = table._?.table || table[ENTITY_SYMBOLS.PHYSICAL_TABLE];
+                        return k === (pt?._?.partitionKey?.name || pt?.[TABLE_SYMBOLS.PARTITION_KEY]?.name);
+                    }) || Object.keys(resolution.keys)[0];
+
+                    const pkValue = resolution.keys[pkName];
+                    keyConditionExpression = `${addName(pkName)} = ${addValue(pkValue)}`;
+
+                    if (resolution.hasSortKey) {
+                        const skName = Object.keys(resolution.keys).find(k => k !== pkName);
+                        if (skName) {
+                            const skValue = resolution.keys[skName];
+                            keyConditionExpression += ` AND ${addName(skName)} = ${addValue(skValue)}`;
+                        }
+                    }
+                } else {
+                    if (this.whereClause) {
+                        filterExpression = buildExpression(this.whereClause);
+                    }
+                }
 		
 				const params: QueryCommandInput | ScanCommandInput = {
 					TableName: tableName,
 					Limit: this.limitVal as number | undefined
 				};
+
 		if (this.projectionFields && this.projectionFields.length > 0) {
 			const projExprs = this.projectionFields.map((col) => addName(col));
 			params.ProjectionExpression = projExprs.join(', ');
