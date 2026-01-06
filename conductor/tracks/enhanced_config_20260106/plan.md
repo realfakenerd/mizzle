@@ -7,7 +7,8 @@ Enhance the configuration schema and client utility.
 
 - [x] Task: Update `MizzleConfig` interface and `defineConfig` helper in `src/config.ts` (d806913)
 - [x] Task: Refactor `getClient` in `src/config.ts` to support profiles and explicit credentials (297bd9f)
-- [~] Task: Implement environment variable override logic in `loadConfig`
+- [x] Task: Implement environment variable override logic in `loadConfig` (0264bef)
+- [x] Task: Add JSDoc documentation for `MizzleConfig` and configuration utilities (b8fa422)
 
 ## Phase 2: `init` Command
 Implement the interactive initialization command.
