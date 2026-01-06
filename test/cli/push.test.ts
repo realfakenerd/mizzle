@@ -3,6 +3,17 @@ import { pushCommand } from "../../src/cli/commands/push";
 import { PhysicalTable } from "../../src/core/table";
 import { TABLE_SYMBOLS } from "../../src/constants";
 
+// Mock Clack
+const mockClack = {
+    text: mock(() => Promise.resolve("migration")),
+    confirm: mock(() => Promise.resolve(true)),
+    intro: mock(() => {}),
+    outro: mock(() => {}),
+    spinner: () => ({ start: () => {}, stop: () => {} }),
+    isCancel: () => false
+};
+mock.module("@clack/prompts", () => mockClack);
+
 // Mock Table
 const mockTable = (name: string) => {
     const table = new PhysicalTable(name, {

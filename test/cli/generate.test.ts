@@ -6,6 +6,17 @@ import { mkdirSync, rmSync, writeFileSync, existsSync, readFileSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";
 
+// Mock Clack
+const mockClack = {
+    text: mock(() => Promise.resolve("migration")),
+    confirm: mock(() => Promise.resolve(true)),
+    intro: mock(() => {}),
+    outro: mock(() => {}),
+    spinner: () => ({ start: () => {}, stop: () => {} }),
+    isCancel: () => false
+};
+mock.module("@clack/prompts", () => mockClack);
+
 // Helper to create mock table
 const mockTable = (name: string) => {
     const table = new PhysicalTable(name, {

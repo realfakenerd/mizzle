@@ -4,6 +4,7 @@ import { loadSnapshot, saveSnapshot, generateSnapshot, getNextMigrationVersion, 
 import { compareSchema, SchemaChange } from "../../core/diff";
 import { join } from "path";
 import { writeFile } from "fs/promises";
+import { text, isCancel, cancel, intro, outro } from "@clack/prompts";
 
 interface GenerateOptions {
     config: MizzleConfig;
@@ -11,6 +12,7 @@ interface GenerateOptions {
 }
 
 export async function generateCommand(options: GenerateOptions) {
+    intro("Mizzle Generate");
     const { config } = options;
     const discover = options.discoverSchema || discoverSchema;
 
@@ -22,18 +24,11 @@ export async function generateCommand(options: GenerateOptions) {
     const existingSnapshot = await loadSnapshot(migrationsDir) || { version: "0", tables: {} };
 
     // 3. Compare
-    // We need to generate a snapshot from current schema first to compare
     const currentSnapshot = generateSnapshot(schema);
-    
-    // compareSchema expects SchemaCurrent, but we refactored it to compare Snapshots?
-    // Wait, let's check src/core/diff.ts signature.
-    // export function compareSchema(current: SchemaCurrent, snapshot: MizzleSnapshot): SchemaChange[]
-    // It takes SchemaCurrent.
-    
     const changes = compareSchema(schema, existingSnapshot);
 
     if (changes.length === 0) {
-        console.log("No changes detected.");
+        outro("No changes detected.");
         return;
     }
 
@@ -41,8 +36,21 @@ export async function generateCommand(options: GenerateOptions) {
 
     // 4. Generate Migration Script
     const version = await getNextMigrationVersion(migrationsDir);
-    // TODO: Prompt for name or use default
-    const name = "migration"; 
+    
+    const name = await text({
+        message: "Enter migration name",
+        placeholder: "init",
+        initialValue: "migration",
+        validate(value) {
+            if (value.length === 0) return "Name is required";
+        }
+    });
+
+    if (isCancel(name)) {
+        cancel("Operation cancelled.");
+        process.exit(0);
+    }
+
     const filename = `${version}_${name}.ts`;
     const filePath = join(migrationsDir, filename);
 
@@ -52,7 +60,7 @@ export async function generateCommand(options: GenerateOptions) {
 
     // 5. Save new Snapshot
     await saveSnapshot(migrationsDir, currentSnapshot);
-    console.log("Updated snapshot.json");
+    outro("Updated snapshot.json");
 }
 
 function generateMigrationScript(changes: SchemaChange[]): string {

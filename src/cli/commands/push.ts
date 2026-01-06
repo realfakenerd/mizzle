@@ -3,6 +3,7 @@ import { discoverSchema } from "../../utils/discovery";
 import { compareSchema } from "../../core/diff";
 import { getRemoteSnapshot } from "../../core/introspection";
 import { DynamoDBClient, CreateTableCommand, DeleteTableCommand } from "@aws-sdk/client-dynamodb";
+import { confirm, isCancel, cancel, intro, outro } from "@clack/prompts";
 
 interface PushOptions {
     config: MizzleConfig;
@@ -11,6 +12,7 @@ interface PushOptions {
 }
 
 export async function pushCommand(options: PushOptions) {
+    intro("Mizzle Push");
     const { config } = options;
     const discover = options.discoverSchema || discoverSchema;
     
@@ -22,11 +24,20 @@ export async function pushCommand(options: PushOptions) {
     const changes = compareSchema(schema, remoteSnapshot);
 
     if (changes.length === 0) {
-        console.log("Remote is up to date.");
+        outro("Remote is up to date.");
         return;
     }
 
     console.log(`Pushing ${changes.length} changes to remote...`);
+
+    const shouldContinue = await confirm({
+        message: "Do you want to apply these changes?"
+    });
+
+    if (isCancel(shouldContinue) || !shouldContinue) {
+        cancel("Operation cancelled.");
+        process.exit(0);
+    }
 
     for (const change of changes) {
         if (change.type === "create") {
@@ -46,5 +57,5 @@ export async function pushCommand(options: PushOptions) {
              console.log(`Updating table: ${change.tableName} (Not fully implemented)`);
         }
     }
-    console.log("Push complete.");
+    outro("Push complete.");
 }
