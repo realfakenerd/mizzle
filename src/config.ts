@@ -1,9 +1,27 @@
 import { join } from "path";
 import { existsSync } from "fs";
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 
 export interface MizzleConfig {
   schema: string | string[];
   out: string;
+  region?: string;
+  endpoint?: string;
+}
+
+export function defineConfig(config: MizzleConfig): MizzleConfig {
+  return config;
+}
+
+export function getClient(config: MizzleConfig): DynamoDBClient {
+    return new DynamoDBClient({
+        region: config.region || "us-east-1",
+        endpoint: config.endpoint,
+        credentials: {
+            accessKeyId: "local",
+            secretAccessKey: "local",
+        },
+    });
 }
 
 export async function loadConfig(configName = "mizzle.config.ts"): Promise<MizzleConfig> {

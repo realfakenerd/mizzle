@@ -1,4 +1,4 @@
-import { MizzleConfig } from "../../config";
+import { MizzleConfig, getClient } from "../../config";
 import { DynamoDBClient, ListTablesCommand, DeleteTableCommand } from "@aws-sdk/client-dynamodb";
 import { intro, outro, multiselect, confirm, isCancel, cancel, spinner } from "@clack/prompts";
 
@@ -10,7 +10,7 @@ interface DropOptions {
 export async function dropCommand(options: DropOptions) {
     intro("Mizzle Drop Tables");
 
-    const client = options.client || new DynamoDBClient({});
+    const client = options.client || getClient(options.config);
     
     try {
         // 1. Fetch tables

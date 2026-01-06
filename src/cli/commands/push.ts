@@ -1,4 +1,4 @@
-import { MizzleConfig } from "../../config";
+import { MizzleConfig, getClient } from "../../config";
 import { discoverSchema } from "../../utils/discovery";
 import { compareSchema } from "../../core/diff";
 import { getRemoteSnapshot } from "../../core/introspection";
@@ -16,7 +16,7 @@ export async function pushCommand(options: PushOptions) {
     const { config } = options;
     const discover = options.discoverSchema || discoverSchema;
     
-    const client = options.client || new DynamoDBClient({}); 
+    const client = options.client || getClient(config); 
 
     try {
         const schema = await discover(config);

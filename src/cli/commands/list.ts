@@ -1,4 +1,4 @@
-import { MizzleConfig } from "../../config";
+import { MizzleConfig, getClient } from "../../config";
 import { getRemoteSnapshot } from "../../core/introspection";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { intro, outro, spinner } from "@clack/prompts";
@@ -11,7 +11,7 @@ interface ListOptions {
 export async function listCommand(options: ListOptions) {
     intro("Mizzle List Tables");
     
-    const client = options.client || new DynamoDBClient({});
+    const client = options.client || getClient(options.config);
     const s = spinner();
     s.start("Fetching remote tables...");
 
