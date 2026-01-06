@@ -10,12 +10,12 @@ Setup the core CLI structure, configuration loading, and schema discovery logic.
 - [x] Task: Create Schema Discovery utility to scan and parse Mizzle table definitions [727bf59]
 - [ ] Task: Conductor - User Manual Verification 'Foundation & Configuration' (Protocol in workflow.md)
 
-## Phase 2: State Management (Snapshots & Diffing)
+## Phase 2: State Management (Snapshots & Diffing) [checkpoint: 238a594]
 Implement the logic for tracking schema state and detecting changes.
 
 - [x] Task: Define JSON Snapshot schema and storage logic [d6f9e7a]
 - [x] Task: Implement Schema Diffing engine (comparing code definitions vs. snapshots) [90ee79d]
-- [ ] Task: Implement Snapshot generation and versioning logic
+- [x] Task: Implement Snapshot generation and versioning logic [238a594]
 - [ ] Task: Conductor - User Manual Verification 'State Management' (Protocol in workflow.md)
 
 ## Phase 3: Command Implementation - `generate` & `push`
