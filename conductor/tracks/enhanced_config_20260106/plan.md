@@ -17,8 +17,8 @@ Implement the interactive initialization command.
 - [x] Task: Wire up the `init` command in `src/cli.ts` (569d378)
 - [x] Task: Add tests for the `init` command (42e2b92)
 
-## Phase 3: Validation & Testing
+## Phase 3: Validation & Testing [checkpoint: 3452f0f]
 Ensure the new configuration system works across different scenarios.
 
 - [x] Task: Add unit tests for `getClient` with various configuration combinations (8806ba5)
-- [~] Task: Update E2E tests to verify environment variable overrides
+- [x] Task: Update E2E tests to verify environment variable overrides (ac151a9)
