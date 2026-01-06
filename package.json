@@ -9,6 +9,7 @@
         "mizzle": "src/cli.ts"
     },
     "scripts": {
+        "build": "turbo run build",
         "test": "turbo run test",
         "check": "turbo run check && bun run check:root",
         "check:root": "tsc --noEmit",
