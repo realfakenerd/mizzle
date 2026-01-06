@@ -2,6 +2,7 @@ import { MizzleConfig } from "../config";
 import { PhysicalTable, Entity } from "../core/table";
 import { Glob } from "bun";
 import { stat } from "fs/promises";
+import { resolve } from "path";
 
 export async function discoverSchema(config: MizzleConfig): Promise<{ tables: PhysicalTable[], entities: Entity[] }> {
   const schemaPatterns = Array.isArray(config.schema) ? config.schema : [config.schema];
@@ -10,11 +11,12 @@ export async function discoverSchema(config: MizzleConfig): Promise<{ tables: Ph
   const scannedFiles = new Set<string>();
 
   const processFile = async (file: string) => {
-    if (scannedFiles.has(file)) return;
-    scannedFiles.add(file);
+    const absolutePath = resolve(process.cwd(), file);
+    if (scannedFiles.has(absolutePath)) return;
+    scannedFiles.add(absolutePath);
     
     try {
-        const imported = await import(file);
+        const imported = await import(absolutePath);
         for (const key in imported) {
             const exportVal = imported[key];
             if (exportVal instanceof PhysicalTable) {
@@ -24,7 +26,7 @@ export async function discoverSchema(config: MizzleConfig): Promise<{ tables: Ph
             }
         }
     } catch (e) {
-        console.warn(`Failed to import schema file: ${file}`, e);
+        console.warn(`Failed to import schema file: ${absolutePath}`, e);
     }
   };
 
