@@ -7,6 +7,13 @@ export interface MizzleConfig {
   out: string;
   region?: string;
   endpoint?: string;
+  credentials?: {
+    accessKeyId: string;
+    secretAccessKey: string;
+    sessionToken?: string;
+  };
+  profile?: string;
+  maxAttempts?: number;
 }
 
 export function defineConfig(config: MizzleConfig): MizzleConfig {
@@ -25,7 +32,8 @@ export function getClient(config: MizzleConfig): DynamoDBClient {
 }
 
 export async function loadConfig(configName = "mizzle.config.ts"): Promise<MizzleConfig> {
-  const configPath = join(process.cwd(), configName);
+  const envConfig = process.env.MIZZLE_CONFIG;
+  const configPath = envConfig || join(process.cwd(), configName);
 
   if (!existsSync(configPath)) {
     throw new Error(`Could not find ${configName} in current directory.`);
