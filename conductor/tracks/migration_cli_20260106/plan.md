@@ -5,7 +5,7 @@ This plan outlines the development of the Mizzle Migration CLI, providing a robu
 ## Phase 1: Foundation & Configuration
 Setup the core CLI structure, configuration loading, and schema discovery logic.
 
-- [~] Task: Initialize CLI Package Structure and Dependencies (Clack, etc.)
+- [x] Task: Initialize CLI Package Structure and Dependencies (Clack, etc.) [01d6ea7]
 - [ ] Task: Implement `mizzle.config.ts` loading and validation
 - [ ] Task: Create Schema Discovery utility to scan and parse Mizzle table definitions
 - [ ] Task: Conductor - User Manual Verification 'Foundation & Configuration' (Protocol in workflow.md)
