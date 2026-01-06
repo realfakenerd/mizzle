@@ -18,14 +18,14 @@ Implement the high-level API access and basic query execution.
 - [x] Task: Implement logic to translate `where` conditions inside `findMany` to DynamoDB expressions. 4599ad0
 - [x] Task: Conductor - User Manual Verification 'The Query Proxy & FindMany' (Protocol in workflow.md)
 
-## Phase 3: Single-Table Mapping & Item Parsing (TDD)
+## Phase 3: Single-Table Mapping & Item Parsing (TDD) [checkpoint: ad8f859]
 Implement the core optimization for Single-Table Design.
 
 - [x] Task: Implement `ItemCollectionParser` to group raw DynamoDB items into structured objects based on relation metadata. 371cafb
 - [x] Task: Write failing integration tests in `test/builders/relational.integration.test.ts` for 1:N relations in a single table. 65720db
 - [x] Task: Update `RelationalQueryBuilder` to fetch related items sharing a PK in a single `Query` command. 24c5d3d
 - [x] Task: Implement support for both `with` and `include` keywords in selection options. 3de5eac
-- [ ] Task: Conductor - User Manual Verification 'Single-Table Mapping & Item Parsing' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Single-Table Mapping & Item Parsing' (Protocol in workflow.md)
 
 ## Phase 4: Advanced Relations (1:1, N:M, GSI)
 Extend the API to support complex relational patterns.
