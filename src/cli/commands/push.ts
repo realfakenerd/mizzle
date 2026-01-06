@@ -7,13 +7,14 @@ import { confirm, isCancel, cancel, intro, outro, spinner } from "@clack/prompts
 
 interface PushOptions {
     config: MizzleConfig;
+    force?: boolean;
     discoverSchema?: typeof discoverSchema;
     client?: DynamoDBClient;
 }
 
 export async function pushCommand(options: PushOptions) {
     intro("Mizzle Push");
-    const { config } = options;
+    const { config, force } = options;
     const discover = options.discoverSchema || discoverSchema;
     
     const client = options.client || getClient(config); 
@@ -31,9 +32,12 @@ export async function pushCommand(options: PushOptions) {
 
         console.log(`Pushing ${changes.length} changes to remote...`);
 
-        const shouldContinue = await confirm({
-            message: "Do you want to apply these changes?"
-        });
+        let shouldContinue = force;
+        if (!shouldContinue) {
+            shouldContinue = await confirm({
+                message: "Do you want to apply these changes?"
+            }) as boolean;
+        }
 
         if (isCancel(shouldContinue) || !shouldContinue) {
             cancel("Operation cancelled.");

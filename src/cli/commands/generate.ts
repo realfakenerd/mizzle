@@ -3,11 +3,13 @@ import { discoverSchema } from "../../utils/discovery";
 import { loadSnapshot, saveSnapshot, generateSnapshot, getNextMigrationVersion, MizzleSnapshot, SchemaCurrent } from "../../core/snapshot";
 import { compareSchema, SchemaChange } from "../../core/diff";
 import { join } from "path";
-import { writeFile } from "fs/promises";
+import { writeFile, mkdir } from "fs/promises";
+import { existsSync } from "fs";
 import { text, isCancel, cancel, intro, outro } from "@clack/prompts";
 
 interface GenerateOptions {
     config: MizzleConfig;
+    name?: string;
     discoverSchema?: typeof discoverSchema;
 }
 
@@ -38,14 +40,17 @@ export async function generateCommand(options: GenerateOptions) {
         // 4. Generate Migration Script
         const version = await getNextMigrationVersion(migrationsDir);
         
-        const name = await text({
-            message: "Enter migration name",
-            placeholder: "init",
-            initialValue: "migration",
-            validate(value) {
-                if (value.length === 0) return "Name is required";
-            }
-        });
+        let name = options.name;
+        if (!name) {
+            name = await text({
+                message: "Enter migration name",
+                placeholder: "init",
+                initialValue: "migration",
+                validate(value) {
+                    if (value.length === 0) return "Name is required";
+                }
+            }) as string;
+        }
 
         if (isCancel(name)) {
             cancel("Operation cancelled.");
@@ -53,6 +58,9 @@ export async function generateCommand(options: GenerateOptions) {
         }
 
         const filename = `${version}_${name}.ts`;
+        if (!existsSync(migrationsDir)) {
+            await mkdir(migrationsDir, { recursive: true });
+        }
         const filePath = join(migrationsDir, filename);
 
         const scriptContent = generateMigrationScript(changes);

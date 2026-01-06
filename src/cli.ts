@@ -17,10 +17,11 @@ program
 program
   .command("generate")
   .description("Generate a new migration snapshot and script")
-  .action(async () => {
+  .option("-n, --name <name>", "Migration name")
+  .action(async (options) => {
     try {
         const config = await loadConfig();
-        await generateCommand({ config });
+        await generateCommand({ config, name: options.name });
     } catch (e: any) {
         p.log.error(e.message);
         process.exit(1);
@@ -30,10 +31,11 @@ program
 program
   .command("push")
   .description("Directly apply schema changes to the target DynamoDB environment")
-  .action(async () => {
+  .option("-y, --yes", "Skip confirmation")
+  .action(async (options) => {
     try {
         const config = await loadConfig();
-        await pushCommand({ config });
+        await pushCommand({ config, force: options.yes });
     } catch (e: any) {
         p.log.error(e.message);
         process.exit(1);
