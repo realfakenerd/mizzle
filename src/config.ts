@@ -3,24 +3,78 @@ import { existsSync } from "fs";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { fromIni } from "@aws-sdk/credential-provider-ini";
 
+/**
+ * Configuration for Mizzle ORM.
+ */
 export interface MizzleConfig {
+  /**
+   * Path or glob pattern(s) to the schema files.
+   */
   schema: string | string[];
+  /**
+   * Directory where generated migrations and snapshots will be stored.
+   */
   out: string;
+  /**
+   * AWS Region to connect to. Defaults to "us-east-1" if not specified.
+   * Can be overridden by MIZZLE_REGION environment variable.
+   */
   region?: string;
+  /**
+   * Optional custom endpoint for DynamoDB (e.g., for local development).
+   * Can be overridden by MIZZLE_ENDPOINT environment variable.
+   */
   endpoint?: string;
+  /**
+   * Explicit AWS credentials. If provided, these will be used instead of the
+   * default credential provider chain or profile.
+   */
   credentials?: {
+    /**
+     * AWS Access Key ID.
+     */
     accessKeyId: string;
+    /**
+     * AWS Secret Access Key.
+     */
     secretAccessKey: string;
+    /**
+     * Optional AWS Session Token.
+     */
     sessionToken?: string;
   };
+  /**
+   * AWS Profile name to use for credentials.
+   */
   profile?: string;
+  /**
+   * Maximum number of retry attempts for DynamoDB requests.
+   */
   maxAttempts?: number;
 }
 
+/**
+ * Helper function to define the configuration with type safety.
+ * 
+ * @param config The Mizzle configuration object.
+ * @returns The same configuration object, validated by TypeScript.
+ */
 export function defineConfig(config: MizzleConfig): MizzleConfig {
   return config;
 }
 
+/**
+ * Creates a configured DynamoDBClient instance based on the provided configuration.
+ * 
+ * It prioritizes credentials in the following order:
+ * 1. Explicitly provided `credentials` object.
+ * 2. Explicitly provided AWS `profile`.
+ * 3. Default "local" credentials if the endpoint is localhost/127.0.0.1.
+ * 4. Default AWS SDK credential provider chain (environment variables, IAM roles, etc.).
+ * 
+ * @param config The Mizzle configuration.
+ * @returns A configured DynamoDBClient instance.
+ */
 export function getClient(config: MizzleConfig): DynamoDBClient {
   const clientConfig: any = {
     region: config.region || "us-east-1",
@@ -45,6 +99,16 @@ export function getClient(config: MizzleConfig): DynamoDBClient {
   return new DynamoDBClient(clientConfig);
 }
 
+/**
+ * Loads the Mizzle configuration from a file (defaulting to mizzle.config.ts).
+ * 
+ * Environment variables (MIZZLE_REGION, MIZZLE_ENDPOINT, MIZZLE_SCHEMA, MIZZLE_OUT)
+ * will override values provided in the configuration file.
+ * 
+ * @param configName The name of the config file to load.
+ * @returns A promise that resolves to the loaded and overridden configuration.
+ * @throws Error if the configuration file is missing or invalid.
+ */
 export async function loadConfig(configName = "mizzle.config.ts"): Promise<MizzleConfig> {
   const envConfig = process.env.MIZZLE_CONFIG;
   const configPath = envConfig || join(process.cwd(), configName);
