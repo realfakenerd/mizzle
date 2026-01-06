@@ -15,13 +15,13 @@ Extract common utilities and constants into a dedicated package to be used by bo
 - [x] Task: Update internal imports in `src/` to use `@mizzle/shared` 050aaa4
 - [x] Task: Conductor - User Manual Verification 'Shared Package Extraction' (Protocol in workflow.md) 9b93400
 
-## Phase 3: Core Library Modularization (`mizzle`)
+## Phase 3: Core Library Modularization (`mizzle`) [checkpoint: e231b88]
 Isolate the core ORM logic and configure it for modern subpath imports.
 
-- [~] Task: Move core logic (builders, columns, expressions, core) to `packages/mizzle`
-- [ ] Task: Configure subpath `exports` in `packages/mizzle/package.json`
-- [ ] Task: Update root tests to import from the new `mizzle` package locations
-- [ ] Task: Conductor - User Manual Verification 'Core Library Modularization' (Protocol in workflow.md)
+- [x] Task: Move core logic (builders, columns, expressions, core) to `packages/mizzle` 6a608c6
+- [x] Task: Configure subpath `exports` in `packages/mizzle/package.json` 05606fc
+- [x] Task: Update root tests to import from the new `mizzle` package locations cf159d9
+- [x] Task: Conductor - User Manual Verification 'Core Library Modularization' (Protocol in workflow.md) e231b88
 
 ## Phase 4: CLI Modularization (`mizzling`)
 Separate the CLI tool into its own package and rename the binary to `mizzling`.
