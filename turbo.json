@@ -1,36 +1,52 @@
 {
-  "$schema": "https://turbo.build/schema.json",
-  "tasks": {
-    "build": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**"],
-      "inputs": ["src/**", "package.json", "tsconfig.json"]
-    },
-    "test": {
-      "dependsOn": ["^build"],
-      "inputs": ["src/**", "test/**", "package.json", "tsconfig.json", "vitest.config.ts"],
-      "passThroughEnv": [
-        "MIZZLE_CONFIG",
-        "MIZZLE_REGION",
-        "MIZZLE_ENDPOINT",
-        "MIZZLE_SCHEMA",
-        "MIZZLE_OUT",
-        "AWS_ACCESS_KEY_ID",
-        "AWS_SECRET_ACCESS_KEY",
-        "AWS_REGION"
-      ]
-    },
-    "lint": {
-      "inputs": ["src/**", "test/**", ".eslintrc.cjs", "package.json", "tsconfig.json"]
-    },
-    "lint:root": {
-      "inputs": ["src/**", "test/**", ".eslintrc.cjs", "package.json", "tsconfig.json"]
-    },
-    "check": {
-      "inputs": ["src/**", "test/**", "package.json", "tsconfig.json"]
-    },
-    "check:root": {
-      "inputs": ["src/**", "test/**", "package.json", "tsconfig.json"]
+    "$schema": "https://turbo.build/schema.json",
+    "tasks": {
+        "build": {
+            "dependsOn": ["^build"],
+            "outputs": ["dist/**"],
+            "inputs": ["src/**", "public/**", "package.json", "tsconfig.json", "*.config.*"]
+        },
+        "test": {
+            "dependsOn": ["^build"],
+            "inputs": ["src/**", "test/**", "public/**", "package.json", "tsconfig.json", "*.config.*"],
+            "passThroughEnv": [
+                "MIZZLE_CONFIG",
+                "MIZZLE_REGION",
+                "MIZZLE_ENDPOINT",
+                "MIZZLE_SCHEMA",
+                "MIZZLE_OUT",
+                "AWS_ACCESS_KEY_ID",
+                "AWS_SECRET_ACCESS_KEY",
+                "AWS_REGION"
+            ]
+        },
+        "lint": {
+            "inputs": [
+                "src/**",
+                "test/**",
+                "public/**",
+                ".eslintrc.cjs",
+                "package.json",
+                "tsconfig.json",
+                "*.config.*"
+            ]
+        },
+        "lint:root": {
+            "inputs": [
+                "src/**",
+                "test/**",
+                "public/**",
+                ".eslintrc.cjs",
+                "package.json",
+                "tsconfig.json",
+                "*.config.*"
+            ]
+        },
+        "check": {
+            "inputs": ["src/**", "test/**", "public/**", "package.json", "tsconfig.json", "*.config.*"]
+        },
+        "check:root": {
+            "inputs": ["src/**", "test/**", "public/**", "package.json", "tsconfig.json", "*.config.*"]
+        }
     }
-  }
 }
