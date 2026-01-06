@@ -26,4 +26,11 @@ describe("Monorepo Setup", () => {
     expect(existsSync(join(tsconfigPath, "package.json"))).toBe(true);
     expect(existsSync(join(tsconfigPath, "base.json"))).toBe(true);
   });
+
+  it("should have a packages/eslint-config directory with package.json and index.cjs", () => {
+    const eslintConfigPath = join(process.cwd(), "packages", "eslint-config");
+    expect(existsSync(eslintConfigPath)).toBe(true);
+    expect(existsSync(join(eslintConfigPath, "package.json"))).toBe(true);
+    expect(existsSync(join(eslintConfigPath, "index.cjs"))).toBe(true);
+  });
 });

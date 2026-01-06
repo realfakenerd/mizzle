@@ -10,12 +10,19 @@
     },
     "scripts": {
         "test": "bun test",
-        "check": "tsc --noEmit"
+        "check": "tsc --noEmit",
+        "lint": "eslint \"src/**/*.ts\" \"test/**/*.ts\""
     },
     "devDependencies": {
         "@aws-sdk/client-dynamodb": "^3.948.0",
         "@aws-sdk/lib-dynamodb": "^3.948.0",
+        "@mizzle/eslint-config": "workspace:*",
+        "@mizzle/tsconfig": "workspace:*",
         "@types/bun": "latest",
+        "@typescript-eslint/eslint-plugin": "^8.0.0",
+        "@typescript-eslint/parser": "^8.0.0",
+        "eslint": "^8.57.0",
+        "eslint-plugin-turbo": "latest",
         "tsx": "^4.21.0",
         "vitest": "^4.0.15"
     },
