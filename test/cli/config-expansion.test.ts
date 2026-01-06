@@ -122,6 +122,16 @@ describe("Config Expansion", () => {
     fromIniSpy.mockRestore();
   });
 
+  test("getClient should use maxAttempts if provided", async () => {
+    const config = {
+      schema: "./schema.ts",
+      out: "./out",
+      maxAttempts: 10
+    };
+    const client = getClient(config);
+    expect(await client.config.maxAttempts()).toBe(10);
+  });
+
   test("loadConfig should support environment variable overrides", async () => {
     const originalEnv = { ...process.env };
     process.env.MIZZLE_REGION = "us-east-1-env";

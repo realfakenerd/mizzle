@@ -20,5 +20,5 @@ Implement the interactive initialization command.
 ## Phase 3: Validation & Testing
 Ensure the new configuration system works across different scenarios.
 
-- [ ] Task: Add unit tests for `getClient` with various configuration combinations
+- [~] Task: Add unit tests for `getClient` with various configuration combinations
 - [ ] Task: Update E2E tests to verify environment variable overrides
