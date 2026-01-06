@@ -21,7 +21,7 @@ Implement the logic for tracking schema state and detecting changes.
 ## Phase 3: Command Implementation - `generate` & `push`
 Build the core commands for creating migrations and syncing with DynamoDB.
 
-- [ ] Task: Implement `generate` command: Create snapshots and TS migration scripts
+- [x] Task: Implement generate command: Create snapshots and TS migration scripts [a8ad09e]
 - [ ] Task: Implement `push` command: Execute AWS SDK commands to sync schema to DB
 - [ ] Task: Add interactive prompts using Clack for these commands
 - [ ] Task: Conductor - User Manual Verification 'Core Commands' (Protocol in workflow.md)
