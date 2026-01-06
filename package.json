@@ -2,6 +2,9 @@
     "name": "mizzle",
     "module": "src/index.ts",
     "type": "module",
+    "workspaces": [
+        "packages/*"
+    ],
     "bin": {
         "mizzle": "src/cli.ts"
     },
