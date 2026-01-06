@@ -4,6 +4,8 @@ import * as p from "@clack/prompts";
 import { loadConfig } from "./config";
 import { generateCommand } from "./cli/commands/generate";
 import { pushCommand } from "./cli/commands/push";
+import { listCommand } from "./cli/commands/list";
+import { dropCommand } from "./cli/commands/drop";
 
 const program = new Command();
 
@@ -41,17 +43,27 @@ program
 program
   .command("list")
   .description("List all existing DynamoDB tables in the environment")
-  .action(() => {
-    p.intro("Mizzle: List Tables");
-    p.outro("Coming soon!");
+  .action(async () => {
+    try {
+        const config = await loadConfig();
+        await listCommand({ config });
+    } catch (e: any) {
+        p.log.error(e.message);
+        process.exit(1);
+    }
   });
 
 program
   .command("drop")
   .description("Interactive command to select and delete DynamoDB tables")
-  .action(() => {
-    p.intro("Mizzle: Drop Table");
-    p.outro("Coming soon!");
+  .action(async () => {
+    try {
+        const config = await loadConfig();
+        await dropCommand({ config });
+    } catch (e: any) {
+        p.log.error(e.message);
+        process.exit(1);
+    }
   });
 
 program.parse();
