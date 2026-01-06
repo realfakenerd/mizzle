@@ -1,10 +1,11 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { DynamoDBClient, CreateTableCommand, DeleteTableCommand } from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient, CreateTableCommand, DeleteTableCommand, ListTablesCommand } from "@aws-sdk/client-dynamodb";
 import { dynamoTable, dynamoEntity } from "../../src/core/table";
 import { string, uuid } from "../../src/columns/all";
 import { prefixKey, staticKey } from "../../src/core/strategies";
 import { defineRelations } from "../../src/core/relations";
 import { mizzle } from "../../src/utils/db";
+import { gsi } from "../../src/indexes";
 
 const client = new DynamoDBClient({
     endpoint: "http://localhost:8000",
@@ -20,6 +21,9 @@ describe("Relational Query Integration", () => {
     const table = dynamoTable(tableName, {
         pk: string("pk"),
         sk: string("sk"),
+        indexes: {
+            gsi1: gsi("gsi1pk", "gsi1sk")
+        }
     });
 
     const users = dynamoEntity(
@@ -49,16 +53,68 @@ describe("Relational Query Integration", () => {
         }),
     );
 
+    const projects = dynamoEntity(
+        table,
+        "projects",
+        {
+            id: uuid("id"),
+            name: string("name"),
+        },
+        (cols) => ({
+            pk: prefixKey("PROJ#", cols.id),
+            sk: staticKey("METADATA"),
+        })
+    );
+
+    const members = dynamoEntity(
+        table,
+        "members",
+        {
+            userId: uuid("userId"),
+            projectId: uuid("projectId"),
+            role: string("role"),
+        },
+        (cols) => ({
+            pk: prefixKey("USER#", cols.userId),
+            sk: prefixKey("PROJ#", cols.projectId),
+            gsi1: {
+                pk: prefixKey("PROJ#", cols.projectId),
+                sk: prefixKey("USER#", cols.userId),
+            }
+        })
+    );
+
     const db = mizzle({
         client,
         relations: {
             users,
             posts,
+            projects,
+            members,
             usersRelations: defineRelations(users, ({ many }) => ({
                 posts: many(posts),
+                memberships: many(members),
             })),
             postsRelations: defineRelations(posts, ({ one }) => ({
                 author: one(users),
+            })),
+            projectsRelations: defineRelations(projects, ({ many }) => ({
+                members: many(members, {
+                    // @ts-ignore - many needs updated types to support fields/references
+                    fields: [projects.id],
+                    // @ts-ignore
+                    references: [members.projectId],
+                }),
+            })),
+            membersRelations: defineRelations(members, ({ one }) => ({
+                project: one(projects, {
+                    fields: [members.projectId],
+                    references: [projects.id],
+                }),
+                user: one(users, {
+                    fields: [members.userId],
+                    references: [users.id],
+                }),
             })),
         }
     });
@@ -80,6 +136,22 @@ describe("Relational Query Integration", () => {
                 AttributeDefinitions: [
                     { AttributeName: "pk", AttributeType: "S" },
                     { AttributeName: "sk", AttributeType: "S" },
+                    { AttributeName: "gsi1pk", AttributeType: "S" },
+                    { AttributeName: "gsi1sk", AttributeType: "S" },
+                ],
+                GlobalSecondaryIndexes: [
+                    {
+                        IndexName: "gsi1",
+                        KeySchema: [
+                            { AttributeName: "gsi1pk", KeyType: "HASH" },
+                            { AttributeName: "gsi1sk", KeyType: "RANGE" },
+                        ],
+                        Projection: { ProjectionType: "ALL" },
+                        ProvisionedThroughput: {
+                            ReadCapacityUnits: 5,
+                            WriteCapacityUnits: 5,
+                        },
+                    }
                 ],
                 ProvisionedThroughput: {
                     ReadCapacityUnits: 5,
@@ -229,13 +301,137 @@ describe("Relational Query Integration", () => {
 
                         expect(results[0].author).toBeDefined();
 
-                        expect(results[0].author.name).toBe("Charlie");
+                                expect(results[0].author.name).toBe("Charlie");
 
-                        expect(Array.isArray(results[0].author)).toBe(false);
+                                expect(Array.isArray(results[0].author)).toBe(false);
 
-                    });
+                            });
 
-                });
+                        
+
+                            it("should fetch user with their projects via bridge entity (N:M)", async () => {
+
+                                const userId = "user-4";
+
+                                const projId1 = "proj-1";
+
+                                const projId2 = "proj-2";
+
+                        
+
+                                // Seed data
+
+                                await db.insert(users).values({ id: userId, name: "David" }).execute();
+
+                                await db.insert(projects).values({ id: projId1, name: "Project Alpha" }).execute();
+
+                                await db.insert(projects).values({ id: projId2, name: "Project Beta" }).execute();
+
+                                
+
+                                // Memberships (Bridge items in the User's partition)
+
+                                await db.insert(members).values({ userId, projectId: projId1, role: "owner" }).execute();
+
+                                await db.insert(members).values({ userId, projectId: projId2, role: "admin" }).execute();
+
+                        
+
+                                // Query user with memberships
+
+                                const results = await db.query.users.findMany({
+
+                                    where: (cols, { eq }) => eq(cols.id, userId),
+
+                                    with: {
+
+                                        memberships: true
+
+                                    }
+
+                                });
+
+                        
+
+                                expect(results).toHaveLength(1);
+
+                                expect(results[0].name).toBe("David");
+
+                                        expect(results[0].memberships).toHaveLength(2);
+
+                                        expect(results[0].memberships.map((m: any) => m.role)).toContain("owner");
+
+                                        expect(results[0].memberships.map((m: any) => m.role)).toContain("admin");
+
+                                    });
+
+                                
+
+                                    it("should fetch project with its members via GSI", async () => {
+
+                                        const userId1 = "user-5";
+
+                                        const userId2 = "user-6";
+
+                                        const projId = "proj-3";
+
+                                
+
+                                        // Seed data
+
+                                        await db.insert(users).values({ id: userId1, name: "Eve" }).execute();
+
+                                        await db.insert(users).values({ id: userId2, name: "Frank" }).execute();
+
+                                        await db.insert(projects).values({ id: projId, name: "Project Gamma" }).execute();
+
+                                        
+
+                                        // Memberships (Co-located with users in main table, but queryable by project via GSI)
+
+                                        await db.insert(members).values({ userId: userId1, projectId: projId, role: "lead" }).execute();
+
+                                        await db.insert(members).values({ userId: userId2, projectId: projId, role: "dev" }).execute();
+
+                                
+
+                                        // Query project with members
+
+                                        // RelationalQueryBuilder needs to be smart enough to know members of a project 
+
+                                        // are resolved via GSI because members.pk != projects.pk
+
+                                        const results = await db.query.projects.findMany({
+
+                                            where: (cols, { eq }) => eq(cols.id, projId),
+
+                                            with: {
+
+                                                members: true
+
+                                            }
+
+                                        });
+
+                                
+
+                                        expect(results).toHaveLength(1);
+
+                                        expect(results[0].name).toBe("Project Gamma");
+
+                                        expect(results[0].members).toBeDefined();
+
+                                        // This will currently fail because members are in different partitions and we haven't implemented GSI-following
+
+                                        expect(results[0].members).toHaveLength(2);
+
+                                    });
+
+                                });
+
+                                
+
+                        
 
                 
 

@@ -16,6 +16,7 @@ export class DynamoQueryBuilder<T extends Entity<any>> {
 	private limitVal?: number;
 	private projectionFields?: string[];
 	private sortForward: boolean = true;
+	private indexName?: string;
 
 	constructor(
 		private client: DynamoDBDocumentClient,
@@ -38,6 +39,11 @@ export class DynamoQueryBuilder<T extends Entity<any>> {
 		return this;
 	}
 
+	index(name: string) {
+		this.indexName = name;
+		return this;
+	}
+
 	setProjection(cols: string[]) {
 		this.projectionFields = cols;
 		return this;
@@ -49,7 +55,7 @@ export class DynamoQueryBuilder<T extends Entity<any>> {
 		const tableName = resolveTableName(this.table);
 		const entityName = table[ENTITY_SYMBOLS.ENTITY_NAME] || (table as any).tableName;
 		
-		const resolution = resolveStrategies(this.table, this.whereClause);
+		const resolution = resolveStrategies(this.table, this.whereClause, undefined, this.indexName);
 
 		// Estado para montar a query do Dynamo
 		const expressionAttributeNames: Record<string, string> = {};
@@ -112,20 +118,25 @@ export class DynamoQueryBuilder<T extends Entity<any>> {
 				let isQuery = resolution.hasPartitionKey;
 		
 				if (isQuery) {
-                    const pkName = Object.keys(resolution.keys).find(k => {
+                    let pkName: string;
+                    let skName: string | undefined;
+
+                    if (resolution.indexName) {
                         const pt = table._?.table || table[ENTITY_SYMBOLS.PHYSICAL_TABLE];
-                        return k === (pt?._?.partitionKey?.name || pt?.[TABLE_SYMBOLS.PARTITION_KEY]?.name);
-                    }) || Object.keys(resolution.keys)[0];
+                        const index = pt?._?.config?.indexes?.[resolution.indexName] || pt?.[TABLE_SYMBOLS.INDEXES]?.[resolution.indexName];
+                        pkName = index.config.pk;
+                        skName = index.config.sk;
+                    } else {
+                        const pt = table._?.table || table[ENTITY_SYMBOLS.PHYSICAL_TABLE];
+                        pkName = pt?._?.partitionKey?.name || pt?.[TABLE_SYMBOLS.PARTITION_KEY]?.name;
+                        skName = pt?._?.sortKey?.name || pt?.[TABLE_SYMBOLS.SORT_KEY]?.name;
+                    }
 
                     const pkValue = resolution.keys[pkName];
                     keyConditionExpression = `${addName(pkName)} = ${addValue(pkValue)}`;
 
-                    if (resolution.hasSortKey) {
-                        const skName = Object.keys(resolution.keys).find(k => k !== pkName);
-                        if (skName) {
-                            const skValue = resolution.keys[skName];
-                            keyConditionExpression += ` AND ${addName(skName)} = ${addValue(skValue)}`;
-                        }
+                    if (resolution.hasSortKey && skName && resolution.keys[skName]) {
+                        keyConditionExpression += ` AND ${addName(skName)} = ${addValue(resolution.keys[skName])}`;
                     }
                 } else {
                     if (this.whereClause) {
@@ -135,7 +146,8 @@ export class DynamoQueryBuilder<T extends Entity<any>> {
 		
 				const params: QueryCommandInput | ScanCommandInput = {
 					TableName: tableName,
-					Limit: this.limitVal as number | undefined
+					Limit: this.limitVal as number | undefined,
+					IndexName: this.indexName
 				};
 
 		if (this.projectionFields && this.projectionFields.length > 0) {

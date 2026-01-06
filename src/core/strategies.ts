@@ -104,6 +104,7 @@ export function resolveStrategies(
     entity: Entity,
     whereClause?: Expression,
     providedValues?: Record<string, any>,
+    forcedIndexName?: string
 ): StrategyResolution {
     const strategies = entity[ENTITY_SYMBOLS.ENTITY_STRATEGY] as Record<string, KeyStrategy>;
     const physicalTable = entity[ENTITY_SYMBOLS.PHYSICAL_TABLE] as any;
@@ -121,6 +122,28 @@ export function resolveStrategies(
         hasPartitionKey: false,
         hasSortKey: false,
     };
+
+    if (forcedIndexName) {
+        const indexes = physicalTable[TABLE_SYMBOLS.INDEXES];
+        const indexBuilder = indexes?.[forcedIndexName] as any;
+        const indexStrategy = strategies[forcedIndexName] as any;
+
+        if (indexBuilder && indexStrategy) {
+            const indexPkValue = resolveKeyStrategy(indexStrategy.pk, availableValues);
+            if (indexPkValue) {
+                result.indexName = forcedIndexName;
+                result.keys[indexBuilder.config.pk] = indexPkValue;
+                result.hasPartitionKey = true;
+
+                const indexSkValue = indexStrategy.sk ? resolveKeyStrategy(indexStrategy.sk, availableValues) : undefined;
+                if (indexSkValue && indexBuilder.config.sk) {
+                    result.keys[indexBuilder.config.sk] = indexSkValue;
+                    result.hasSortKey = true;
+                }
+                return result;
+            }
+        }
+    }
 
     if (strategies.pk) {
         const pkValue = resolveKeyStrategy(strategies.pk, availableValues);
@@ -150,8 +173,6 @@ export function resolveStrategies(
                 const indexStrategy = strategies[indexName] as any;
                 if (!indexStrategy) continue;
                 
-                // console.log("Checking index:", indexName, indexStrategy);
-
                 if (indexStrategy.pk && indexBuilder.config.pk) {
                     const indexPkValue = resolveKeyStrategy(
                         indexStrategy.pk,
