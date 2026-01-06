@@ -8,6 +8,7 @@ import {
 import type { Condition } from '../expressions/operators';
 import type { InferSelectedModel, Entity } from '../core/table';
 import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from '../constants';
+import { resolveTableName } from '../utils/utils';
 
 export class DynamoQueryBuilder<T extends Entity<any>> {
 	private whereClause?: Condition;
@@ -44,13 +45,14 @@ export class DynamoQueryBuilder<T extends Entity<any>> {
 	// Executa a query
 	async execute(): Promise<InferSelectedModel<T>[]> {
 		const table = this.table as any;
-		const tableName = table[ENTITY_SYMBOLS.ENTITY_NAME] || (table as any).tableName;
+		const tableName = resolveTableName(this.table);
+		const entityName = table[ENTITY_SYMBOLS.ENTITY_NAME] || (table as any).tableName;
 		
 		const physicalTable = table._?.table || table[ENTITY_SYMBOLS.PHYSICAL_TABLE];
 		const pkPhisicalName = physicalTable?._?.partitionKey?.name || physicalTable?.[TABLE_SYMBOLS.PARTITION_KEY]?.name;
 
 		if (!pkPhisicalName) {
-			throw new Error(`Table ${tableName} does not have an Partition Key defined`);
+			throw new Error(`Entity ${entityName} does not have an Partition Key defined`);
 		}
 
 		// Estado para montar a query do Dynamo
