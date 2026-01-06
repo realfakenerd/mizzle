@@ -9,14 +9,14 @@ Establish the foundation for the relational schema and the new initialization lo
 - [x] Task: Create basic types for the `RelationalQueryBuilder` and query options (`where`, `with`, `include`). d7044ef
 - [x] Task: Conductor - User Manual Verification 'Core Architecture & Schema Types' (Protocol in workflow.md)
 
-## Phase 2: The Query Proxy & FindMany (TDD)
+## Phase 2: The Query Proxy & FindMany (TDD) [checkpoint: 8fc0c92]
 Implement the high-level API access and basic query execution.
 
 - [x] Task: Implement the `db.query` proxy to provide dynamic access to entities in the schema. 4f3a5c3
 - [x] Task: Implement `RelationalQueryBuilder.findMany()` base logic. 5b91de5
-- [ ] Task: Write failing tests in `test/builders/relational.test.ts` for basic `findMany` without relations.
+- [x] Task: Write failing tests in `test/builders/relational.test.ts` for basic `findMany` without relations. 5b91de5
 - [x] Task: Implement logic to translate `where` conditions inside `findMany` to DynamoDB expressions. 4599ad0
-- [ ] Task: Conductor - User Manual Verification 'The Query Proxy & FindMany' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'The Query Proxy & FindMany' (Protocol in workflow.md)
 
 ## Phase 3: Single-Table Mapping & Item Parsing (TDD)
 Implement the core optimization for Single-Table Design.
