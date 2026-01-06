@@ -34,7 +34,7 @@ Add helper commands for environment inspection and cleanup.
 - [x] Task: Refine CLI output and error handling for all commands [1233382]
 - [ ] Task: Conductor - User Manual Verification 'Utilities' (Protocol in workflow.md)
 
-## Phase 5: Integration & Polishing
+## Phase 5: Integration & Polishing [checkpoint: 6463d9c]
 Ensure all components work together and the user experience is seamless.
 
 - [x] Task: Perform end-to-end testing of the full migration lifecycle [a608ed3]
