@@ -16,51 +16,56 @@ export async function generateCommand(options: GenerateOptions) {
     const { config } = options;
     const discover = options.discoverSchema || discoverSchema;
 
-    // 1. Discover Schema
-    const schema = await discover(config); // Returns { tables, entities }
-    
-    // 2. Load Snapshot
-    const migrationsDir = config.out;
-    const existingSnapshot = await loadSnapshot(migrationsDir) || { version: "0", tables: {} };
+    try {
+        // 1. Discover Schema
+        const schema = await discover(config); // Returns { tables, entities }
+        
+        // 2. Load Snapshot
+        const migrationsDir = config.out;
+        const existingSnapshot = await loadSnapshot(migrationsDir) || { version: "0", tables: {} };
 
-    // 3. Compare
-    const currentSnapshot = generateSnapshot(schema);
-    const changes = compareSchema(schema, existingSnapshot);
+        // 3. Compare
+        const currentSnapshot = generateSnapshot(schema);
+        const changes = compareSchema(schema, existingSnapshot);
 
-    if (changes.length === 0) {
-        outro("No changes detected.");
-        return;
-    }
-
-    console.log(`Detected ${changes.length} changes.`);
-
-    // 4. Generate Migration Script
-    const version = await getNextMigrationVersion(migrationsDir);
-    
-    const name = await text({
-        message: "Enter migration name",
-        placeholder: "init",
-        initialValue: "migration",
-        validate(value) {
-            if (value.length === 0) return "Name is required";
+        if (changes.length === 0) {
+            outro("No changes detected.");
+            return;
         }
-    });
 
-    if (isCancel(name)) {
-        cancel("Operation cancelled.");
-        process.exit(0);
+        console.log(`Detected ${changes.length} changes.`);
+
+        // 4. Generate Migration Script
+        const version = await getNextMigrationVersion(migrationsDir);
+        
+        const name = await text({
+            message: "Enter migration name",
+            placeholder: "init",
+            initialValue: "migration",
+            validate(value) {
+                if (value.length === 0) return "Name is required";
+            }
+        });
+
+        if (isCancel(name)) {
+            cancel("Operation cancelled.");
+            return;
+        }
+
+        const filename = `${version}_${name}.ts`;
+        const filePath = join(migrationsDir, filename);
+
+        const scriptContent = generateMigrationScript(changes);
+        await writeFile(filePath, scriptContent);
+        console.log(`Created migration: ${filename}`);
+
+        // 5. Save new Snapshot
+        await saveSnapshot(migrationsDir, currentSnapshot);
+        outro("Updated snapshot.json");
+    } catch (error) {
+        console.error("Error generating migration:", error);
+        process.exit(1);
     }
-
-    const filename = `${version}_${name}.ts`;
-    const filePath = join(migrationsDir, filename);
-
-    const scriptContent = generateMigrationScript(changes);
-    await writeFile(filePath, scriptContent);
-    console.log(`Created migration: ${filename}`);
-
-    // 5. Save new Snapshot
-    await saveSnapshot(migrationsDir, currentSnapshot);
-    outro("Updated snapshot.json");
 }
 
 function generateMigrationScript(changes: SchemaChange[]): string {

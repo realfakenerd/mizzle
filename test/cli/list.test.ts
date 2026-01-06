@@ -1,6 +1,14 @@
 import { expect, test, describe, beforeEach, afterEach, mock, spyOn } from "bun:test";
 import { listCommand } from "../../src/cli/commands/list";
 
+// Mock Clack
+const mockClack = {
+    intro: mock(() => {}),
+    outro: mock(() => {}),
+    spinner: () => ({ start: () => {}, stop: () => {}, message: () => {} }),
+};
+mock.module("@clack/prompts", () => mockClack);
+
 // Mock Console
 const logSpy = spyOn(console, "log").mockImplementation(() => {});
 

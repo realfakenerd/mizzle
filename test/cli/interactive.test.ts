@@ -13,7 +13,7 @@ const mockClack = {
     confirm: mock(() => Promise.resolve(true)),
     intro: mock(() => {}),
     outro: mock(() => {}),
-    spinner: () => ({ start: () => {}, stop: () => {} }),
+    spinner: () => ({ start: () => {}, stop: () => {}, message: () => {} }),
     isCancel: () => false
 };
 mock.module("@clack/prompts", () => mockClack);

@@ -1,4 +1,4 @@
-import { expect, test, describe, beforeEach, afterEach, mock } from "bun:test";
+import { expect, test, describe, beforeEach, afterEach, mock, spyOn } from "bun:test";
 import { generateCommand } from "../../src/cli/commands/generate";
 import { PhysicalTable } from "../../src/core/table";
 import { TABLE_SYMBOLS } from "../../src/constants";
@@ -90,5 +90,22 @@ describe("Generate Command", () => {
 
         const filesAfter = await import("fs").then(fs => fs.readdirSync(MIGRATIONS_DIR));
         expect(filesAfter.length).toBe(filesBefore.length);
+    });
+
+    test("should handle errors gracefully", async () => {
+            mockDiscover.mockRejectedValue(new Error("Discovery failed"));
+            const errorSpy = spyOn(console, "error").mockImplementation(() => {});
+            const processExitSpy = spyOn(process, "exit").mockImplementation((() => {}) as any);
+    
+            await generateCommand({
+                config: { schema: SCHEMA_FILE, out: MIGRATIONS_DIR },
+                discoverSchema: mockDiscover
+            });
+    
+            expect(errorSpy).toHaveBeenCalled();
+            expect(processExitSpy).toHaveBeenCalledWith(1);
+            
+        errorSpy.mockRestore();
+        processExitSpy.mockRestore();
     });
 });
