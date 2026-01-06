@@ -20,7 +20,7 @@ Establish the foundational narrative and usage guides.
 ## Phase 3: API & CLI Reference
 Detailed documentation of the technical interfaces.
 
-- [ ] Task: Create API Reference pages for `select`, `insert`, `update`, `delete`, and `query`
+- [x] Task: Create API Reference pages for `select`, `insert`, `update`, `delete`, and `query` (a01dea6)
 - [ ] Task: Create CLI Guide for the `mizzling` tool (Migrations, Init, List, Push, Drop)
 - [ ] Task: Verify all internal documentation links and code examples
 - [ ] Task: Conductor - User Manual Verification 'API & CLI Reference' (Protocol in workflow.md)
