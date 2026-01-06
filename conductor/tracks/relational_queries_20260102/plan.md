@@ -21,7 +21,7 @@ Implement the high-level API access and basic query execution.
 ## Phase 3: Single-Table Mapping & Item Parsing (TDD)
 Implement the core optimization for Single-Table Design.
 
-- [ ] Task: Implement `ItemCollectionParser` to group raw DynamoDB items into structured objects based on relation metadata.
+- [x] Task: Implement `ItemCollectionParser` to group raw DynamoDB items into structured objects based on relation metadata. 371cafb
 - [ ] Task: Write failing integration tests in `test/builders/relational.integration.test.ts` for 1:N relations in a single table.
 - [ ] Task: Update `RelationalQueryBuilder` to fetch related items sharing a PK in a single `Query` command.
 - [ ] Task: Implement support for both `with` and `include` keywords in selection options.
