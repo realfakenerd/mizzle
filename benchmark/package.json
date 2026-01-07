@@ -1,0 +1,17 @@
+{
+  "name": "@mizzle/benchmark",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.962.0",
+    "@aws-sdk/lib-dynamodb": "^3.962.0",
+    "dynamoose": "^4.0.3",
+    "electrodb": "^3.5.3",
+    "mizzle": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.9.3"
+  }
+}
