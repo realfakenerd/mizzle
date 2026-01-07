@@ -11,38 +11,38 @@
 - [x] Task: Conductor - User Manual Verification 'Setup & Infrastructure' (Protocol in workflow.md) (fd4db52)
 
 ## Phase 2: Core Benchmark Framework
-- [x] Task: Implement Metrics Collection Utility (75ef0ea)
-    - [x] Write Tests: Verify correctness of latency (ms), memory (MB), and CPU (%) tracking
-    - [x] Implement: `MetricsTracker` to capture start/end snapshots and calculate deltas
-- [ ] Task: Implement Data Seeding Utility
-    - [ ] Write Tests: Verify generation of 1,000 and 100,000 item datasets with consistent schema
-    - [ ] Implement: `DataGenerator` to seed DynamoDB Local for repeatable tests
+- [x] Task: Implement Metrics Collection Utility with tinybench (75ef0ea)
+    - [x] Write Tests: Verify correctness of latency (ms), memory (MB), and CPU (%) tracking using `tinybench` as the engine
+    - [x] Implement: `runBenchmarkTask` wrapper around `tinybench.Bench` to capture resource usage deltas
+- [x] Task: Implement Data Seeding Utility (ef38553)
+    - [x] Write Tests: Verify generation of 1,000 and 100,000 item datasets with consistent schema
+    - [x] Implement: `DataGenerator` to seed DynamoDB Local for repeatable tests
 - [ ] Task: Conductor - User Manual Verification 'Core Benchmark Framework' (Protocol in workflow.md)
 
 ## Phase 3: ORM Implementation (Baseline & Mizzle)
-- [ ] Task: Implement AWS SDK v3 Baseline
-    - [ ] Write Tests: Ensure the SDK runner correctly performs all 6 required operations
-    - [ ] Implement: `AWSSDKRunner` using the Document Client as the baseline
-- [ ] Task: Implement Mizzle Runner
-    - [ ] Write Tests: Ensure the Mizzle runner correctly performs all operations via its query builder
-    - [ ] Implement: `MizzleRunner` using the internal `packages/mizzle`
+- [ ] Task: Implement AWS SDK v3 Benchmark Functions
+    - [ ] Write Tests: Ensure functions correctly perform all 6 required operations
+    - [ ] Implement: `AWSSDKBench` providing task functions for `tinybench`
+- [ ] Task: Implement Mizzle Benchmark Functions
+    - [ ] Write Tests: Ensure Mizzle functions correctly perform operations via its query builder
+    - [ ] Implement: `MizzleBench` providing task functions for `tinybench`
 - [ ] Task: Conductor - User Manual Verification 'Baseline & Mizzle Implementation' (Protocol in workflow.md)
 
 ## Phase 4: Competitor Implementation
-- [ ] Task: Implement Dynamoose Runner
-    - [ ] Write Tests: Ensure Dynamoose runner maps schema and performs operations correctly
-    - [ ] Implement: `DynamooseRunner`
-- [ ] Task: Implement ElectroDB Runner
-    - [ ] Write Tests: Ensure ElectroDB runner handles keys and queries as expected
-    - [ ] Implement: `ElectroDBRunner`
+- [ ] Task: Implement Dynamoose Benchmark Functions
+    - [ ] Write Tests: Ensure Dynamoose functions map schema and perform operations correctly
+    - [ ] Implement: `DynamooseBench`
+- [ ] Task: Implement ElectroDB Benchmark Functions
+    - [ ] Write Tests: Ensure ElectroDB functions handle keys and queries as expected
+    - [ ] Implement: `ElectroDBBench`
 - [ ] Task: Conductor - User Manual Verification 'Competitor Implementation' (Protocol in workflow.md)
 
 ## Phase 5: Execution & Reporting
-- [ ] Task: Implement Benchmark Orchestrator
-    - [ ] Write Tests: Verify orchestrator correctly chains runs and handles failures
-    - [ ] Implement: Main CLI entry point to execute comparisons across both Small and Large scales
+- [ ] Task: Implement Benchmark Orchestrator with tinybench
+    - [ ] Write Tests: Verify orchestrator correctly chains `tinybench.Bench` runs
+    - [ ] Implement: Main CLI entry point to execute comparisons across both Small and Large scales using `tinybench`
 - [ ] Task: Report Generation & Documentation
-    - [ ] Write Tests: Verify Markdown table generation from result objects
+    - [ ] Write Tests: Verify Markdown table generation from `tinybench` result objects
     - [ ] Implement: Report generator to output `results.md`
     - [ ] Create `benchmark/README.md` with execution instructions
 - [ ] Task: Conductor - User Manual Verification 'Reporting & Finalization' (Protocol in workflow.md)
