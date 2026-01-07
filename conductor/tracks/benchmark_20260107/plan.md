@@ -38,11 +38,11 @@
 - [x] Task: Conductor - User Manual Verification 'Competitor Implementation' (Protocol in workflow.md) (edfa916)
 
 ## Phase 5: Execution & Reporting
-- [ ] Task: Implement Benchmark Orchestrator with tinybench
-    - [ ] Write Tests: Verify orchestrator correctly chains `tinybench.Bench` runs
-    - [ ] Implement: Main CLI entry point to execute comparisons across both Small and Large scales using `tinybench`
-- [ ] Task: Report Generation & Documentation
-    - [ ] Write Tests: Verify Markdown table generation from `tinybench` result objects
-    - [ ] Implement: Report generator to output `results.md`
-    - [ ] Create `benchmark/README.md` with execution instructions
-- [ ] Task: Conductor - User Manual Verification 'Reporting & Finalization' (Protocol in workflow.md)
+- [x] Task: Implement Benchmark Orchestrator with tinybench (0017b12)
+    - [x] Write Tests: Verify orchestrator correctly chains `tinybench.Bench` runs
+    - [x] Implement: Main CLI entry point to execute comparisons across both Small and Large scales using `tinybench`
+- [x] Task: Report Generation & Documentation (d705474)
+    - [x] Write Tests: Verify Markdown table generation from `tinybench` result objects
+    - [x] Implement: Report generator to output `results.md`
+    - [x] Create `benchmark/README.md` with execution instructions
+- [~] Task: Conductor - User Manual Verification 'Reporting & Finalization' (Protocol in workflow.md)
