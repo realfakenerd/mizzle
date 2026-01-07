@@ -5,6 +5,8 @@ import { ElectroDBBench } from "./electrodb-bench";
 import { DataGenerator } from "./data-gen";
 import { runBenchmarkTask, ExtendedMetrics } from "./metrics";
 import { createTable, deleteTable, waitForTable } from "./setup";
+import { Reporter } from "./reporter";
+import { writeFileSync } from "fs";
 
 async function main() {
     const scaleArg = Bun.argv[2] || "both";
@@ -22,6 +24,12 @@ async function main() {
         console.error(`Unknown scale: ${scaleArg}. Use 'small', 'large', or 'both'.`);
         process.exit(1);
     }
+
+    console.log("Starting Benchmark Suite...");
+
+    let finalMarkdown = "# Benchmark Results\n\n";
+
+    for (const scale of scales) {
         console.log(`\n--- Scale: ${scale.name} (${scale.count} items) ---`);
 
         // Setup
@@ -98,7 +106,12 @@ async function main() {
             "Latency (ms)": r.latencyMs.toFixed(4),
             "Mem Delta (MB)": r.memoryDeltaMb.toFixed(2),
         })));
+
+        finalMarkdown += Reporter.generateMarkdown(allResults, scale.name);
     }
+
+    writeFileSync("results.md", finalMarkdown);
+    console.log("\nResults saved to results.md");
 
     await deleteTable();
     console.log("\nBenchmark Suite Complete.");
