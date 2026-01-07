@@ -41,7 +41,7 @@ const Model = dynamoose.model(TABLE_NAME, schema, {
 
 export class DynamooseBench {
     async putItem(item: BenchmarkItem): Promise<void> {
-        await Model.create(item);
+        await Model.create(item, { overwrite: true });
     }
 
     async getItem(pk: string, sk: string): Promise<BenchmarkItem | undefined> {

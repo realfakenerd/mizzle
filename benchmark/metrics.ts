@@ -31,13 +31,23 @@ export async function runBenchmarkTask(
     const endMemory = process.memoryUsage().heapUsed;
     
     const task = bench.getTask(name)!;
-    const result = task.result!;
+    const result = task.result;
+
+    if (!result || task.error) {
+        return {
+            name,
+            opsPerSecond: 0,
+            latencyMs: 0,
+            memoryDeltaMb: 0,
+            cpuUserDeltaMs: 0,
+            cpuSystemDeltaMs: 0,
+        };
+    }
     
     return {
         name,
-        // In tinybench v3+, result structure changed. 
         // result.latency.mean is in ms.
-        // result.throughput.mean is ops/sec (equivalent to old hz).
+        // result.throughput.mean is ops/sec.
         opsPerSecond: result.throughput.mean,
         latencyMs: result.latency.mean,
         memoryDeltaMb: (endMemory - startMemory) / (1024 * 1024),
