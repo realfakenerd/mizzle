@@ -1,4 +1,4 @@
-import { ExtendedMetrics } from "./metrics";
+import type { ExtendedMetrics } from "./metrics";
 
 export class Reporter {
     static generateMarkdown(results: ExtendedMetrics[], scaleName: string): string {

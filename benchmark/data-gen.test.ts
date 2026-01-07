@@ -25,8 +25,8 @@ describe("DataGenerator", () => {
         const items = gen.generateBatch(count);
 
         expect(items).toHaveLength(count);
-        expect(items[0].pk).toBe("USER#1");
-        expect(items[99].pk).toBe("USER#100");
+        expect(items[0]!.pk).toBe("USER#1");
+        expect(items[99]!.pk).toBe("USER#100");
     });
 
     it("should generate consistent data for same index", () => {

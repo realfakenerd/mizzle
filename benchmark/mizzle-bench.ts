@@ -12,7 +12,7 @@ import {
     type DynamoDB
 } from "mizzle";
 import { TABLE_NAME, REGION, ENDPOINT } from "./env";
-import { BenchmarkItem } from "./data-gen";
+import type { BenchmarkItem } from "./data-gen";
 
 // Define the physical table
 const table = dynamoTable(TABLE_NAME, {
@@ -68,7 +68,7 @@ export class MizzleBench {
         } as any).execute();
     }
 
-    async getItem(pk: string, sk: string): Promise<BenchmarkItem | undefined> {
+    async getItem(pk: string, _sk: string): Promise<BenchmarkItem | undefined> {
         const id = pk.replace("USER#", "");
         const results = await this.db
             .select()
@@ -91,9 +91,9 @@ export class MizzleBench {
         };
     }
 
-    async updateItem(pk: string, sk: string, updates: Partial<BenchmarkItem>): Promise<void> {
+    async updateItem(pk: string, _sk: string, updates: Partial<BenchmarkItem>): Promise<void> {
         const id = pk.replace("USER#", "");
-        const { pk: _pk, sk: _sk, ...validUpdates } = updates as any;
+        const { pk: __pk, sk: __sk, ...validUpdates } = updates as any;
         
         await this.db
             .update(User)
@@ -102,7 +102,7 @@ export class MizzleBench {
             .execute();
     }
 
-    async deleteItem(pk: string, sk: string): Promise<void> {
+    async deleteItem(pk: string, _sk: string): Promise<void> {
         const id = pk.replace("USER#", "");
         await this.db
             .delete(User, { id } as any)

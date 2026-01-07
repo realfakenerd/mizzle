@@ -42,7 +42,7 @@ describe("DynamooseBench", () => {
         
         const items = await bench.queryItems("USER#2");
         expect(items).toHaveLength(1);
-        expect(items[0].pk).toBe("USER#2");
+        expect(items[0]!.pk).toBe("USER#2");
     });
 
     it("should scan items", async () => {

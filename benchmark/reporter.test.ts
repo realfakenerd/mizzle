@@ -1,6 +1,6 @@
 import { expect, test, describe } from "bun:test";
 import { Reporter } from "./reporter";
-import { ExtendedMetrics } from "./metrics";
+import type { ExtendedMetrics } from "./metrics";
 
 describe("Reporter", () => {
     test("should generate markdown table from results", () => {

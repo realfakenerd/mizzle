@@ -26,13 +26,13 @@ describe("AWSSDKBench", () => {
     it("should get an item", async () => {
         const item = await bench.getItem("USER#1", "METADATA");
         expect(item).toBeDefined();
-        expect(item.pk).toBe("USER#1");
+        expect(item!.pk).toBe("USER#1");
     });
 
     it("should update an item", async () => {
         await bench.updateItem("USER#1", "METADATA", { name: "Updated Name" });
         const item = await bench.getItem("USER#1", "METADATA");
-        expect(item.name).toBe("Updated Name");
+        expect(item!.name).toBe("Updated Name");
     });
 
     it("should query items", async () => {
@@ -42,7 +42,7 @@ describe("AWSSDKBench", () => {
         
         const items = await bench.queryItems("USER#2");
         expect(items).toHaveLength(1);
-        expect(items[0].pk).toBe("USER#2");
+        expect(items[0]!.pk).toBe("USER#2");
     });
 
     it("should scan items", async () => {

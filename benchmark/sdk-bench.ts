@@ -9,7 +9,7 @@ import {
     ScanCommand 
 } from "@aws-sdk/lib-dynamodb";
 import { TABLE_NAME, REGION, ENDPOINT } from "./env";
-import { BenchmarkItem } from "./data-gen";
+import type { BenchmarkItem } from "./data-gen";
 
 export class AWSSDKBench {
     private docClient: DynamoDBDocumentClient;

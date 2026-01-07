@@ -37,7 +37,7 @@ describe("Benchmark Orchestrator", () => {
         const electrodb = new ElectroDBBench();
         const gen = new DataGenerator();
         const items = gen.generateBatch(1);
-        const item = items[0];
+        const item = items[0]!;
 
         const bench = new Bench({ time: 50, iterations: 10 }); // Very short for testing
 

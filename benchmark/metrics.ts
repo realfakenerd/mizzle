@@ -33,7 +33,7 @@ export async function runBenchmarkTask(
     const task = bench.getTask(name)!;
     const result = task.result;
 
-    if (!result || task.error) {
+    if (result.state !== "completed") {
         return {
             name,
             opsPerSecond: 0,

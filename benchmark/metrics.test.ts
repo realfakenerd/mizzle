@@ -15,7 +15,7 @@ describe("runBenchmarkTask", () => {
     it("should track memory usage delta", async () => {
         const metrics = await runBenchmarkTask("memory-test", () => {
             const arr = new Array(1000000).fill(0);
-            return arr.length;
+            void arr.length;
         }, 10);
         
         expect(typeof metrics.memoryDeltaMb).toBe("number");

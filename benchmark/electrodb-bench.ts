@@ -1,7 +1,7 @@
 import { Entity } from "electrodb";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { TABLE_NAME, ENDPOINT, REGION } from "./env";
-import { BenchmarkItem } from "./data-gen";
+import type { BenchmarkItem } from "./data-gen";
 
 const client = new DynamoDBClient({
     endpoint: ENDPOINT,

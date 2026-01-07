@@ -3,7 +3,8 @@ import { MizzleBench } from "./mizzle-bench";
 import { DynamooseBench } from "./dynamoose-bench";
 import { ElectroDBBench } from "./electrodb-bench";
 import { DataGenerator } from "./data-gen";
-import { runBenchmarkTask, ExtendedMetrics } from "./metrics";
+import { runBenchmarkTask } from "./metrics";
+import type { ExtendedMetrics } from "./metrics";
 import { createTable, deleteTable, waitForTable } from "./setup";
 import { Reporter } from "./reporter";
 import { writeFileSync } from "fs";
@@ -39,13 +40,13 @@ async function main() {
 
         const gen = new DataGenerator();
         const data = gen.generateBatch(scale.count);
-        const item = data[0];
+        const item = data[0]!;
 
         console.log(`Seeding ${scale.count} items...`);
         const sdk = new AWSSDKBench();
         // Seed in batches for speed if possible, but for now just loop
         for (let i = 0; i < data.length; i++) {
-            await sdk.putItem(data[i]);
+            await sdk.putItem(data[i]!);
             if (i % 100 === 0 && i > 0) process.stdout.write(".");
         }
         console.log("\nSeeding complete.");

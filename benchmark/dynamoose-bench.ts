@@ -1,7 +1,7 @@
 import * as dynamoose from "dynamoose";
 import { DynamoDB } from "@aws-sdk/client-dynamodb";
 import { TABLE_NAME, ENDPOINT, REGION } from "./env";
-import { BenchmarkItem } from "./data-gen";
+import type { BenchmarkItem } from "./data-gen";
 
 // Configure dynamoose to use local instance
 const ddb = new DynamoDB({
