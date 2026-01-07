@@ -32,10 +32,10 @@
 - [x] Task: Implement Dynamoose Benchmark Functions (508e972)
     - [x] Write Tests: Ensure Dynamoose functions map schema and perform operations correctly
     - [x] Implement: `DynamooseBench`
-- [~] Task: Implement ElectroDB Benchmark Functions
-    - [ ] Write Tests: Ensure ElectroDB functions handle keys and queries as expected
-    - [ ] Implement: `ElectroDBBench`
-- [ ] Task: Conductor - User Manual Verification 'Competitor Implementation' (Protocol in workflow.md)
+- [x] Task: Implement ElectroDB Benchmark Functions (0a69f53)
+    - [x] Write Tests: Ensure ElectroDB functions handle keys and queries as expected
+    - [x] Implement: `ElectroDBBench`
+- [~] Task: Conductor - User Manual Verification 'Competitor Implementation' (Protocol in workflow.md)
 
 ## Phase 5: Execution & Reporting
 - [ ] Task: Implement Benchmark Orchestrator with tinybench
