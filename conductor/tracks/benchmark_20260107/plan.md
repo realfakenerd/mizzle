@@ -10,14 +10,14 @@
     - [x] Create a setup/teardown script for benchmark tables
 - [x] Task: Conductor - User Manual Verification 'Setup & Infrastructure' (Protocol in workflow.md) (fd4db52)
 
-## Phase 2: Core Benchmark Framework
+## Phase 2: Core Benchmark Framework [checkpoint: 0e24444]
 - [x] Task: Implement Metrics Collection Utility with tinybench (75ef0ea)
     - [x] Write Tests: Verify correctness of latency (ms), memory (MB), and CPU (%) tracking using `tinybench` as the engine
     - [x] Implement: `runBenchmarkTask` wrapper around `tinybench.Bench` to capture resource usage deltas
 - [x] Task: Implement Data Seeding Utility (ef38553)
     - [x] Write Tests: Verify generation of 1,000 and 100,000 item datasets with consistent schema
     - [x] Implement: `DataGenerator` to seed DynamoDB Local for repeatable tests
-- [ ] Task: Conductor - User Manual Verification 'Core Benchmark Framework' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Core Benchmark Framework' (Protocol in workflow.md) (0e24444)
 
 ## Phase 3: ORM Implementation (Baseline & Mizzle)
 - [ ] Task: Implement AWS SDK v3 Benchmark Functions
