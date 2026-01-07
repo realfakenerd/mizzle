@@ -1,6 +1,6 @@
 # Implementation Plan: DynamoDB ORM Benchmark
 
-## Phase 1: Setup & Infrastructure
+## Phase 1: Setup & Infrastructure [checkpoint: 63bc185]
 - [x] Task: Initialize `benchmark/` workspace (78aa8a2)
     - [ ] Create `benchmark/` directory at the root
     - [ ] Create `benchmark/package.json` with dependencies: `@aws-sdk/client-dynamodb`, `@aws-sdk/lib-dynamodb`, `dynamoose`, `electrodb`, and the local `mizzle` package
