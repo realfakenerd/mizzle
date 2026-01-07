@@ -2,19 +2,29 @@ import { AWSSDKBench } from "./sdk-bench";
 import { MizzleBench } from "./mizzle-bench";
 import { DynamooseBench } from "./dynamoose-bench";
 import { ElectroDBBench } from "./electrodb-bench";
-import { DataGenerator } from "./data-gen";
-import { runBenchmarkTask } from "./metrics";
-import type { ExtendedMetrics } from "./metrics";
+import { DataGenerator, type BenchmarkItem } from "./data-gen";
+import { MetricsCollector, type ExtendedMetrics } from "./metrics";
 import { createTable, deleteTable, waitForTable } from "./setup";
 import { Reporter } from "./reporter";
 import { writeFileSync } from "fs";
+import { Bench } from "tinybench";
+
+interface Competitor {
+    name: string;
+    bench: any;
+}
+
+interface Operation {
+    name: string;
+    run: (bench: any, item: BenchmarkItem) => Promise<void>;
+}
 
 async function main() {
     const scaleArg = Bun.argv[2] || "both";
     
     const allScales = [
         { name: "Small", count: 1000, iterations: 100 },
-        { name: "Large", count: 10000, iterations: 10 } // Reduced large scale for stability in local dev
+        { name: "Large", count: 10000, iterations: 10 }
     ];
 
     const scales = scaleArg === "both" 
@@ -31,7 +41,7 @@ async function main() {
     let finalMarkdown = "# Benchmark Results\n\n";
 
     for (const scale of scales) {
-        console.log(`\n--- Scale: ${scale.name} (${scale.count} items) ---`);
+        console.log(`\n=== Scale: ${scale.name} (${scale.count} items) ===`);
 
         // Setup
         await deleteTable();
@@ -51,64 +61,95 @@ async function main() {
         }
         console.log("\nSeeding complete.");
 
-        const competitors = [
+        const competitors: Competitor[] = [
             { name: "AWS SDK v3", bench: new AWSSDKBench() },
             { name: "Mizzle", bench: new MizzleBench() },
             { name: "Dynamoose", bench: new DynamooseBench() },
             { name: "ElectroDB", bench: new ElectroDBBench() },
         ];
 
-        const allResults: ExtendedMetrics[] = [];
+        const operations: Operation[] = [
+            { 
+                name: "PutItem", 
+                run: async (b, i) => b.putItem(i) 
+            },
+            { 
+                name: "GetItem", 
+                run: async (b, i) => b.getItem(i.pk, i.sk) 
+            },
+            { 
+                name: "UpdateItem", 
+                run: async (b, i) => b.updateItem(i.pk, i.sk, { name: "Updated Name" }) 
+            },
+            { 
+                name: "Query", 
+                run: async (b, i) => b.queryItems(i.pk) 
+            },
+            { 
+                name: "Scan", 
+                run: async (b, i) => b.scanItems() 
+            },
+            { 
+                name: "DeleteItem", 
+                run: async (b, i) => b.deleteItem(i.pk, i.sk) 
+            }
+        ];
 
-        for (const comp of competitors) {
-            console.log(`\nRunning ${comp.name}...`);
+        const scaleResults: ExtendedMetrics[] = [];
+
+        for (const op of operations) {
+            console.log(`\n--- Operation: ${op.name} ---`);
             
-            // PutItem
-            const putRes = await runBenchmarkTask(`${comp.name}: PutItem`, async () => {
-                await comp.bench.putItem(item);
-            }, scale.iterations);
-            allResults.push(putRes);
+            const bench = new Bench({ iterations: scale.iterations });
+            const collector = new MetricsCollector();
 
-            // GetItem
-            const getRes = await runBenchmarkTask(`${comp.name}: GetItem`, async () => {
-                await comp.bench.getItem(item.pk, item.sk);
-            }, scale.iterations);
-            allResults.push(getRes);
+            for (const comp of competitors) {
+                bench.add(comp.name, async () => {
+                    await op.run(comp.bench, item);
+                }, {
+                    beforeAll: function() { collector.beforeAll(this); },
+                    afterAll: function() { collector.afterAll(this); }
+                });
+            }
 
-            // UpdateItem
-            const updateRes = await runBenchmarkTask(`${comp.name}: UpdateItem`, async () => {
-                await comp.bench.updateItem(item.pk, item.sk, { name: "Updated Name" });
-            }, scale.iterations);
-            allResults.push(updateRes);
+            await bench.run();
 
-            // Query
-            const queryRes = await runBenchmarkTask(`${comp.name}: Query`, async () => {
-                await comp.bench.queryItems(item.pk);
-            }, scale.iterations);
-            allResults.push(queryRes);
+            // Collect results
+            const opResults: ExtendedMetrics[] = bench.tasks.map(task => {
+                const result = task.result;
+                const resourceMetrics = collector.get(task.name);
+                
+                if (!result || result.error) {
+                    console.error(`Task ${task.name} failed:`, result?.error);
+                    return {
+                        name: `${task.name}: ${op.name}`,
+                        opsPerSecond: 0,
+                        latencyMs: 0,
+                        ...resourceMetrics
+                    };
+                }
 
-            // Scan
-            const scanRes = await runBenchmarkTask(`${comp.name}: Scan`, async () => {
-                await comp.bench.scanItems();
-            }, scale.iterations);
-            allResults.push(scanRes);
+                return {
+                    name: `${task.name}: ${op.name}`,
+                    opsPerSecond: result.throughput.mean,
+                    latencyMs: result.latency.mean,
+                    ...resourceMetrics
+                };
+            });
 
-            // DeleteItem
-            const delRes = await runBenchmarkTask(`${comp.name}: DeleteItem`, async () => {
-                await comp.bench.deleteItem(item.pk, item.sk);
-            }, scale.iterations);
-            allResults.push(delRes);
+            // Print table for this operation
+            console.table(opResults.map(r => ({
+                Competitor: r.name.split(":")[0],
+                "Ops/sec": r.opsPerSecond.toFixed(2),
+                "Latency (ms)": r.latencyMs.toFixed(4),
+                "Mem Delta (MB)": r.memoryDeltaMb.toFixed(2),
+                "CPU (ms)": (r.cpuUserDeltaMs + r.cpuSystemDeltaMs).toFixed(2)
+            })));
+
+            scaleResults.push(...opResults);
         }
 
-        // Output results for this scale
-        console.table(allResults.map(r => ({
-            Operation: r.name,
-            "Ops/sec": r.opsPerSecond.toFixed(2),
-            "Latency (ms)": r.latencyMs.toFixed(4),
-            "Mem Delta (MB)": r.memoryDeltaMb.toFixed(2),
-        })));
-
-        finalMarkdown += Reporter.generateMarkdown(allResults, scale.name);
+        finalMarkdown += Reporter.generateMarkdown(scaleResults, scale.name);
     }
 
     writeFileSync("results.md", finalMarkdown);

@@ -1,4 +1,4 @@
-import { Bench } from "tinybench";
+import { Task } from "tinybench";
 
 export interface ExtendedMetrics {
     name: string;
@@ -9,49 +9,43 @@ export interface ExtendedMetrics {
     cpuSystemDeltaMs: number;
 }
 
-/**
- * Runs a single task using tinybench and captures additional resource usage metrics.
- * Note: Resource usage is captured for the entire run (including multiple iterations).
- */
-export async function runBenchmarkTask(
-    name: string,
-    fn: () => Promise<void> | void,
-    iterations: number = 100
-): Promise<ExtendedMetrics> {
-    const bench = new Bench({ iterations });
-    
-    // We capture resource usage for the entire benchmark run
-    const startMemory = process.memoryUsage().heapUsed;
-    const startCpu = process.cpuUsage();
-    
-    bench.add(name, fn);
-    await bench.run();
-    
-    const endCpu = process.cpuUsage(startCpu);
-    const endMemory = process.memoryUsage().heapUsed;
-    
-    const task = bench.getTask(name)!;
-    const result = task.result;
+export interface ResourceMetrics {
+    memoryDeltaMb: number;
+    cpuUserDeltaMs: number;
+    cpuSystemDeltaMs: number;
+}
 
-    if (result.state !== "completed") {
-        return {
-            name,
-            opsPerSecond: 0,
-            latencyMs: 0,
+export class MetricsCollector {
+    private starts = new Map<string, { mem: number, cpu: NodeJS.CpuUsage }>();
+    private results = new Map<string, ResourceMetrics>();
+
+    // These need to be bound or called with the task context
+    beforeAll(task: Task) {
+        this.starts.set(task.name, {
+            mem: process.memoryUsage().heapUsed,
+            cpu: process.cpuUsage()
+        });
+    }
+
+    afterAll(task: Task) {
+        const start = this.starts.get(task.name);
+        if (!start) return;
+
+        const endCpu = process.cpuUsage(start.cpu);
+        const endMemory = process.memoryUsage().heapUsed;
+
+        this.results.set(task.name, {
+            memoryDeltaMb: (endMemory - start.mem) / (1024 * 1024),
+            cpuUserDeltaMs: endCpu.user / 1000,
+            cpuSystemDeltaMs: endCpu.system / 1000
+        });
+    }
+
+    get(taskName: string): ResourceMetrics {
+        return this.results.get(taskName) || {
             memoryDeltaMb: 0,
             cpuUserDeltaMs: 0,
-            cpuSystemDeltaMs: 0,
+            cpuSystemDeltaMs: 0
         };
     }
-    
-    return {
-        name,
-        // result.latency.mean is in ms.
-        // result.throughput.mean is ops/sec.
-        opsPerSecond: result.throughput.mean,
-        latencyMs: result.latency.mean,
-        memoryDeltaMb: (endMemory - startMemory) / (1024 * 1024),
-        cpuUserDeltaMs: endCpu.user / 1000,
-        cpuSystemDeltaMs: endCpu.system / 1000,
-    };
 }

@@ -59,5 +59,5 @@ describe("Benchmark Orchestrator", () => {
 
         expect(bench.tasks.length).toBe(4);
         expect(bench.tasks.every(task => task.result !== undefined)).toBe(true);
-    });
+    }, 10000);
 });
