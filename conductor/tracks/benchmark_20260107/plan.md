@@ -11,9 +11,9 @@
 - [x] Task: Conductor - User Manual Verification 'Setup & Infrastructure' (Protocol in workflow.md) (fd4db52)
 
 ## Phase 2: Core Benchmark Framework
-- [ ] Task: Implement Metrics Collection Utility
-    - [ ] Write Tests: Verify correctness of latency (ms), memory (MB), and CPU (%) tracking
-    - [ ] Implement: `MetricsTracker` to capture start/end snapshots and calculate deltas
+- [x] Task: Implement Metrics Collection Utility (75ef0ea)
+    - [x] Write Tests: Verify correctness of latency (ms), memory (MB), and CPU (%) tracking
+    - [x] Implement: `MetricsTracker` to capture start/end snapshots and calculate deltas
 - [ ] Task: Implement Data Seeding Utility
     - [ ] Write Tests: Verify generation of 1,000 and 100,000 item datasets with consistent schema
     - [ ] Implement: `DataGenerator` to seed DynamoDB Local for repeatable tests
