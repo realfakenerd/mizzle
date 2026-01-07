@@ -41,23 +41,19 @@ export function compositeKey(
 
 function extracValuesFromExpression(
     expression: Expression,
-): Record<string, any> {
-    const foundValues: Record<string, any> = {};
-
+    acc: Record<string, any>
+): void {
     if (expression instanceof BinaryExpression) {
         if (expression.operator === "=") {
-            foundValues[expression.column.name] = expression.value;
+            acc[expression.column.name] = expression.value;
         }
     } else if (expression instanceof LogicalExpression) {
         if (expression.operator === "AND") {
             for (const condition of expression.conditions) {
-                const childValues = extracValuesFromExpression(condition);
-                Object.assign(foundValues, childValues);
+                extracValuesFromExpression(condition, acc);
             }
         }
     }
-
-    return foundValues;
 }
 
 function resolveKeyStrategy(
@@ -68,6 +64,11 @@ function resolveKeyStrategy(
         return strategy.segments[0] as string;
     }
 
+    if (strategy.segments.length === 0) return undefined;
+
+    // Optimization: Pre-calculate size or avoid push if possible, 
+    // but joining is inevitable for composite keys.
+    // However, we can fail fast.
     const resolvedParts: string[] = [];
 
     for (const segment of strategy.segments) {
@@ -91,6 +92,7 @@ function resolveKeyStrategy(
     if (strategy.type === "composite") {
         return resolvedParts.join(strategy.separator || "#");
     }
+    return undefined;
 }
 
 export interface StrategyResolution {
@@ -112,10 +114,19 @@ export function resolveStrategies(
     const pkCol = physicalTable[TABLE_SYMBOLS.PARTITION_KEY] as Column;
     const skCol = physicalTable[TABLE_SYMBOLS.SORT_KEY] as Column | undefined;
 
-    const availableValues = {
-        ...(whereClause ? extracValuesFromExpression(whereClause) : {}),
-        ...(providedValues || {}),
-    };
+    const availableValues: Record<string, any> = {};
+    
+    if (whereClause) {
+        extracValuesFromExpression(whereClause, availableValues);
+    }
+    
+    if (providedValues) {
+        // providedValues take precedence or merge? 
+        // Previously: { ...extracted, ...provided } -> provided overwrites.
+        for (const key in providedValues) {
+            availableValues[key] = providedValues[key];
+        }
+    }
 
     const result: StrategyResolution = {
         keys: {},

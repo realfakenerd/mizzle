@@ -120,7 +120,8 @@ export class RelationnalQueryBuilder<T extends Entity> {
 			const entityMeta = this.schema.entities[this.entityName];
 
             if (entityMeta) {
-                for (const result of results) {
+                // Execute fetching for all results in parallel
+                await Promise.all(results.map(async (result) => {
                     for (const [relName, relOption] of Object.entries(relationsToFetch)) {
                         if (!relOption) continue;
                         
@@ -148,7 +149,7 @@ export class RelationnalQueryBuilder<T extends Entity> {
                             }
                         }
 
-                        // Try to resolve keys for the related entity using mapped fields
+                        // Try to resolve keys for the target entity using mapped fields
                         const targetEntity = relConfig.config.to;
                         const targetRes = resolveStrategies(targetEntity, undefined, targetValues);
 
@@ -189,7 +190,7 @@ export class RelationnalQueryBuilder<T extends Entity> {
                             }
                         }
                     }
-                }
+                }));
             }
 		}
 

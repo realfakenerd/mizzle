@@ -2,6 +2,9 @@ import { join } from "path";
 import { existsSync } from "fs";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { fromIni } from "@aws-sdk/credential-provider-ini";
+import { NodeHttpHandler } from "@smithy/node-http-handler";
+import http from "http";
+import https from "https";
 
 /**
  * Configuration for Mizzle ORM.
@@ -76,10 +79,19 @@ export function defineConfig(config: MizzleConfig): MizzleConfig {
  * @returns A configured DynamoDBClient instance.
  */
 export function getClient(config: MizzleConfig): DynamoDBClient {
+  const agentOptions = {
+      keepAlive: true,
+      maxSockets: Infinity,
+  };
+
   const clientConfig: any = {
     region: config.region || "us-east-1",
     endpoint: config.endpoint,
     maxAttempts: config.maxAttempts,
+    requestHandler: new NodeHttpHandler({
+        httpAgent: new http.Agent(agentOptions),
+        httpsAgent: new https.Agent(agentOptions),
+    }),
   };
 
   if (config.credentials) {
