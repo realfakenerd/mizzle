@@ -29,10 +29,10 @@
 - [x] Task: Conductor - User Manual Verification 'Baseline & Mizzle Implementation' (Protocol in workflow.md) (f24d516)
 
 ## Phase 4: Competitor Implementation
-- [ ] Task: Implement Dynamoose Benchmark Functions
-    - [ ] Write Tests: Ensure Dynamoose functions map schema and perform operations correctly
-    - [ ] Implement: `DynamooseBench`
-- [ ] Task: Implement ElectroDB Benchmark Functions
+- [x] Task: Implement Dynamoose Benchmark Functions (508e972)
+    - [x] Write Tests: Ensure Dynamoose functions map schema and perform operations correctly
+    - [x] Implement: `DynamooseBench`
+- [~] Task: Implement ElectroDB Benchmark Functions
     - [ ] Write Tests: Ensure ElectroDB functions handle keys and queries as expected
     - [ ] Implement: `ElectroDBBench`
 - [ ] Task: Conductor - User Manual Verification 'Competitor Implementation' (Protocol in workflow.md)
