@@ -20,10 +20,10 @@
 - [x] Task: Conductor - User Manual Verification 'Core Benchmark Framework' (Protocol in workflow.md) (0e24444)
 
 ## Phase 3: ORM Implementation (Baseline & Mizzle)
-- [ ] Task: Implement AWS SDK v3 Benchmark Functions
-    - [ ] Write Tests: Ensure functions correctly perform all 6 required operations
-    - [ ] Implement: `AWSSDKBench` providing task functions for `tinybench`
-- [ ] Task: Implement Mizzle Benchmark Functions
+- [x] Task: Implement AWS SDK v3 Benchmark Functions (368eec3)
+    - [x] Write Tests: Ensure functions correctly perform all 6 required operations
+    - [x] Implement: `AWSSDKBench` providing task functions for `tinybench`
+- [~] Task: Implement Mizzle Benchmark Functions
     - [ ] Write Tests: Ensure Mizzle functions correctly perform operations via its query builder
     - [ ] Implement: `MizzleBench` providing task functions for `tinybench`
 - [ ] Task: Conductor - User Manual Verification 'Baseline & Mizzle Implementation' (Protocol in workflow.md)
