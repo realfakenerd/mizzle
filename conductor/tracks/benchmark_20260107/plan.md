@@ -8,7 +8,7 @@
 - [x] Task: Configure DynamoDB Local for Benchmarks (ea69437)
     - [x] Verify `docker-compose.yml` has a suitable DynamoDB Local service
     - [x] Create a setup/teardown script for benchmark tables
-- [ ] Task: Conductor - User Manual Verification 'Setup & Infrastructure' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Setup & Infrastructure' (Protocol in workflow.md) (fd4db52)
 
 ## Phase 2: Core Benchmark Framework
 - [ ] Task: Implement Metrics Collection Utility
