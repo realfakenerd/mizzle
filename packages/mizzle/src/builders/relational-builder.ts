@@ -1,4 +1,3 @@
-import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import { DynamoQueryBuilder } from './query-builder';
 import { operators, type Operators, eq } from '../expressions/operators';
 import type { Condition } from '../expressions/operators';
@@ -8,6 +7,7 @@ import type { InternalRelationalSchema } from '../core/relations';
 import { resolveStrategies } from '../core/strategies';
 import { TABLE_SYMBOLS } from "@mizzle/shared";
 import { Column } from '../core/column';
+import { type IMizzleClient } from '../core/client';
 
 type WhereCallback<T extends Entity> = (
 	fields: T['_']['columns'],
@@ -52,7 +52,7 @@ export type InferRelationalModel<
 
 export class RelationnalQueryBuilder<T extends Entity> {
 	constructor(
-		private client: DynamoDBDocumentClient,
+		private client: IMizzleClient,
 		private table: T,
 		private schema?: InternalRelationalSchema,
 		private entityName?: string

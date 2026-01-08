@@ -1,5 +1,4 @@
 import {
-	DynamoDBDocumentClient,
 	QueryCommand,
 	ScanCommand,
 	type QueryCommandInput,
@@ -10,6 +9,7 @@ import type { InferSelectedModel, Entity } from '../core/table';
 import { ENTITY_SYMBOLS, TABLE_SYMBOLS, resolveTableName } from '@mizzle/shared';
 import { resolveStrategies } from '../core/strategies';
 import { Column } from '../core/column';
+import { type IMizzleClient } from '../core/client';
 
 export class DynamoQueryBuilder<T extends Entity> {
 	private whereClause?: Condition;
@@ -19,7 +19,7 @@ export class DynamoQueryBuilder<T extends Entity> {
 	private indexName?: string;
 
 	constructor(
-		private client: DynamoDBDocumentClient,
+		private client: IMizzleClient,
 		private table: T
 	) {}
 

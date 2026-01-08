@@ -1,4 +1,4 @@
-import { type DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import { type IMizzleClient } from "../core/client";
 import { Entity } from "../core/table";
 import { QueryPromise } from "./query-promise";
 import { resolveTableName } from "@mizzle/shared";
@@ -12,7 +12,7 @@ export abstract class BaseBuilder<
 > extends QueryPromise<TResult> {
     constructor(
         protected readonly entity: TEntity,
-        protected readonly client: DynamoDBDocumentClient,
+        protected readonly client: IMizzleClient,
     ) {
         super();
     }

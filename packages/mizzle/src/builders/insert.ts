@@ -1,16 +1,17 @@
-import { PutCommand, type DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import { PutCommand } from "@aws-sdk/lib-dynamodb";
 import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "@mizzle/shared";
 import { Entity, type InferInsertModel } from "../core/table";
 import { BaseBuilder } from "./base";
 import { Column } from "../core/column";
 import { KeyStrategy } from "../core/strategies";
+import { type IMizzleClient } from "../core/client";
 
 export class InsertBuilder<TEntity extends Entity> {
     static readonly [ENTITY_SYMBOLS.ENTITY_KIND]: string = "InsertBuilder";
 
     constructor(
         private entity: TEntity,
-        private client: DynamoDBDocumentClient,
+        private client: IMizzleClient,
     ) {}
 
     values(values: InferInsertModel<TEntity>): InsertBase<TEntity> {
@@ -26,7 +27,7 @@ class InsertBase<
 
     constructor(
         entity: TEntity,
-        client: DynamoDBDocumentClient,
+        client: IMizzleClient,
         private valuesData: InferInsertModel<TEntity>,
     ) {
         super(entity, client);

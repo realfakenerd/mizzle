@@ -2,7 +2,6 @@ import {
     GetCommand,
     QueryCommand,
     ScanCommand,
-    type DynamoDBDocumentClient,
 } from "@aws-sdk/lib-dynamodb";
 import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "@mizzle/shared";
 import type { Column } from "../core/column";
@@ -11,12 +10,13 @@ import { type Expression } from "../expressions/operators";
 import { Entity, type InferSelectModel } from "../core/table";
 import { BaseBuilder } from "./base";
 import type { StrategyResolution } from "../core/strategies";
+import type { IMizzleClient } from "../core/client";
 
 export type SelectedFields = SelectedFieldsBase<Column>;
 
 export class SelectBuilder<TSelection extends SelectedFields | undefined> {
     constructor(
-        private client: DynamoDBDocumentClient,
+        private client: IMizzleClient,
         private fields?: TSelection,
     ) {}
 
@@ -36,7 +36,7 @@ class SelectBase<
 
     constructor(
         entity: TEntity,
-        client: DynamoDBDocumentClient,
+        client: IMizzleClient,
         private fields?: TSelection,
     ) {
         super(entity, client);

@@ -1,8 +1,9 @@
-import { UpdateCommand, type DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import { UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { ENTITY_SYMBOLS } from "@mizzle/shared";
 import { Entity, type InferInsertModel } from "../core/table";
 import { type Expression } from "../expressions/operators";
 import { BaseBuilder } from "./base";
+import { type IMizzleClient } from "../core/client";
 
 export class UpdateBuilder<
     TEntity extends Entity,
@@ -20,7 +21,7 @@ export class UpdateBuilder<
 
     constructor(
         entity: TEntity,
-        client: DynamoDBDocumentClient,
+        client: IMizzleClient,
     ) {
         super(entity, client);
     }

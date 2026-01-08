@@ -7,7 +7,8 @@ import type { Entity, InferInsertModel } from "./core/table";
 import { UpdateBuilder } from "./builders/update";
 import { DeleteBuilder } from "./builders/delete";
 import { extractMetadata, type InternalRelationalSchema } from "./core/relations";
-import type { RetryConfig } from "./core/retry";
+import { RetryHandler, type RetryConfig } from "./core/retry";
+import { MizzleClient, type IMizzleClient } from "./core/client";
 
 export type QuerySchema<TSchema extends Record<string, unknown>> = {
     [K in keyof TSchema as TSchema[K] extends Entity ? K : never]: RelationnalQueryBuilder<TSchema[K] extends Entity ? TSchema[K] : never>;
@@ -17,7 +18,7 @@ export type QuerySchema<TSchema extends Record<string, unknown>> = {
  * DynamoDB database instance.
  */
 export class DynamoDB<TSchema extends Record<string, unknown> = Record<string, unknown>> {
-    private docClient: DynamoDBDocumentClient;
+    private docClient: IMizzleClient;
     private schema?: InternalRelationalSchema;
     private retryConfig: RetryConfig;
 
@@ -32,11 +33,14 @@ export class DynamoDB<TSchema extends Record<string, unknown> = Record<string, u
     public readonly query: QuerySchema<TSchema>;
 
     constructor(client: DynamoDBClient, relations?: TSchema, retry?: Partial<RetryConfig>) {
-        this.docClient = DynamoDBDocumentClient.from(client);
         this.retryConfig = {
             maxAttempts: retry?.maxAttempts ?? 3,
             baseDelay: retry?.baseDelay ?? 100,
         };
+        this.docClient = new MizzleClient(
+            DynamoDBDocumentClient.from(client),
+            new RetryHandler(this.retryConfig)
+        );
         
         if (relations) {
             this.schema = extractMetadata(relations);
