@@ -17,16 +17,16 @@
     - Handle specific retryable exceptions: `ProvisionedThroughputExceededException`, `RequestLimitExceeded`, `InternalServerError`, `ServiceUnavailable`.
 - [x] Task: Conductor - User Manual Verification 'Exponential Backoff & Jitter' (Protocol in workflow.md) d55184e
 
-## Phase 3: Smart Batching Resilience
-- [~] Task: Implement `BatchGetItem` recursive retry logic
+## Phase 3: Smart Batching Resilience [checkpoint: 27c8042]
+- [x] Task: Implement `BatchGetItem` recursive retry logic 27c8042
     - Update `BatchGetItem` to check for `UnprocessedKeys`.
     - Recursively (or iteratively) retry `UnprocessedKeys` using the `RetryHandler`.
-- [ ] Task: Implement `BatchWriteItem` recursive retry logic
+- [x] Task: Implement `BatchWriteItem` recursive retry logic 27c8042
     - Update `BatchWriteItem` to check for `UnprocessedItems`.
     - Recursively retry `UnprocessedItems` using the `RetryHandler`.
-- [ ] Task: Update Batch API return types
+- [x] Task: Update Batch API return types 27c8042
     - Ensure `BatchGet` and `BatchWrite` operations return a structure like `{ succeeded: T[], failed: T[] }` when retries are exhausted.
-- [ ] Task: Conductor - User Manual Verification 'Smart Batching Resilience' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Smart Batching Resilience' (Protocol in workflow.md) 27c8042
 
 ## Phase 4: Client-Side Validation
 - [ ] Task: Implement `calculateItemSize` utility
