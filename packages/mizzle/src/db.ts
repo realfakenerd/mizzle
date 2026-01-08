@@ -3,9 +3,11 @@ import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import { InsertBuilder } from "./builders/insert";
 import { RelationnalQueryBuilder } from "./builders/relational-builder";
 import { SelectBuilder, type SelectedFields } from "./builders/select";
-import type { Entity, InferInsertModel } from "./core/table";
+import type { Entity, InferInsertModel, InferSelectModel } from "./core/table";
 import { UpdateBuilder } from "./builders/update";
 import { DeleteBuilder } from "./builders/delete";
+import { BatchGetBuilder } from "./builders/batch-get";
+import { BatchWriteBuilder, type BatchWriteOperation } from "./builders/batch-write";
 import { extractMetadata, type InternalRelationalSchema } from "./core/relations";
 import { RetryHandler, type RetryConfig } from "./core/retry";
 import { MizzleClient, type IMizzleClient } from "./core/client";
@@ -78,6 +80,26 @@ export class DynamoDB<TSchema extends Record<string, unknown> = Record<string, u
         fields?: TSelection,
     ): SelectBuilder<TSelection | undefined> {
         return new SelectBuilder(this.docClient, fields);
+    }
+
+    /**
+     * Batch get items from the database.
+     */
+    batchGet<T extends Entity>(
+        entity: T,
+        keys: Partial<InferSelectModel<T>>[],
+    ) {
+        return new BatchGetBuilder(this.docClient).items(entity, keys);
+    }
+
+    /**
+     * Batch write items to the database.
+     */
+    batchWrite<T extends Entity>(
+        entity: T,
+        operations: BatchWriteOperation<T>[],
+    ) {
+        return new BatchWriteBuilder(this.docClient).operations(entity, operations);
     }
 
     /**

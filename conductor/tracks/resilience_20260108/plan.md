@@ -18,7 +18,7 @@
 - [x] Task: Conductor - User Manual Verification 'Exponential Backoff & Jitter' (Protocol in workflow.md) d55184e
 
 ## Phase 3: Smart Batching Resilience
-- [ ] Task: Implement `BatchGetItem` recursive retry logic
+- [~] Task: Implement `BatchGetItem` recursive retry logic
     - Update `BatchGetItem` to check for `UnprocessedKeys`.
     - Recursively (or iteratively) retry `UnprocessedKeys` using the `RetryHandler`.
 - [ ] Task: Implement `BatchWriteItem` recursive retry logic
