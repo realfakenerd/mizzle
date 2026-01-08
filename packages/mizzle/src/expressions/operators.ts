@@ -1,6 +1,6 @@
 import { Column } from "../core/column";
 
-type BinaryOperators = "=" | "<" | "<=" | ">=" | ">";
+type BinaryOperators = "=" | "<" | "<=" | ">=" | ">" | "between" | "in";
 type LogicalOperators = "AND" | "OR";
 type FunctionOperators = "begins_with" | "contains" | "attribute_exists";
 
@@ -13,7 +13,7 @@ export class BinaryExpression extends Expression {
     constructor(
         readonly column: Column,
         readonly operator: BinaryOperators,
-        readonly value: any,
+        readonly value: unknown,
     ) {
         super();
     }
@@ -34,42 +34,50 @@ export class FunctionExpression extends Expression {
     constructor(
         readonly column: Column,
         readonly operator: FunctionOperators,
-        readonly value: any,
+        readonly value: unknown,
     ) {
         super();
     }
 }
 
-export function eq(column: Column, value: any) {
+export function eq(column: Column, value: unknown) {
     return new BinaryExpression(column, "=", value);
 }
 
-export function gt(column: Column, value: any) {
+export function gt(column: Column, value: unknown) {
     return new BinaryExpression(column, ">", value);
 }
 
-export function gte(column: Column, value: any) {
+export function gte(column: Column, value: unknown) {
     return new BinaryExpression(column, ">=", value);
 }
 
-export function lt(column: Column, value: any) {
+export function lt(column: Column, value: unknown) {
     return new BinaryExpression(column, "<", value);
 }
 
-export function lte(column: Column, value: any) {
+export function lte(column: Column, value: unknown) {
     return new BinaryExpression(column, "<=", value);
+}
+
+export function between(column: Column, values: [unknown, unknown]) {
+    return new BinaryExpression(column, "between", values);
+}
+
+export function inList(column: Column, values: unknown[]) {
+    return new BinaryExpression(column, "in", values);
 }
 
 export function beginsWith(column: Column, value: string) {
     return new FunctionExpression(column, "begins_with", value);
 }
 
-export function contains(column: Column, value: any) {
+export function contains(column: Column, value: unknown) {
     return new FunctionExpression(column, "contains", value);
 }
 
-export function attributeExists(column: Column, value: any) {
-    return new FunctionExpression(column, "attribute_exists", value);
+export function attributeExists(column: Column) {
+    return new FunctionExpression(column, "attribute_exists", undefined);
 }
 
 export function or(...conditions: Expression[]) {
@@ -86,6 +94,8 @@ export const operators = {
     gte,
     lt,
     lte,
+    between,
+    in: inList,
     and,
     or,
     contains,

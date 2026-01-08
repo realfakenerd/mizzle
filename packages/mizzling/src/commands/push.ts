@@ -50,14 +50,16 @@ export async function pushCommand(options: PushOptions) {
         for (const change of changes) {
             if (change.type === "create") {
                 s.message(`Creating table: ${change.table.TableName}`);
-                await client.send(new CreateTableCommand({
-                    TableName: change.table.TableName,
-                    AttributeDefinitions: change.table.AttributeDefinitions as any,
-                    KeySchema: change.table.KeySchema as any,
-                    GlobalSecondaryIndexes: change.table.GlobalSecondaryIndexes as any,
-                    LocalSecondaryIndexes: change.table.LocalSecondaryIndexes as any,
-                    BillingMode: "PAY_PER_REQUEST"
-                }));
+                await client.send(
+                    new CreateTableCommand({
+                        TableName: change.table.TableName,
+                        AttributeDefinitions: change.table.AttributeDefinitions,
+                        KeySchema: change.table.KeySchema,
+                        GlobalSecondaryIndexes: change.table.GlobalSecondaryIndexes,
+                        LocalSecondaryIndexes: change.table.LocalSecondaryIndexes,
+                        BillingMode: "PAY_PER_REQUEST",
+                    }),
+                );
             } else if (change.type === "delete") {
                 s.message(`Deleting table: ${change.tableName}`);
                 await client.send(new DeleteTableCommand({ TableName: change.tableName }));

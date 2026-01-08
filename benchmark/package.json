@@ -4,9 +4,10 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.962.0",
-    "@aws-sdk/lib-dynamodb": "^3.962.0",
-    "dynamoose": "^4.0.3",
+    "@aws-sdk/client-dynamodb": "3.962.0",
+    "@aws-sdk/lib-dynamodb": "3.962.0",
+    "@aws-sdk/node-http-handler": "^3.374.0",
+    "dynamoose": "^4.0.4",
     "electrodb": "^3.5.3",
     "mizzle": "workspace:*",
     "tinybench": "^6.0.0"
@@ -14,5 +15,8 @@
   "devDependencies": {
     "@types/bun": "latest",
     "typescript": "^5.9.3"
+  },
+  "scripts": {
+    "bench:mizzle": "bun mizzle-only-bench.ts"
   }
 }

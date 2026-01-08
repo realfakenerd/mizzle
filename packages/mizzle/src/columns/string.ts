@@ -21,20 +21,20 @@ class StringColumnBuilder<
     T extends ColumnBuilderBaseConfig<"string", "S">,
 > extends ColumnBuider<
     T,
-    { validators: { length?: number; email?: boolean } }
+    { validators?: { length?: number; email?: boolean } }
 > {
     constructor(name: string) {
         super(name, "string", "S");
-
-        this.config.validators = {};
     }
 
     length(value: number): this {
+        this.config.validators ??= {};
         this.config.validators.length = value;
         return this;
     }
 
     email(): this {
+        this.config.validators ??= {};
         this.config.validators.email = true;
         return this;
     }
@@ -45,7 +45,7 @@ class StringColumnBuilder<
     ): StringColumn<MakeColumnConfig<T, TTableName>> {
         return new StringColumn<MakeColumnConfig<T, TTableName>>(
             table,
-            this.config as ColumnRuntimeConfig<any, any>,
+            this.config as ColumnRuntimeConfig<T["data"], object>,
         );
     }
 }

@@ -6,7 +6,8 @@ import type { Entity, InferSelectedModel } from '../core/table';
 import { ItemCollectionParser } from '../core/parser';
 import type { InternalRelationalSchema } from '../core/relations';
 import { resolveStrategies } from '../core/strategies';
-import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from '@mizzle/shared';
+import { TABLE_SYMBOLS } from "@mizzle/shared";
+import { Column } from '../core/column';
 
 type WhereCallback<T extends Entity> = (
 	fields: T['_']['columns'],
@@ -44,9 +45,9 @@ export type InferRelationalModel<
     T extends Entity,
     TOptions extends RelationalQueryOptions<T> = Record<string, never>
 > = InferSelectedModel<T> & {
-    [K in keyof TOptions['with'] & string]: any; 
+    [K in keyof TOptions['with'] & string]: unknown; 
 } & {
-    [K in keyof TOptions['include'] & string]: any;
+    [K in keyof TOptions['include'] & string]: unknown;
 };
 
 export class RelationnalQueryBuilder<T extends Entity> {
@@ -58,7 +59,7 @@ export class RelationnalQueryBuilder<T extends Entity> {
 	) {}
 
 	async findMany<TOptions extends RelationalQueryOptions<T>>(
-        options: TOptions = {} as any
+        options: TOptions = {} as TOptions
     ): Promise<InferRelationalModel<T, TOptions>[]> {
 		const qb = new DynamoQueryBuilder<T>(this.client, this.table);
 
@@ -66,40 +67,39 @@ export class RelationnalQueryBuilder<T extends Entity> {
 			qb.sort(options.orderBy === 'asc');
 		}
 
-		const columns = this.table._?.columns || (this.table as any).columns || this.table;
 		let condition: Condition | undefined;
 
 		if (options.where) {
+			const columns = (this.table._?.columns || (this.table as unknown as Record<string, Column>)) as Record<string, Column>;
 			if (typeof options.where === 'function') {
-				condition = (options.where as any)(columns, operators);
+				condition = (options.where as WhereCallback<T>)(columns as any, operators);
 			} else {
-				condition = options.where as any;
+				condition = options.where as Condition;
 			}
 		}
 
-		let results: any[];
+		let results: Record<string, unknown>[];
 
 		// Single-Table Optimization (Direct PK)
 		const resolution = resolveStrategies(this.table, condition);
 
 		if (this.schema && this.entityName && (options.with || options.include) && resolution.hasPartitionKey && !resolution.indexName) {
 			const pkName = Object.keys(resolution.keys).find(k => {
-				const pt = this.table._?.table || (this.table as any)[ENTITY_SYMBOLS.PHYSICAL_TABLE];
-				const ptMeta = pt?._ || pt;
-				const physicalPKName = ptMeta.partitionKey?.name || (ptMeta as any)[TABLE_SYMBOLS.PARTITION_KEY]?.name;
+				const pt = this.table._?.table;
+				const physicalPKName = (pt?.[TABLE_SYMBOLS.PARTITION_KEY] as Column | undefined)?.name;
                 return k === physicalPKName;
 			}) || Object.keys(resolution.keys)[0];
 			const pkValue = resolution.keys[pkName!];
 
 			// Override where to ONLY use the PK to get related items in the same collection
-			qb.where(eq({ name: pkName! } as any, pkValue));
+			qb.where(eq({ name: pkName! } as Column, pkValue));
 
 			// NOTE: We DON'T apply options.limit here because we need the related items.
 			// Instead, we fetch the whole collection and limit the results later.
 
 			const rawItems = await qb.execute();
 			const parser = new ItemCollectionParser(this.schema);
-			results = parser.parse(rawItems, this.entityName, (options.with || options.include) as any);
+			results = parser.parse(rawItems, this.entityName, (options.with || options.include) as Record<string, boolean | object>);
 			
 			if (options.limit) {
 				results = results.slice(0, options.limit);
@@ -138,7 +138,7 @@ export class RelationnalQueryBuilder<T extends Entity> {
                         if (!relConfig) continue;
 
                         // Map fields from the current item to the target entity's columns
-                        const targetValues: Record<string, any> = { ...result };
+                        const targetValues: Record<string, unknown> = { ...result };
                         if (relConfig.config.fields && relConfig.config.references) {
                             for (let i = 0; i < relConfig.config.fields.length; i++) {
                                 const sourceCol = relConfig.config.fields[i];
@@ -162,23 +162,23 @@ export class RelationnalQueryBuilder<T extends Entity> {
                             }
 
                             const pkNameInTarget = Object.keys(targetRes.keys).find(k => {
-                                const pt = targetEntity._?.table || (targetEntity as any)[ENTITY_SYMBOLS.PHYSICAL_TABLE];
-                                const ptMeta = pt?._ || pt;
-                                const pkFromMeta = ptMeta.partitionKey?.name || (ptMeta as any)[TABLE_SYMBOLS.PARTITION_KEY]?.name;
+                                const pt = targetEntity._?.table;
+                                const pkFromMeta = (pt?.[TABLE_SYMBOLS.PARTITION_KEY] as Column | undefined)?.name;
                                 
                                 if (targetRes.indexName) {
-                                    const index = ptMeta.config?.indexes?.[targetRes.indexName] || (ptMeta as any)[TABLE_SYMBOLS.INDEXES]?.[targetRes.indexName];
-                                    return k === index.config.pk;
+                                    const indexes = pt?.[TABLE_SYMBOLS.INDEXES];
+                                    const index = indexes?.[targetRes.indexName] as { config: { pk: string; sk?: string } } | undefined;
+                                    return index && k === index.config.pk;
                                 }
                                 
                                 return k === pkFromMeta;
                             }) || Object.keys(targetRes.keys)[0];
 
                             // Use the actual target entity column if we can find it
-                            const targetColumns = targetEntity._?.columns || (targetEntity as any).columns || targetEntity;
-                            const pkColumn = Object.values(targetColumns).find((c: any) => c.name === pkNameInTarget) || { name: pkNameInTarget };
+                            const targetColumns = (targetEntity._?.columns as Record<string, Column> || (targetEntity as unknown as Record<string, Column>)) as Record<string, Column>;
+                            const pkColumn = Object.values(targetColumns).find((c) => c.name === pkNameInTarget) || ({ name: pkNameInTarget } as Column);
 
-                            const targetCondition = eq(pkColumn as any, targetRes.keys[pkNameInTarget!]);
+                            const targetCondition = eq(pkColumn, targetRes.keys[pkNameInTarget!]);
                             targetQb.where(targetCondition);
 
                             const relatedItems = await targetQb.execute();
@@ -194,11 +194,11 @@ export class RelationnalQueryBuilder<T extends Entity> {
             }
 		}
 
-		return results as any;
+		return results as unknown as InferRelationalModel<T, TOptions>[];
 	}
 
 	async findFirst<TOptions extends RelationalQueryOptions<T>>(
-        options: TOptions = {} as any
+        options: TOptions = {} as TOptions
     ): Promise<InferRelationalModel<T, TOptions> | undefined> {
 		const res = await this.findMany({ ...options, limit: 1 });
 		return res[0];

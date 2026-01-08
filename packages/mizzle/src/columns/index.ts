@@ -7,3 +7,4 @@ export { numberSet } from "./number-set";
 export { string } from "./string";
 export { stringSet } from "./string-set";
 export { uuid } from "./uuid";
+export { json } from "./json";

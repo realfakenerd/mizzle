@@ -4,11 +4,24 @@
         "build": {
             "dependsOn": ["^build"],
             "outputs": ["dist/**"],
-            "inputs": ["src/**", "public/**", "package.json", "tsconfig.json", "*.config.*"]
+            "inputs": [
+                "src/**",
+                "public/**",
+                "package.json",
+                "tsconfig.json",
+                "*.config.*"
+            ]
         },
         "test": {
             "dependsOn": ["^build"],
-            "inputs": ["src/**", "test/**", "public/**", "package.json", "tsconfig.json", "*.config.*"],
+            "inputs": [
+                "src/**",
+                "test/**",
+                "public/**",
+                "package.json",
+                "tsconfig.json",
+                "*.config.*"
+            ],
             "passThroughEnv": [
                 "MIZZLE_CONFIG",
                 "MIZZLE_REGION",
@@ -43,10 +56,24 @@
             ]
         },
         "check": {
-            "inputs": ["src/**", "test/**", "public/**", "package.json", "tsconfig.json", "*.config.*"]
+            "inputs": [
+                "src/**",
+                "test/**",
+                "public/**",
+                "package.json",
+                "tsconfig.json",
+                "*.config.*"
+            ]
         },
         "check:root": {
-            "inputs": ["src/**", "test/**", "public/**", "package.json", "tsconfig.json", "*.config.*"]
+            "inputs": [
+                "src/**",
+                "test/**",
+                "public/**",
+                "package.json",
+                "tsconfig.json",
+                "*.config.*"
+            ]
         }
     }
 }

@@ -8,14 +8,14 @@ import { UpdateBuilder } from "./builders/update";
 import { DeleteBuilder } from "./builders/delete";
 import { extractMetadata, type InternalRelationalSchema } from "./core/relations";
 
-export type QuerySchema<TSchema extends Record<string, any>> = {
-    [K in keyof TSchema as TSchema[K] extends Entity ? K : never]: RelationnalQueryBuilder<TSchema[K]>;
+export type QuerySchema<TSchema extends Record<string, unknown>> = {
+    [K in keyof TSchema as TSchema[K] extends Entity ? K : never]: RelationnalQueryBuilder<TSchema[K] extends Entity ? TSchema[K] : never>;
 };
 
 /**
  * DynamoDB database instance.
  */
-export class DynamoDB<TSchema extends Record<string, any> = Record<string, any>> {
+export class DynamoDB<TSchema extends Record<string, unknown> = Record<string, unknown>> {
     private docClient: DynamoDBDocumentClient;
     private schema?: InternalRelationalSchema;
 
@@ -36,7 +36,7 @@ export class DynamoDB<TSchema extends Record<string, any> = Record<string, any>>
             this.schema = extractMetadata(relations);
         }
 
-        this.query = new Proxy({} as any, {
+        this.query = new Proxy({} as QuerySchema<TSchema>, {
             get: (_, prop) => {
                 if (typeof prop !== 'string') return undefined;
 
@@ -75,7 +75,7 @@ export class DynamoDB<TSchema extends Record<string, any> = Record<string, any>>
      * @internal
      */
     _query<T extends Entity>(table: T) {
-        return new RelationnalQueryBuilder<any>(this.docClient, table as any);
+        return new RelationnalQueryBuilder<T>(this.docClient, table);
     }
 
     /**
@@ -92,14 +92,14 @@ export class DynamoDB<TSchema extends Record<string, any> = Record<string, any>>
         table: T,
         keys: Partial<InferInsertModel<T>>,
     ): DeleteBuilder<T> {
-        return new DeleteBuilder(table, this.docClient, keys);
+        return new DeleteBuilder(table, this.docClient, keys as Record<string, unknown>);
     }
 }
 
 /**
  * Configuration for initializing Mizzle.
  */
-export interface MizzleConfig<TSchema extends Record<string, any> = Record<string, any>> {
+export interface MizzleConfig<TSchema extends Record<string, unknown> = Record<string, unknown>> {
     /**
      * AWS DynamoDB Client.
      */
@@ -120,11 +120,19 @@ export interface MizzleConfig<TSchema extends Record<string, any> = Record<strin
  * const db = mizzle({ client, relations });
  * ```
  */
-export function mizzle<TSchema extends Record<string, any> = Record<string, any>>(
+export function mizzle<TSchema extends Record<string, unknown> = Record<string, unknown>>(
     config: DynamoDBClient | MizzleConfig<TSchema>
 ): DynamoDB<TSchema> {
     if (config instanceof DynamoDBClient) {
         return new DynamoDB(config);
     }
-    return new DynamoDB(config.client, config.relations);
+    
+    if ("client" in config && config.client instanceof DynamoDBClient) {
+        return new DynamoDB(config.client, config.relations);
+    }
+    // Fallback for cases where instanceof might fail due to multiple SDK versions
+    if ("client" in config && config.client) {
+        return new DynamoDB(config.client as DynamoDBClient, config.relations);
+    }
+    return new DynamoDB(config as unknown as DynamoDBClient);
 }

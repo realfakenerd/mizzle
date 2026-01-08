@@ -16,18 +16,19 @@ export type NumberColumnInitial<TName extends string> = NumberColumnBuilder<{
 
 export class NumberColumnBuilder<
     T extends ColumnBuilderBaseConfig<"number", "N">,
-> extends ColumnBuider<T, { validators: { min?: number; max?: number } }> {
+> extends ColumnBuider<T, { validators?: { min?: number; max?: number } }> {
     constructor(name: T["name"]) {
         super(name, "number", "N");
-        this.config.validators = {};
     }
 
     min(value: number): this {
+        this.config.validators ??= {};
         this.config.validators.min = value;
         return this;
     }
 
     max(value: number): this {
+        this.config.validators ??= {};
         this.config.validators.max = value;
         return this;
     }
@@ -38,7 +39,7 @@ export class NumberColumnBuilder<
     ): NumberColumn<MakeColumnConfig<T, TTableName>> {
         return new NumberColumn<MakeColumnConfig<T, TTableName>>(
             table,
-            this.config as ColumnBuilderRuntimeConfig<any, any>,
+            this.config as ColumnBuilderRuntimeConfig<T["data"], object>,
         );
     }
 }

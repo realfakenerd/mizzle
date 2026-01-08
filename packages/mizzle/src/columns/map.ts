@@ -12,7 +12,7 @@ import type { AnyTable } from "../core/table";
 
 export type MapColumnInitial<TName extends string> = MapColumnBuilder<{
     name: TName;
-    data: Map<any, any>;
+    data: Record<string, unknown>;
     dataType: "map";
     columnType: "M";
 }>;
@@ -29,7 +29,7 @@ export class MapColumnBuilder<
     ): Column<MakeColumnConfig<T, TTableName>> {
         return new MapColumn<MakeColumnConfig<T, TTableName>>(
             table,
-            this.config as ColumnRuntimeConfig<any, any>,
+            this.config as ColumnRuntimeConfig<T["data"], object>,
         );
     }
 }

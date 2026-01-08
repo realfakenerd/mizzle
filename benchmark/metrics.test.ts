@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 import { MetricsCollector } from "./metrics";
 import { Bench } from "tinybench";
 
@@ -18,7 +18,7 @@ describe("MetricsCollector", () => {
         await bench.run();
 
         const metrics = collector.get("resource-test");
-        
+
         expect(typeof metrics.memoryDeltaMb).toBe("number");
         expect(typeof metrics.cpuUserDeltaMs).toBe("number");
         expect(typeof metrics.cpuSystemDeltaMs).toBe("number");
@@ -27,7 +27,7 @@ describe("MetricsCollector", () => {
     it("should return zero metrics for unknown task", () => {
         const collector = new MetricsCollector();
         const metrics = collector.get("unknown");
-        
+
         expect(metrics.memoryDeltaMb).toBe(0);
         expect(metrics.cpuUserDeltaMs).toBe(0);
         expect(metrics.cpuSystemDeltaMs).toBe(0);

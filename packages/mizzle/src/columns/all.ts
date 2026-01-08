@@ -8,10 +8,12 @@ export { numberSet } from "./number-set";
 export { string } from "./string";
 export { stringSet } from "./string-set";
 export { uuid } from "./uuid";
+export { json } from "./json";
 
 import { binary } from "./binary";
 import { binarySet } from "./binary-set";
 import { boolean } from "./boolean";
+import { json } from "./json";
 import { list } from "./list";
 import { map } from "./map";
 import { number } from "./number";
@@ -25,6 +27,7 @@ export function getColumnBuilders() {
         binary,
         binarySet,
         boolean,
+        json,
         list,
         map,
         number,

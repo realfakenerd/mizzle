@@ -1,0 +1,8 @@
+{
+  "track_id": "tech_debt_type_safety_20260108",
+  "type": "chore",
+  "status": "completed",
+  "created_at": "2026-01-08T15:45:00Z",
+  "updated_at": "2026-01-08T16:15:00Z",
+  "description": "Technical Debt & Coverage: Expose JSON column and enforce strict type safety via ESLint (no-explicit-any)."
+}

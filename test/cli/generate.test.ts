@@ -1,4 +1,12 @@
-import { expect, test, describe, beforeEach, afterEach, mock, spyOn } from "bun:test";
+import {
+    expect,
+    test,
+    describe,
+    beforeEach,
+    afterEach,
+    mock,
+    spyOn,
+} from "vitest";
 import { generateCommand } from "../../packages/mizzling/src/commands/generate";
 import { PhysicalTable } from "mizzle/table";
 import { TABLE_SYMBOLS } from "@mizzle/shared";
@@ -13,17 +21,26 @@ const mockClack = {
     intro: mock(() => {}),
     outro: mock(() => {}),
     spinner: () => ({ start: () => {}, stop: () => {} }),
-    isCancel: () => false
+    isCancel: () => false,
 };
 mock.module("@clack/prompts", () => mockClack);
 
 // Helper to create mock table
 const mockTable = (name: string) => {
     const table = new PhysicalTable(name, {
-        pk: { build: () => ({ _: { name: "id", type: "string" }, getDynamoType: () => "S", name: "id" }) } as any
+        pk: {
+            build: () => ({
+                _: { name: "id", type: "string" },
+                getDynamoType: () => "S",
+                name: "id",
+            }),
+        } as any,
     });
     table[TABLE_SYMBOLS.TABLE_NAME] = name;
-    table[TABLE_SYMBOLS.PARTITION_KEY] = { name: "id", getDynamoType: () => "S" };
+    table[TABLE_SYMBOLS.PARTITION_KEY] = {
+        name: "id",
+        getDynamoType: () => "S",
+    };
     return table;
 };
 
@@ -36,7 +53,7 @@ describe("Generate Command", () => {
         mkdirSync(TEMP_DIR, { recursive: true });
         mkdirSync(MIGRATIONS_DIR, { recursive: true });
     });
-  
+
     afterEach(() => {
         rmSync(TEMP_DIR, { recursive: true, force: true });
     });
@@ -51,7 +68,7 @@ describe("Generate Command", () => {
 
         await generateCommand({
             config: { schema: SCHEMA_FILE, out: MIGRATIONS_DIR },
-            discoverSchema: mockDiscover // Dependency injection for testing
+            discoverSchema: mockDiscover, // Dependency injection for testing
         });
 
         // Verify Snapshot
@@ -61,48 +78,56 @@ describe("Generate Command", () => {
         expect(snapshot.tables["users"]).toBeDefined();
 
         // Verify Migration Script
-        const files = await import("fs").then(fs => fs.readdirSync(MIGRATIONS_DIR));
-        const migrationFile = files.find(f => f.endsWith(".ts"));
+        const files = await import("fs").then((fs) =>
+            fs.readdirSync(MIGRATIONS_DIR),
+        );
+        const migrationFile = files.find((f) => f.endsWith(".ts"));
         expect(migrationFile).toBeDefined();
         expect(migrationFile).toMatch(/^0000_.*\.ts$/);
     });
 
     test("should not create migration if no changes", async () => {
-         // Setup: Create snapshot first
-         const tables = [mockTable("users")];
-         mockDiscover.mockResolvedValue({ tables, entities: [] });
-         
-         // Run once to setup
-         await generateCommand({
+        // Setup: Create snapshot first
+        const tables = [mockTable("users")];
+        mockDiscover.mockResolvedValue({ tables, entities: [] });
+
+        // Run once to setup
+        await generateCommand({
             config: { schema: SCHEMA_FILE, out: MIGRATIONS_DIR },
-            discoverSchema: mockDiscover
+            discoverSchema: mockDiscover,
         });
 
-        const filesBefore = await import("fs").then(fs => fs.readdirSync(MIGRATIONS_DIR));
+        const filesBefore = await import("fs").then((fs) =>
+            fs.readdirSync(MIGRATIONS_DIR),
+        );
 
         // Run again
         await generateCommand({
             config: { schema: SCHEMA_FILE, out: MIGRATIONS_DIR },
-            discoverSchema: mockDiscover
+            discoverSchema: mockDiscover,
         });
 
-        const filesAfter = await import("fs").then(fs => fs.readdirSync(MIGRATIONS_DIR));
+        const filesAfter = await import("fs").then((fs) =>
+            fs.readdirSync(MIGRATIONS_DIR),
+        );
         expect(filesAfter.length).toBe(filesBefore.length);
     });
 
     test("should handle errors gracefully", async () => {
-            mockDiscover.mockRejectedValue(new Error("Discovery failed"));
-            const errorSpy = spyOn(console, "error").mockImplementation(() => {});
-            const processExitSpy = spyOn(process, "exit").mockImplementation((() => {}) as any);
-    
-            await generateCommand({
-                config: { schema: SCHEMA_FILE, out: MIGRATIONS_DIR },
-                discoverSchema: mockDiscover
-            });
-    
-            expect(errorSpy).toHaveBeenCalled();
-            expect(processExitSpy).toHaveBeenCalledWith(1);
-            
+        mockDiscover.mockRejectedValue(new Error("Discovery failed"));
+        const errorSpy = spyOn(console, "error").mockImplementation(() => {});
+        const processExitSpy = spyOn(process, "exit").mockImplementation(
+            (() => {}) as any,
+        );
+
+        await generateCommand({
+            config: { schema: SCHEMA_FILE, out: MIGRATIONS_DIR },
+            discoverSchema: mockDiscover,
+        });
+
+        expect(errorSpy).toHaveBeenCalled();
+        expect(processExitSpy).toHaveBeenCalledWith(1);
+
         errorSpy.mockRestore();
         processExitSpy.mockRestore();
     });

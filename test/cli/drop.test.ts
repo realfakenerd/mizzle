@@ -1,4 +1,4 @@
-import { expect, test, describe, beforeEach, spyOn } from "bun:test";
+import { expect, test, describe, beforeEach, spyOn } from "vitest";
 import { dropCommand } from "../../packages/mizzling/src/commands/drop";
 import * as prompts from "@clack/prompts";
 
@@ -11,12 +11,17 @@ const outroSpy = spyOn(prompts, "outro").mockImplementation(() => {});
 const multiselectSpy = spyOn(prompts, "multiselect");
 const confirmSpy = spyOn(prompts, "confirm");
 const cancelSpy = spyOn(prompts, "cancel").mockImplementation(() => {});
-const isCancelSpy = spyOn(prompts, "isCancel").mockImplementation((val): val is symbol => val === Symbol("clack:cancel"));
-spyOn(prompts, "spinner").mockImplementation(() => ({
-    start: () => {},
-    stop: () => {},
-    message: () => {}
-}) as any);
+const isCancelSpy = spyOn(prompts, "isCancel").mockImplementation(
+    (val): val is symbol => val === Symbol("clack:cancel"),
+);
+spyOn(prompts, "spinner").mockImplementation(
+    () =>
+        ({
+            start: () => {},
+            stop: () => {},
+            message: () => {},
+        }) as any,
+);
 
 // Manual Mock Client
 const createMockClient = (tables: any[]) => {
@@ -24,13 +29,13 @@ const createMockClient = (tables: any[]) => {
         send: async (command: any) => {
             const cmdName = command.constructor.name;
             if (cmdName === "ListTablesCommand") {
-                return { TableNames: tables.map(t => t.TableName) };
+                return { TableNames: tables.map((t) => t.TableName) };
             }
             if (cmdName === "DeleteTableCommand") {
                 return {};
             }
             return {};
-        }
+        },
     } as any;
 };
 
@@ -48,9 +53,11 @@ describe("Drop Command", () => {
         const client = createMockClient([]);
         await dropCommand({
             config: { schema: "dummy", out: "dummy" } as any,
-            client
+            client,
         });
-        expect(console.log).toHaveBeenCalledWith(expect.stringContaining("No tables found"));
+        expect(console.log).toHaveBeenCalledWith(
+            expect.stringContaining("No tables found"),
+        );
         expect(multiselectSpy).not.toHaveBeenCalled();
     });
 
@@ -64,25 +71,30 @@ describe("Drop Command", () => {
 
         await dropCommand({
             config: { schema: "dummy", out: "dummy" } as any,
-            client
+            client,
         });
 
         // Verify ListTables was called
-        expect((sendSpy.mock.calls[0]![0] as any).constructor.name).toBe("ListTablesCommand");
-        
+        expect((sendSpy.mock.calls[0]![0] as any).constructor.name).toBe(
+            "ListTablesCommand",
+        );
+
         // Verify multiselect was called with options
         expect(multiselectSpy).toHaveBeenCalled();
-        
+
         // Verify confirm was called
         expect(confirmSpy).toHaveBeenCalled();
 
         // Verify DeleteTable was called for 'users'
         // Note: The order of calls depends on implementation, but we expect at least one DeleteTableCommand
         const calls = sendSpy.mock.calls as any[];
-        const deleteCall = calls.find(call => (call[0] as any).constructor.name === "DeleteTableCommand");
+        const deleteCall = calls.find(
+            (call) =>
+                (call[0] as any).constructor.name === "DeleteTableCommand",
+        );
         expect(deleteCall).toBeDefined();
         expect(deleteCall![0].input.TableName).toBe("users");
-        
+
         expect(outroSpy).toHaveBeenCalled();
     });
 
@@ -96,21 +108,26 @@ describe("Drop Command", () => {
 
         await dropCommand({
             config: { schema: "dummy", out: "dummy" } as any,
-            client
+            client,
         });
 
         // Verify DeleteTable was NOT called
         const calls = sendSpy.mock.calls;
-        const deleteCall = calls.find(call => (call[0] as any).constructor.name === "DeleteTableCommand");
+        const deleteCall = calls.find(
+            (call) =>
+                (call[0] as any).constructor.name === "DeleteTableCommand",
+        );
         expect(deleteCall).toBeUndefined();
-        
-        expect(console.log).toHaveBeenCalledWith(expect.stringContaining("Operation cancelled"));
+
+        expect(console.log).toHaveBeenCalledWith(
+            expect.stringContaining("Operation cancelled"),
+        );
     });
 
     test("should handle cancellation at selection", async () => {
         const mockTables = [{ TableName: "users" }];
         const client = createMockClient(mockTables);
-        
+
         // Simulate cancellation symbol
         const cancelSymbol = Symbol("clack:cancel");
         multiselectSpy.mockResolvedValueOnce(cancelSymbol as any);
@@ -118,7 +135,7 @@ describe("Drop Command", () => {
 
         await dropCommand({
             config: { schema: "dummy", out: "dummy" } as any,
-            client
+            client,
         });
 
         expect(cancelSpy).toHaveBeenCalled();

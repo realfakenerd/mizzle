@@ -1,5 +1,11 @@
-import { expect, test, describe, beforeEach, afterEach } from "bun:test";
-import { generateSnapshot, getNextMigrationVersion, saveSnapshot, loadSnapshot, type MizzleSnapshot } from "mizzle/snapshot";
+import { expect, test, describe, beforeEach, afterEach } from "vitest";
+import {
+    generateSnapshot,
+    getNextMigrationVersion,
+    saveSnapshot,
+    loadSnapshot,
+    type MizzleSnapshot,
+} from "mizzle/snapshot";
 import { PhysicalTable } from "mizzle/table";
 import { TABLE_SYMBOLS, ENTITY_SYMBOLS } from "@mizzle/shared";
 import { mkdirSync, rmSync, writeFileSync } from "fs";
@@ -10,12 +16,12 @@ import { tmpdir } from "os";
 const mockColumn = (name: string, type: string) => ({
     name,
     getDynamoType: () => type,
-    _: { name, type }
+    _: { name, type },
 });
 
 const mockTable = (name: string, pkName: string, pkType: string) => {
     const table = new PhysicalTable(name, {
-        pk: { build: () => mockColumn(pkName, pkType) } as any
+        pk: { build: () => mockColumn(pkName, pkType) } as any,
     });
     table[TABLE_SYMBOLS.TABLE_NAME] = name;
     table[TABLE_SYMBOLS.PARTITION_KEY] = mockColumn(pkName, pkType);
@@ -24,11 +30,14 @@ const mockTable = (name: string, pkName: string, pkType: string) => {
 
 const mockEntity = (table: PhysicalTable, columns: Record<string, string>) => {
     const colBuilders = Object.fromEntries(
-        Object.entries(columns).map(([name, type]) => [name, mockColumn(name, type)])
+        Object.entries(columns).map(([name, type]) => [
+            name,
+            mockColumn(name, type),
+        ]),
     );
     return {
         [ENTITY_SYMBOLS.PHYSICAL_TABLE]: table,
-        [ENTITY_SYMBOLS.COLUMNS]: colBuilders
+        [ENTITY_SYMBOLS.COLUMNS]: colBuilders,
     } as any;
 };
 
@@ -38,26 +47,26 @@ describe("Snapshot Persistence", () => {
     beforeEach(() => {
         mkdirSync(TEMP_DIR, { recursive: true });
     });
-  
+
     afterEach(() => {
         rmSync(TEMP_DIR, { recursive: true, force: true });
     });
 
     test("should save and load snapshot", async () => {
-        const snapshot: MizzleSnapshot = { 
-            version: "1", 
-            tables: { 
-                "test": { 
-                    TableName: "test", 
-                    AttributeDefinitions: [], 
-                    KeySchema: [] 
-                } 
-            } 
+        const snapshot: MizzleSnapshot = {
+            version: "1",
+            tables: {
+                test: {
+                    TableName: "test",
+                    AttributeDefinitions: [],
+                    KeySchema: [],
+                },
+            },
         };
 
         await saveSnapshot(TEMP_DIR, snapshot);
         const loaded = await loadSnapshot(TEMP_DIR);
-        
+
         expect(loaded).toEqual(snapshot);
     });
 
@@ -71,29 +80,34 @@ describe("Snapshot Generation", () => {
     test("should generate MizzleSnapshot from tables and entities", () => {
         const table = mockTable("users", "id", "S");
         const schema = { tables: [table], entities: [] };
-        
+
         const snapshot = generateSnapshot(schema);
-        
+
         expect(snapshot.version).toBe("1");
         expect(snapshot.tables["users"]).toBeDefined();
         expect(snapshot.tables["users"]!.TableName).toBe("users");
-        expect(snapshot.tables["users"]!.AttributeDefinitions).toEqual([{ AttributeName: "id", AttributeType: "S" }]);
+        expect(snapshot.tables["users"]!.AttributeDefinitions).toEqual([
+            { AttributeName: "id", AttributeType: "S" },
+        ]);
     });
 
     test("should include indexes in snapshot", () => {
         const table = mockTable("users", "id", "S");
         table[TABLE_SYMBOLS.INDEXES] = {
-            "byEmail": { type: "gsi", config: { pk: "email" } },
-            "byDate": { type: "lsi", config: { sk: "date" } }
+            byEmail: { type: "gsi", config: { pk: "email" } },
+            byDate: { type: "lsi", config: { sk: "date" } },
         };
 
         const entity = mockEntity(table, {
-            "id": "S",
-            "email": "S",
-            "date": "N"
+            id: "S",
+            email: "S",
+            date: "N",
         });
 
-        const snapshot = generateSnapshot({ tables: [table], entities: [entity] });
+        const snapshot = generateSnapshot({
+            tables: [table],
+            entities: [entity],
+        });
         const userTable = snapshot.tables["users"]!;
 
         expect(userTable.GlobalSecondaryIndexes).toHaveLength(1);
@@ -103,8 +117,14 @@ describe("Snapshot Generation", () => {
 
         // Verify Attributes
         const attrs = userTable.AttributeDefinitions;
-        expect(attrs).toContainEqual({ AttributeName: "email", AttributeType: "S" });
-        expect(attrs).toContainEqual({ AttributeName: "date", AttributeType: "N" });
+        expect(attrs).toContainEqual({
+            AttributeName: "email",
+            AttributeType: "S",
+        });
+        expect(attrs).toContainEqual({
+            AttributeName: "date",
+            AttributeType: "N",
+        });
     });
 });
 
@@ -112,7 +132,7 @@ describe("Migration Versioning", () => {
     beforeEach(() => {
         mkdirSync(TEMP_DIR, { recursive: true });
     });
-  
+
     afterEach(() => {
         rmSync(TEMP_DIR, { recursive: true, force: true });
     });

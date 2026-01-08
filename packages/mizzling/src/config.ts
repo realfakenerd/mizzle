@@ -1,6 +1,6 @@
 import { join } from "path";
 import { existsSync } from "fs";
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient, type DynamoDBClientConfig } from "@aws-sdk/client-dynamodb";
 import { fromIni } from "@aws-sdk/credential-provider-ini";
 import { NodeHttpHandler } from "@smithy/node-http-handler";
 import http from "http";
@@ -84,7 +84,7 @@ export function getClient(config: MizzleConfig): DynamoDBClient {
       maxSockets: Infinity,
   };
 
-  const clientConfig: any = {
+  const clientConfig: DynamoDBClientConfig = {
     region: config.region || "us-east-1",
     endpoint: config.endpoint,
     maxAttempts: config.maxAttempts,
@@ -153,10 +153,11 @@ export async function loadConfig(configName = "mizzle.config.ts"): Promise<Mizzl
     if (process.env.MIZZLE_OUT) finalConfig.out = process.env.MIZZLE_OUT;
 
     return finalConfig;
-  } catch (error: any) {
-    if (error.message.startsWith("Invalid config")) {
+  } catch (error) {
+    if (error instanceof Error && error.message.startsWith("Invalid config")) {
         throw error;
     }
-    throw new Error(`Failed to load config: ${error.message}`);
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`Failed to load config: ${message}`);
   }
 }

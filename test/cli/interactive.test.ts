@@ -1,4 +1,4 @@
-import { expect, test, describe, beforeEach, afterEach, mock } from "bun:test";
+import { expect, test, describe, beforeEach, afterEach, mock } from "vitest";
 import { generateCommand } from "../../packages/mizzling/src/commands/generate";
 import { pushCommand } from "../../packages/mizzling/src/commands/push";
 import { PhysicalTable } from "mizzle/table";
@@ -14,23 +14,32 @@ const mockClack = {
     intro: mock(() => {}),
     outro: mock(() => {}),
     spinner: () => ({ start: () => {}, stop: () => {}, message: () => {} }),
-    isCancel: () => false
+    isCancel: () => false,
 };
 mock.module("@clack/prompts", () => mockClack);
 
 const mockTable = (name: string) => {
     const table = new PhysicalTable(name, {
-        pk: { build: () => ({ _: { name: "id", type: "string" }, getDynamoType: () => "S", name: "id" }) } as any
+        pk: {
+            build: () => ({
+                _: { name: "id", type: "string" },
+                getDynamoType: () => "S",
+                name: "id",
+            }),
+        } as any,
     });
     table[TABLE_SYMBOLS.TABLE_NAME] = name;
-    table[TABLE_SYMBOLS.PARTITION_KEY] = { name: "id", getDynamoType: () => "S" };
+    table[TABLE_SYMBOLS.PARTITION_KEY] = {
+        name: "id",
+        getDynamoType: () => "S",
+    };
     return table;
 };
 
 // Mock Client
 const createMockClient = () => {
     return {
-        send: async () => ({ TableNames: [], Table: undefined })
+        send: async () => ({ TableNames: [], Table: undefined }),
     } as any;
 };
 
@@ -42,7 +51,7 @@ describe("Interactive Commands", () => {
         mockClack.text.mockClear();
         mockClack.confirm.mockClear();
     });
-  
+
     afterEach(() => {
         rmSync(TEMP_DIR, { recursive: true, force: true });
     });
@@ -55,7 +64,7 @@ describe("Interactive Commands", () => {
 
         await generateCommand({
             config: { schema: "dummy", out: TEMP_DIR } as any,
-            discoverSchema: mockDiscover
+            discoverSchema: mockDiscover,
         });
 
         expect(mockClack.text).toHaveBeenCalled();
@@ -69,7 +78,7 @@ describe("Interactive Commands", () => {
         await pushCommand({
             config: { schema: "dummy", out: TEMP_DIR } as any,
             discoverSchema: mockDiscover,
-            client
+            client,
         });
 
         expect(mockClack.confirm).toHaveBeenCalled();

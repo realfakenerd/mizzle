@@ -27,7 +27,7 @@ export abstract class BaseBuilder<
 
     protected resolveKeys(
         whereClause?: Expression,
-        providedValues?: Record<string, any>,
+        providedValues?: Record<string, unknown>,
     ): StrategyResolution {
         return resolveStrategies(this.entity, whereClause, providedValues);
     }

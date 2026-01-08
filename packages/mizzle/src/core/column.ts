@@ -24,7 +24,7 @@ export interface ColumnBaseConfig<
     hasRuntimeDefault: boolean;
     isPartitionKey: boolean;
     isSortKey: boolean;
-    validators?: Record<string, any>;
+    validators?: Record<string, unknown>;
 }
 
 export type ColumnTypeConfig<

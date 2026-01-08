@@ -40,7 +40,7 @@ export class StringSetColumnBuilder<
     ): Column<MakeColumnConfig<T, TTableName>> {
         return new StringSetColumn<MakeColumnConfig<T, TTableName>>(
             table,
-            this.config as ColumnRuntimeConfig<any, any>,
+            this.config as ColumnRuntimeConfig<T["data"], object>,
         );
     }
 }

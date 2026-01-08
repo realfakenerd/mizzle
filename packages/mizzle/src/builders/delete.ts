@@ -10,12 +10,12 @@ export class DeleteBuilder<
     static readonly [ENTITY_SYMBOLS.ENTITY_KIND]: string = "DeleteBuilder";
 
     private _returnValues?: "NONE" | "ALL_OLD";
-    private _keys: Record<string, any>;
+    private _keys: Record<string, unknown>;
 
     constructor(
         entity: TEntity,
         client: DynamoDBDocumentClient,
-        keys: Record<string, any>,
+        keys: Record<string, unknown>,
     ) {
         super(entity, client);
         this._keys = keys;

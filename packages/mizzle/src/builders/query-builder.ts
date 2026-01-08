@@ -5,12 +5,13 @@ import {
 	type QueryCommandInput,
 	type ScanCommandInput
 } from '@aws-sdk/lib-dynamodb';
-import type { Condition } from '../expressions/operators';
+import { type Condition, BinaryExpression, LogicalExpression } from '../expressions/operators';
 import type { InferSelectedModel, Entity } from '../core/table';
 import { ENTITY_SYMBOLS, TABLE_SYMBOLS, resolveTableName } from '@mizzle/shared';
 import { resolveStrategies } from '../core/strategies';
+import { Column } from '../core/column';
 
-export class DynamoQueryBuilder<T extends Entity<any>> {
+export class DynamoQueryBuilder<T extends Entity> {
 	private whereClause?: Condition;
 	private limitVal?: number;
 	private projectionFields?: string[];
@@ -50,61 +51,58 @@ export class DynamoQueryBuilder<T extends Entity<any>> {
 
 	// Executa a query
 	async execute(): Promise<InferSelectedModel<T>[]> {
-		const table = this.table as any;
 		const tableName = resolveTableName(this.table);
 		
 		const resolution = resolveStrategies(this.table, this.whereClause, undefined, this.indexName);
 
 		// Estado para montar a query do Dynamo
 		const expressionAttributeNames: Record<string, string> = {};
-		const expressionAttributeValues: Record<string, any> = {};
+		const expressionAttributeValues: Record<string, unknown> = {};
 		let valueCounter = 0;
 
-		const addValue = (val: any) => {
+		const addValue = (val: unknown) => {
 			const key = `:v${++valueCounter}`;
-			(expressionAttributeValues as any)[key] = val;
+			expressionAttributeValues[key] = val;
 			return key;
 		};
 
 		const addName = (name: string) => {
 			const key = `#${name}`;
-			(expressionAttributeNames as any)[key] = name;
+			expressionAttributeNames[key] = name;
 			return key;
 		};
 
-		const getColName = (colRef: string | { name: string }) =>
-			typeof colRef === 'string' ? colRef : colRef.name;
-
 		// Função recursiva para transformar Condition -> String do Dynamo
 		const buildExpression = (cond: Condition): string => {
-			const c = cond as any;
-			if (c.type === 'logical' && c.conditions) {
-				const parts = c.conditions.map(buildExpression);
-				return `(${parts.join(` ${c.operator} `)})`;
+			if (cond instanceof LogicalExpression) {
+				const parts = cond.conditions.map(buildExpression);
+				return `(${parts.join(` ${cond.operator} `)})`;
 			}
 
-			if (c.type === 'binary' && c.column) {
-				const colNameStr = getColName(c.column);
+			if (cond instanceof BinaryExpression) {
+				const colNameStr = cond.column.name;
 				const colName = addName(colNameStr);
 
-				if (c.operator === 'begins_with') {
-					const valKey = addValue(c.value);
+				if (cond.operator === 'begins_with') {
+					const valKey = addValue(cond.value);
 					return `begins_with(${colName}, ${valKey})`;
 				}
 
-				if (c.operator === 'between') {
-					const valKey1 = addValue(c.value[0]);
-					const valKey2 = addValue(c.value[1]);
+				if (cond.operator === 'between') {
+					const valArray = cond.value as unknown[];
+					const valKey1 = addValue(valArray[0]);
+					const valKey2 = addValue(valArray[1]);
 					return `${colName} BETWEEN ${valKey1} AND ${valKey2}`;
 				}
 
-				if (c.operator === 'in') {
-					const valKeys = (c.value as any[]).map(val => addValue(val));
+				if (cond.operator === 'in') {
+					const valArray = cond.value as unknown[];
+					const valKeys = valArray.map(val => addValue(val));
 					return `${colName} IN (${valKeys.join(', ')})`;
 				}
 
-				const valKey = addValue(c.value);
-				return `${colName} ${c.operator} ${valKey}`;
+				const valKey = addValue(cond.value);
+				return `${colName} ${cond.operator} ${valKey}`;
 			}
 			return '';
 		};
@@ -120,20 +118,22 @@ export class DynamoQueryBuilder<T extends Entity<any>> {
                     let skName: string | undefined;
 
                     if (resolution.indexName) {
-                        const pt = table._?.table || table[ENTITY_SYMBOLS.PHYSICAL_TABLE];
-                        const index = pt?._?.config?.indexes?.[resolution.indexName] || pt?.[TABLE_SYMBOLS.INDEXES]?.[resolution.indexName];
+                        const pt = this.table[ENTITY_SYMBOLS.PHYSICAL_TABLE];
+                        const indexes = pt[TABLE_SYMBOLS.INDEXES];
+                        const index = indexes?.[resolution.indexName] as { config: { pk: string; sk?: string } } | undefined;
+                        if (!index) throw new Error(`Index ${resolution.indexName} not found`);
                         pkName = index.config.pk;
                         skName = index.config.sk;
                     } else {
-                        const pt = table._?.table || table[ENTITY_SYMBOLS.PHYSICAL_TABLE];
-                        pkName = pt?._?.partitionKey?.name || pt?.[TABLE_SYMBOLS.PARTITION_KEY]?.name;
-                        skName = pt?._?.sortKey?.name || pt?.[TABLE_SYMBOLS.SORT_KEY]?.name;
+                        const pt = this.table[ENTITY_SYMBOLS.PHYSICAL_TABLE];
+                        pkName = (pt[TABLE_SYMBOLS.PARTITION_KEY] as Column).name;
+                        skName = (pt[TABLE_SYMBOLS.SORT_KEY] as Column | undefined)?.name;
                     }
 
                     const pkValue = resolution.keys[pkName];
                     keyConditionExpression = `${addName(pkName)} = ${addValue(pkValue)}`;
 
-                    if (resolution.hasSortKey && skName && resolution.keys[skName]) {
+                    if (resolution.hasSortKey && skName && resolution.keys[skName] !== undefined) {
                         keyConditionExpression += ` AND ${addName(skName)} = ${addValue(resolution.keys[skName])}`;
                     }
                 } else {
@@ -144,7 +144,7 @@ export class DynamoQueryBuilder<T extends Entity<any>> {
 		
 				const params: QueryCommandInput | ScanCommandInput = {
 					TableName: tableName,
-					Limit: this.limitVal as number | undefined,
+					Limit: this.limitVal,
 					IndexName: this.indexName
 				};
 
@@ -163,11 +163,12 @@ export class DynamoQueryBuilder<T extends Entity<any>> {
 
 		let command: QueryCommand | ScanCommand;
 		if (isQuery) {
-			(params as QueryCommandInput).KeyConditionExpression = keyConditionExpression;
-			(params as QueryCommandInput).ScanIndexForward = this.sortForward;
-			if (filterExpression) params.FilterExpression = filterExpression;
+			const queryParams = params as QueryCommandInput;
+			queryParams.KeyConditionExpression = keyConditionExpression;
+			queryParams.ScanIndexForward = this.sortForward;
+			if (filterExpression) queryParams.FilterExpression = filterExpression;
 
-			command = new QueryCommand(params);
+			command = new QueryCommand(queryParams);
 		} else {
 			if (filterExpression) params.FilterExpression = filterExpression;
 			command = new ScanCommand(params);

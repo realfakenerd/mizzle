@@ -1,4 +1,4 @@
-import { expect, test, describe, mock } from "bun:test";
+import { expect, test, describe, mock } from "vitest";
 import { pushCommand } from "../../packages/mizzling/src/commands/push";
 import { PhysicalTable } from "mizzle/table";
 import { TABLE_SYMBOLS } from "@mizzle/shared";
@@ -10,17 +10,26 @@ const mockClack = {
     intro: mock(() => {}),
     outro: mock(() => {}),
     spinner: () => ({ start: () => {}, stop: () => {}, message: () => {} }),
-    isCancel: () => false
+    isCancel: () => false,
 };
 mock.module("@clack/prompts", () => mockClack);
 
 // Mock Table
 const mockTable = (name: string) => {
     const table = new PhysicalTable(name, {
-        pk: { build: () => ({ _: { name: "id", type: "string" }, getDynamoType: () => "S", name: "id" }) } as any
+        pk: {
+            build: () => ({
+                _: { name: "id", type: "string" },
+                getDynamoType: () => "S",
+                name: "id",
+            }),
+        } as any,
     });
     table[TABLE_SYMBOLS.TABLE_NAME] = name;
-    table[TABLE_SYMBOLS.PARTITION_KEY] = { name: "id", getDynamoType: () => "S" };
+    table[TABLE_SYMBOLS.PARTITION_KEY] = {
+        name: "id",
+        getDynamoType: () => "S",
+    };
     return table;
 };
 
@@ -31,7 +40,7 @@ const createMockClient = () => {
         send: async (command: any) => {
             sends.push(command);
             const cmdName = command.constructor.name;
-            
+
             if (cmdName === "ListTablesCommand") {
                 return { TableNames: [] };
             }
@@ -41,7 +50,7 @@ const createMockClient = () => {
             return {};
         },
         // Helper to access captured calls
-        _sends: sends
+        _sends: sends,
     } as any;
 };
 
@@ -58,13 +67,15 @@ describe("Push Command", () => {
         await pushCommand({
             config: { schema: "dummy", out: "dummy" } as any,
             discoverSchema: mockDiscover,
-            client: mockClient
+            client: mockClient,
         });
 
         // Verify CreateTable was called
         // We look for CreateTableCommand in mockClient._sends
-        const createCall = mockClient._sends.find((cmd: any) => cmd.constructor.name === "CreateTableCommand");
-        
+        const createCall = mockClient._sends.find(
+            (cmd: any) => cmd.constructor.name === "CreateTableCommand",
+        );
+
         expect(createCall).toBeDefined();
         expect(createCall.input.TableName).toBe("users");
         expect(createCall.input.KeySchema).toBeDefined();

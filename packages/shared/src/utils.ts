@@ -10,13 +10,15 @@ export type Update<T, TUpdate> = {
     [K in Exclude<keyof T, keyof TUpdate>]: T[K];
 } & TUpdate;
 
-export function getEntityColumns<T extends { [ENTITY_SYMBOLS.COLUMNS]: any }>(
+export function getEntityColumns<T extends { [ENTITY_SYMBOLS.COLUMNS]: Record<string, unknown> }>(
     entity: T,
 ): T[typeof ENTITY_SYMBOLS.COLUMNS] {
     return entity[ENTITY_SYMBOLS.COLUMNS];
 }
 
-export function resolveTableName(entity: any): string {
+export function resolveTableName(entity: {
+    [ENTITY_SYMBOLS.PHYSICAL_TABLE]: { [TABLE_SYMBOLS.TABLE_NAME]: string };
+}): string {
     const physicalTable = entity[ENTITY_SYMBOLS.PHYSICAL_TABLE];
     return physicalTable[TABLE_SYMBOLS.TABLE_NAME];
 }

@@ -8,10 +8,11 @@ import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "@mizzle/shared";
 import type { Column } from "../core/column";
 import type { SelectedFields as SelectedFieldsBase } from "../core/operations";
 import { type Expression } from "../expressions/operators";
-import { Entity, PhysicalTable, type InferSelectModel } from "../core/table";
+import { Entity, type InferSelectModel } from "../core/table";
 import { BaseBuilder } from "./base";
+import type { StrategyResolution } from "../core/strategies";
 
-export type SelectedFields = SelectedFieldsBase<Column, PhysicalTable>;
+export type SelectedFields = SelectedFieldsBase<Column>;
 
 export class SelectBuilder<TSelection extends SelectedFields | undefined> {
     constructor(
@@ -27,7 +28,7 @@ export class SelectBuilder<TSelection extends SelectedFields | undefined> {
 class SelectBase<
     TEntity extends Entity,
     TSelection extends SelectedFields | undefined = undefined,
-    TResult = TSelection extends undefined ? InferSelectModel<TEntity> : any,
+    TResult = TSelection extends undefined ? InferSelectModel<TEntity> : Record<string, unknown>,
 > extends BaseBuilder<TEntity, TResult[]> {
     static readonly [ENTITY_SYMBOLS.ENTITY_KIND]: string = "SelectBase";
 
@@ -63,7 +64,7 @@ class SelectBase<
         return this.executeScan();
     }
 
-    private async executeGet(keys: Record<string, any>): Promise<TResult[]> {
+    private async executeGet(keys: Record<string, unknown>): Promise<TResult[]> {
         const command = new GetCommand({
             TableName: this.tableName,
             Key: keys,
@@ -74,30 +75,31 @@ class SelectBase<
     }
 
     private async executeQuery(
-        resolution: any,
+        resolution: StrategyResolution,
     ): Promise<TResult[]> {
         let pkName: string;
         let skName: string | undefined;
-        const physicalTable = this.physicalTable as any;
+        const physicalTable = this.physicalTable;
 
         if (resolution.indexName) {
             const indexes = physicalTable[TABLE_SYMBOLS.INDEXES];
-            if (!indexes || !indexes[resolution.indexName]) {
+            const indexBuilder = indexes?.[resolution.indexName] as { config: { pk: string; sk?: string } } | undefined;
+            if (!indexes || !indexBuilder) {
                 throw new Error(
                     `Index ${resolution.indexName} not found on table definition.`,
                 );
             }
-            pkName = indexes[resolution.indexName].config.pk!;
-            skName = indexes[resolution.indexName].config.sk;
+            pkName = indexBuilder.config.pk;
+            skName = indexBuilder.config.sk;
         } else {
-            pkName = physicalTable[TABLE_SYMBOLS.PARTITION_KEY].name;
-            skName = physicalTable[TABLE_SYMBOLS.SORT_KEY]?.name;
+            pkName = (physicalTable[TABLE_SYMBOLS.PARTITION_KEY] as Column).name;
+            skName = (physicalTable[TABLE_SYMBOLS.SORT_KEY] as Column | undefined)?.name;
         }
 
         const pkValue = resolution.keys[pkName];
 
         let keyConditionExpression = `${pkName} = :pk`;
-        const expressionAttributeValues: Record<string, any> = {
+        const expressionAttributeValues: Record<string, unknown> = {
             ":pk": pkValue,
         };
 

@@ -2,12 +2,13 @@ import {
     UpdateCommand,
     type DynamoDBDocumentClient,
 } from "@aws-sdk/lib-dynamodb";
-import type { Condition } from "../expressions/operators";
-import type { InferInsertModel, TableDefinition, InferSelectedModel, AtomicValues } from "../core/table";
+import { type Condition, BinaryExpression } from "../expressions/operators";
+import type { InferInsertModel, Entity, InferSelectedModel, AtomicValues } from "../core/table";
 import { ENTITY_SYMBOLS } from "@mizzle/shared";
+import { Column } from "../core/column";
 
-export class UpdateBuilder<T extends TableDefinition<any>> {
-    #key?: Record<string, any>;
+export class UpdateBuilder<T extends Entity> {
+    #key?: Record<string, unknown>;
     #where?: Condition;
     #setValues: Partial<InferInsertModel<T>> = {};
     #addValues: AtomicValues<T> = {};
@@ -19,7 +20,7 @@ export class UpdateBuilder<T extends TableDefinition<any>> {
         private table: T,
     ) {}
 
-    key(keyParams: any) {
+    key(keyParams: Record<string, unknown>) {
         this.#key = keyParams;
         return this;
     }
@@ -34,7 +35,7 @@ export class UpdateBuilder<T extends TableDefinition<any>> {
         return this;
     }
 
-    remove(keys: (keyof any)[]) {
+    remove(keys: (keyof InferInsertModel<T>)[]) {
         this.#removeKeys.push(...(keys as string[]));
         return this;
     }
@@ -50,14 +51,14 @@ export class UpdateBuilder<T extends TableDefinition<any>> {
     }
 
     async execute(): Promise<InferSelectedModel<T>> {
-        const table = this.table as any;
-        const tableName = table[ENTITY_SYMBOLS.ENTITY_NAME] || table.tableName;
-        const columns = table[ENTITY_SYMBOLS.COLUMNS] || table.columns;
+        const entity = this.table;
+        const tableName = entity[ENTITY_SYMBOLS.ENTITY_NAME];
+        const columns = entity[ENTITY_SYMBOLS.COLUMNS] as Record<string, Column>;
 
         let pkPhisicalName: string | undefined;
 
-        for (const col of Object.values(columns) as any[]) {
-            if (col.config?.isPrimaryKey || col.isPrimaryKey) {
+        for (const col of Object.values(columns)) {
+            if (col.primary) {
                 pkPhisicalName = col.name;
                 break;
             }
@@ -70,7 +71,7 @@ export class UpdateBuilder<T extends TableDefinition<any>> {
         }
 
         const expressionAttributeNames: Record<string, string> = {};
-        const expressionAttributeValues: Record<string, any> = {};
+        const expressionAttributeValues: Record<string, unknown> = {};
         let valueCount = 0;
 
         const addName = (name: string) => {
@@ -79,7 +80,7 @@ export class UpdateBuilder<T extends TableDefinition<any>> {
             return key;
         };
 
-        const addValue = (val: any) => {
+        const addValue = (val: unknown) => {
             const key = `:up_v${++valueCount}`;
             expressionAttributeValues[key] = val;
             return key;
@@ -90,7 +91,7 @@ export class UpdateBuilder<T extends TableDefinition<any>> {
 
         // SET Clause
         const setParts: string[] = [];
-        for (const [key, value] of Object.entries(this.#setValues as any)) {
+        for (const [key, value] of Object.entries(this.#setValues as Record<string, unknown>)) {
             if (value !== undefined) {
                 setParts.push(`${addName(key)} = ${addValue(value)}`);
             }
@@ -102,7 +103,7 @@ export class UpdateBuilder<T extends TableDefinition<any>> {
 
         // ADD Clause
         const addParts: string[] = [];
-        for (const [key, value] of Object.entries(this.#addValues as any)) {
+        for (const [key, value] of Object.entries(this.#addValues as Record<string, unknown>)) {
             if (value !== undefined) {
                 addParts.push(`${addName(key)} ${addValue(value)}`);
             }
@@ -119,21 +120,22 @@ export class UpdateBuilder<T extends TableDefinition<any>> {
 
         const updateExpression = clauses.join(" ");
 
-        const keyObj: any = {};
+        const keyObj: Record<string, unknown> = this.#key || {};
 
-        // Vamos fazer uma extração simples da PK para o exemplo funcionar:
-        const where = this.#where as any;
-        if (
-            where &&
-            where.type === "binary" &&
-            (typeof where.column === 'string' ? where.column : where.column.name) === pkPhisicalName &&
-            where.operator === "="
-        ) {
-            keyObj[pkPhisicalName] = where.value;
-        } else {
-            throw new Error(
-                "Para update, o .where() deve conter uma igualdade simples na Chave Primária.",
-            );
+        if (!this.#key) {
+            // Vamos fazer uma extração simples da PK para o exemplo funcionar:
+            const where = this.#where;
+            if (
+                where instanceof BinaryExpression &&
+                where.column.name === pkPhisicalName &&
+                where.operator === "="
+            ) {
+                keyObj[pkPhisicalName] = where.value;
+            } else {
+                throw new Error(
+                    "Para update, o .where() deve conter uma igualdade simples na Chave Primária.",
+                );
+            }
         }
 
         const command = new UpdateCommand({

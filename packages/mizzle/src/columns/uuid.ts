@@ -8,6 +8,8 @@ import {
 } from "../core/column-builder";
 import type { AnyTable } from "../core/table";
 
+const uuidDefault = () => uuidV7();
+
 export type UUIDColumnInitial<TName extends string> = UUIDColumnBuilder<{
     name: TName;
     dataType: "string";
@@ -21,7 +23,7 @@ export class UUIDColumnBuilder<
     constructor(name: string) {
         super(name, "string", "S");
 
-        this.config.defaultFn = () => uuidV7();
+        this.config.defaultFn = uuidDefault;
     }
 
     /** @internal */
@@ -30,7 +32,7 @@ export class UUIDColumnBuilder<
     ): UUIDColumn<MakeColumnConfig<T, TTableName>> {
         return new UUIDColumn<MakeColumnConfig<T, TTableName>>(
             table,
-            this.config as ColumnBuilderRuntimeConfig<any, any>,
+            this.config as ColumnBuilderRuntimeConfig<T["data"], object>,
         );
     }
 }

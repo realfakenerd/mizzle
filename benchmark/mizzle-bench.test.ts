@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll } from "bun:test";
+import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { MizzleBench } from "./mizzle-bench";
 import { createTable, deleteTable, waitForTable } from "./setup";
 import { DataGenerator } from "./data-gen";
@@ -39,7 +39,7 @@ describe("MizzleBench", () => {
         // Seed some data for query
         await bench.putItem(gen.generateItem(2));
         await bench.putItem(gen.generateItem(3));
-        
+
         const items = await bench.queryItems("USER#2");
         expect(items).toHaveLength(1);
         expect(items[0]!.pk).toBe("USER#2");

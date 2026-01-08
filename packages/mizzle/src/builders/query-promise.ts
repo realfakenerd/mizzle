@@ -3,7 +3,7 @@ export abstract class QueryPromise<T> implements Promise<T> {
 
     catch<TResult = never>(
         onrejected?:
-            | ((reason: any) => TResult | PromiseLike<TResult>)
+            | ((reason: unknown) => TResult | PromiseLike<TResult>)
             | null
             | undefined,
     ): Promise<T | TResult> {
@@ -30,7 +30,7 @@ export abstract class QueryPromise<T> implements Promise<T> {
             | null
             | undefined,
         onrejected?:
-            | ((reason: any) => TResult2 | PromiseLike<TResult2>)
+            | ((reason: unknown) => TResult | PromiseLike<TResult>)
             | null
             | undefined,
     ): Promise<TResult1 | TResult2> {

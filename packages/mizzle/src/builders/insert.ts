@@ -2,6 +2,8 @@ import { PutCommand, type DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "@mizzle/shared";
 import { Entity, type InferInsertModel } from "../core/table";
 import { BaseBuilder } from "./base";
+import { Column } from "../core/column";
+import { KeyStrategy } from "../core/strategies";
 
 export class InsertBuilder<TEntity extends Entity> {
     static readonly [ENTITY_SYMBOLS.ENTITY_KIND]: string = "InsertBuilder";
@@ -32,28 +34,25 @@ class InsertBase<
 
     returning(): InsertBase<TEntity, InferInsertModel<TEntity>> {
         this.shouldReturnValues = true;
-        return this as any;
+        return this as unknown as InsertBase<TEntity, InferInsertModel<TEntity>>;
     }
 
     override async execute(): Promise<TResult> {
         const itemToSave = this.processValues(this.valuesData);
         const resolution = this.resolveKeys(undefined, itemToSave);
         
-        const finalItem = { ...itemToSave, ...resolution.keys };
+        const finalItem: Record<string, unknown> = { ...itemToSave, ...resolution.keys };
 
         // Also resolve GSI keys if they are defined in strategies but not in resolution.keys
-        // resolveStrategies only returns PK/SK for main table or a specific index.
-        // We need all of them for PutItem.
-        const strategies = this.entity[ENTITY_SYMBOLS.ENTITY_STRATEGY] as Record<string, any>;
-        const physicalTable = this.entity[ENTITY_SYMBOLS.PHYSICAL_TABLE] as any;
+        const strategies = this.entity[ENTITY_SYMBOLS.ENTITY_STRATEGY] as Record<string, { pk: KeyStrategy, sk?: KeyStrategy }>;
+        const physicalTable = this.entity[ENTITY_SYMBOLS.PHYSICAL_TABLE];
         const indexes = physicalTable[TABLE_SYMBOLS.INDEXES] || {};
 
         for (const [indexName, strategy] of Object.entries(strategies)) {
             if (indexName === "pk" || indexName === "sk") continue;
 
-            const indexBuilder = indexes[indexName];
+            const indexBuilder = indexes[indexName] as { config: { pk: string; sk?: string } } | undefined;
             if (indexBuilder) {
-                // It's an index strategy
                 if (strategy.pk && indexBuilder.config.pk) {
                     const pkValue = this.resolveStrategyValue(strategy.pk, itemToSave);
                     if (pkValue) finalItem[indexBuilder.config.pk] = pkValue;
@@ -76,7 +75,7 @@ class InsertBase<
         return undefined as unknown as TResult;
     }
 
-    private resolveStrategyValue(strategy: any, availableValues: Record<string, any>): string | undefined {
+    private resolveStrategyValue(strategy: KeyStrategy, availableValues: Record<string, unknown>): string | undefined {
         if (strategy.type === "static") {
             return strategy.segments[0] as string;
         }
@@ -100,23 +99,24 @@ class InsertBase<
 
     private processValues(
         values: InferInsertModel<TEntity>,
-    ): Record<string, any> {
-        const item: any = { ...values };
-        const columns = this.entity[ENTITY_SYMBOLS.COLUMNS] as Record<string, any>;
+    ): Record<string, unknown> {
+        const item: Record<string, unknown> = { ...(values as Record<string, unknown>) };
+        const columns = this.entity[ENTITY_SYMBOLS.COLUMNS] as Record<string, Column>;
 
-        for (const [key, col] of Object.entries(columns)) {
-            let value = item[key];
+        for (const key in columns) {
+            const col = columns[key];
+            const value = item[key];
 
             if (value === undefined) {
                 if (col.default !== undefined) item[key] = col.default;
                 else if (col.defaultFn) item[key] = col.defaultFn();
             }
 
-            value = item[key];
+            const finalValue = item[key];
 
             if (["SS", "NS", "BS"].includes(col.columnType)) {
-                if (Array.isArray(value)) {
-                    const setVal = new Set(value);
+                if (Array.isArray(finalValue)) {
+                    const setVal = new Set(finalValue);
                     item[key] = setVal;
                     if (setVal.size === 0) delete item[key];
                 }

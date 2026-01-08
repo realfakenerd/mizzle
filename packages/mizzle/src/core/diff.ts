@@ -4,7 +4,7 @@ import { generateSnapshot } from "./snapshot";
 export type SchemaChange = 
   | { type: "create"; table: TableSnapshot }
   | { type: "delete"; tableName: string }
-  | { type: "update"; tableName: string; changes: any[] };
+  | { type: "update"; tableName: string; changes: unknown[] };
 
 export function compareSchema(current: SchemaCurrent, snapshot: MizzleSnapshot): SchemaChange[] {
     const changes: SchemaChange[] = [];

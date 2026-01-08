@@ -267,6 +267,6 @@ export abstract class ColumnBuider<
 
     /** @internal */
     abstract build<TTableName extends string>(
-        table: AnyTable<any>,
+        table: AnyTable,
     ): Column<MakeColumnConfig<T, TTableName>>;
 }

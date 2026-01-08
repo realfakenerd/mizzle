@@ -26,7 +26,7 @@ export class BooleanColumnBuilder<
     ): BooleanColumn<MakeColumnConfig<T, TTableName>> {
         return new BooleanColumn<MakeColumnConfig<T, TTableName>>(
             table,
-            this.config as ColumnBuilderRuntimeConfig<any, any>,
+            this.config as ColumnBuilderRuntimeConfig<T["data"], object>,
         );
     }
 }

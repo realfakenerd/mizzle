@@ -42,4 +42,94 @@ The suite captures the following metrics:
 
 ## Results
 
+
+
 Results are displayed in the console and saved to `results.md` in the current directory.
+
+
+
+## Mizzle-Only Benchmark
+
+
+
+
+
+
+
+To benchmark Mizzle in isolation (useful for profiling or focused testing):
+
+
+
+
+
+
+
+1. Run the Mizzle-only benchmark:
+
+
+
+   ```bash
+
+
+
+   cd benchmark
+
+
+
+   bun run bench:mizzle
+
+
+
+   # Or with a specific scale:
+
+
+
+   bun run bench:mizzle small
+
+
+
+   ```
+
+
+
+
+
+
+
+2. For profiling, you can add the `--profile` flag manually:
+
+
+
+   ```bash
+
+
+
+   bun --profile mizzle-only-bench.ts small
+
+
+
+   ```
+
+
+
+   Then analyze the profile using the root analysis script:
+
+
+
+   ```bash
+
+
+
+   cd ..
+
+
+
+   bun analyze_profile.ts benchmark/cpu.profile
+
+
+
+   ```
+
+
+
+

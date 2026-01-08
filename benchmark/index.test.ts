@@ -1,4 +1,4 @@
-import { expect, test, describe, beforeAll, afterAll } from "bun:test";
+import { expect, test, describe, beforeAll, afterAll } from "vitest";
 import { Bench } from "tinybench";
 import { AWSSDKBench } from "./sdk-bench";
 import { MizzleBench } from "./mizzle-bench";

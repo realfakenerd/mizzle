@@ -41,7 +41,7 @@ export function compositeKey(
 
 function extracValuesFromExpression(
     expression: Expression,
-    acc: Record<string, any>
+    acc: Record<string, unknown>
 ): void {
     if (expression instanceof BinaryExpression) {
         if (expression.operator === "=") {
@@ -58,7 +58,7 @@ function extracValuesFromExpression(
 
 function resolveKeyStrategy(
     strategy: KeyStrategy,
-    availableValues: Record<string, any>,
+    availableValues: Record<string, unknown>,
 ): string | undefined {
     if (strategy.type === "static") {
         return strategy.segments[0] as string;
@@ -96,124 +96,238 @@ function resolveKeyStrategy(
 }
 
 export interface StrategyResolution {
-    keys: Record<string, any>;
+    keys: Record<string, unknown>;
     hasPartitionKey: boolean;
     hasSortKey: boolean;
     indexName?: string;
 }
 
 export function resolveStrategies(
+
     entity: Entity,
+
     whereClause?: Expression,
-    providedValues?: Record<string, any>,
+
+    providedValues?: Record<string, unknown>,
+
     forcedIndexName?: string
+
 ): StrategyResolution {
-    const strategies = entity[ENTITY_SYMBOLS.ENTITY_STRATEGY] as Record<string, KeyStrategy>;
-    const physicalTable = entity[ENTITY_SYMBOLS.PHYSICAL_TABLE] as any;
+
+    const strategies = entity[ENTITY_SYMBOLS.ENTITY_STRATEGY] as Record<string, { pk: KeyStrategy, sk?: KeyStrategy }>;
+
+    const physicalTable = entity[ENTITY_SYMBOLS.PHYSICAL_TABLE];
+
+
 
     const pkCol = physicalTable[TABLE_SYMBOLS.PARTITION_KEY] as Column;
+
     const skCol = physicalTable[TABLE_SYMBOLS.SORT_KEY] as Column | undefined;
 
-    const availableValues: Record<string, any> = {};
+
+
+    const availableValues: Record<string, unknown> = {};
+
     
+
     if (whereClause) {
+
         extracValuesFromExpression(whereClause, availableValues);
+
     }
+
     
+
     if (providedValues) {
+
         // providedValues take precedence or merge? 
+
         // Previously: { ...extracted, ...provided } -> provided overwrites.
+
         for (const key in providedValues) {
+
             availableValues[key] = providedValues[key];
+
         }
+
     }
+
+
 
     const result: StrategyResolution = {
+
         keys: {},
+
         hasPartitionKey: false,
+
         hasSortKey: false,
+
     };
 
+
+
     if (forcedIndexName) {
+
         const indexes = physicalTable[TABLE_SYMBOLS.INDEXES];
-        const indexBuilder = indexes?.[forcedIndexName] as any;
-        const indexStrategy = strategies[forcedIndexName] as any;
+
+        const indexBuilder = indexes?.[forcedIndexName] as { config: { pk: string; sk?: string } } | undefined;
+
+        const indexStrategy = strategies[forcedIndexName];
+
+
 
         if (indexBuilder && indexStrategy) {
+
             const indexPkValue = resolveKeyStrategy(indexStrategy.pk, availableValues);
+
             if (indexPkValue) {
+
                 result.indexName = forcedIndexName;
+
                 result.keys[indexBuilder.config.pk] = indexPkValue;
+
                 result.hasPartitionKey = true;
 
+
+
                 const indexSkValue = indexStrategy.sk ? resolveKeyStrategy(indexStrategy.sk, availableValues) : undefined;
+
                 if (indexSkValue && indexBuilder.config.sk) {
+
                     result.keys[indexBuilder.config.sk] = indexSkValue;
+
                     result.hasSortKey = true;
+
                 }
+
                 return result;
+
             }
+
         }
+
     }
+
+
 
     if (strategies.pk) {
+
         const pkValue = resolveKeyStrategy(strategies.pk, availableValues);
+
         if (pkValue) {
+
             result.keys[pkCol.name] = pkValue;
+
             result.hasPartitionKey = true;
+
         }
+
     }
+
+
 
     if (strategies.sk) {
+
         const skValue = resolveKeyStrategy(strategies.sk, availableValues);
+
         if (skValue) {
+
             if (skCol) {
+
                 result.keys[skCol.name] = skValue;
+
                 result.hasSortKey = true;
+
             }
+
         }
+
     } else {
+
         result.hasSortKey = skCol ? false : true;
+
     }
+
+
 
     if (!result.hasPartitionKey) {
+
         const indexes = physicalTable[TABLE_SYMBOLS.INDEXES];
+
         if (indexes) {
+
             for (const [indexName, indexBuilderBase] of Object.entries(indexes)) {
-                const indexBuilder = indexBuilderBase as any;
-                const indexStrategy = strategies[indexName] as any;
+
+                const indexBuilder = indexBuilderBase as { config: { pk: string; sk?: string } };
+
+                const indexStrategy = strategies[indexName];
+
                 if (!indexStrategy) continue;
+
                 
+
                 if (indexStrategy.pk && indexBuilder.config.pk) {
+
                     const indexPkValue = resolveKeyStrategy(
+
                         indexStrategy.pk,
+
                         availableValues,
+
                     );
 
+
+
                     if (indexPkValue) {
+
                         result.indexName = indexName;
 
+
+
                         result.keys = {};
+
                         result.keys[indexBuilder.config.pk] = indexPkValue;
+
                         result.hasPartitionKey = true;
 
+
+
                         if (indexStrategy.sk && indexBuilder.config.sk) {
+
                             const indexSkValue = resolveKeyStrategy(
+
                                 indexStrategy.sk,
+
                                 availableValues,
+
                             );
+
                             if (indexSkValue) {
+
                                 result.keys[indexBuilder.config.sk] =
+
                                     indexSkValue;
+
                                 result.hasSortKey = true;
+
                             }
+
                         }
+
                         break;
+
                     }
+
                 }
+
             }
+
         }
+
     }
 
+
+
     return result;
+
 }

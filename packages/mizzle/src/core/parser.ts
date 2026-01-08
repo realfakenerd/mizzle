@@ -1,6 +1,8 @@
 import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "@mizzle/shared";
 import type { InternalRelationalSchema } from "./relations";
-import type { KeyStrategy } from "./strategies";
+import { type KeyStrategy } from "./strategies";
+import { Entity } from "./table";
+import { Column } from "./column";
 
 /**
  * Parser for DynamoDB item collections (Single-Table Design).
@@ -11,14 +13,18 @@ export class ItemCollectionParser {
     /**
      * Parse a flat list of items into structured, nested objects.
      */
-    parse(items: any[], rootEntityName: string, relations: Record<string, any> = {}) {
+    parse(
+        items: Record<string, unknown>[],
+        rootEntityName: string,
+        relations: Record<string, boolean | object> = {},
+    ): Record<string, unknown>[] {
         const rootEntityMeta = this.schema.entities[rootEntityName];
         if (!rootEntityMeta) {
             throw new Error(`Root entity ${rootEntityName} not found in schema`);
         }
 
-        const primaryItems: any[] = [];
-        const otherItems: any[] = [];
+        const primaryItems: Record<string, unknown>[] = [];
+        const otherItems: Record<string, unknown>[] = [];
 
         // 1. Identify primary items vs related items
         for (const item of items) {
@@ -38,10 +44,12 @@ export class ItemCollectionParser {
                 if (!relConfig) continue;
 
                 const targetEntity = relConfig.config.to;
-                
+
                 // Find items that match the target entity type
                 // In Single-Table Design Query, these items usually share the same PK
-                const relatedItems = otherItems.filter(item => this.isEntity(item, targetEntity));
+                const relatedItems = otherItems.filter((item) =>
+                    this.isEntity(item, targetEntity),
+                );
 
                 if (relatedItems.length > 0) {
                     if (relConfig.type === "many") {
@@ -59,15 +67,21 @@ export class ItemCollectionParser {
     /**
      * Check if an item matches an entity definition based on its key strategies.
      */
-    private isEntity(item: any, entity: any): boolean {
-        const strategies = entity[ENTITY_SYMBOLS.ENTITY_STRATEGY] as Record<string, KeyStrategy>;
-        const physicalTable = entity[ENTITY_SYMBOLS.PHYSICAL_TABLE] as any;
+    private isEntity(item: Record<string, unknown>, entity: Entity): boolean {
+        const strategies = entity[ENTITY_SYMBOLS.ENTITY_STRATEGY] as Record<
+            string,
+            KeyStrategy
+        >;
+        const physicalTable = entity[ENTITY_SYMBOLS.PHYSICAL_TABLE];
 
-        const pkName = physicalTable[TABLE_SYMBOLS.PARTITION_KEY].name;
-        const skName = physicalTable[TABLE_SYMBOLS.SORT_KEY]?.name;
+        const pkName = (physicalTable[TABLE_SYMBOLS.PARTITION_KEY] as Column).name;
+        const skName = (physicalTable[TABLE_SYMBOLS.SORT_KEY] as Column | undefined)
+            ?.name;
 
         const pkMatch = this.matchStrategy(item[pkName], strategies.pk);
-        const skMatch = skName ? this.matchStrategy(item[skName], strategies.sk) : true;
+        const skMatch = skName
+            ? this.matchStrategy(item[skName], strategies.sk)
+            : true;
 
         return pkMatch && skMatch;
     }
@@ -75,7 +89,7 @@ export class ItemCollectionParser {
     /**
      * Check if a value matches a key strategy.
      */
-    private matchStrategy(value: any, strategy?: KeyStrategy): boolean {
+    private matchStrategy(value: unknown, strategy?: KeyStrategy): boolean {
         if (!strategy) return true;
         if (value === undefined || value === null) return false;
 

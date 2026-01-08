@@ -35,7 +35,7 @@ export type StrategyCallback<
         : never]: KeyStrategy;
 } & IndexesStrategy<TPhysicalConfig["indexes"]>;
 
-export interface EntityConfig<TColumn extends Column = Column<any>> {
+export interface EntityConfig<TColumn extends Column = Column> {
     name: string;
     table: PhysicalTable;
     columns: Record<string, TColumn>;
@@ -65,7 +65,7 @@ export class PhysicalTable<
     [TABLE_SYMBOLS.INDEXES]: T["indexes"] = undefined;
 
     /** @internal */
-    [TABLE_SYMBOLS.PARTITION_KEY]: Column = {} as any;
+    [TABLE_SYMBOLS.PARTITION_KEY]: Column = {} as Column;
 
     /** @internal */
     [TABLE_SYMBOLS.SORT_KEY]?: Column = undefined;
@@ -75,10 +75,10 @@ export class PhysicalTable<
     constructor(name: string, config: T) {
         this[TABLE_SYMBOLS.TABLE_NAME] = name;
         this[TABLE_SYMBOLS.PARTITION_KEY] = (config.pk as ColumnBuider).build(
-            {} as any,
+            this as unknown as AnyTable,
         );
         this[TABLE_SYMBOLS.SORT_KEY] = config.sk
-            ? (config.sk as ColumnBuider).build({} as any)
+            ? (config.sk as ColumnBuider).build(this as unknown as AnyTable)
             : undefined;
         this[TABLE_SYMBOLS.INDEXES] = config.indexes;
     }
@@ -102,10 +102,10 @@ export class Entity<T extends EntityConfig = EntityConfig> {
     [ENTITY_SYMBOLS.ENTITY_NAME]: string = "";
 
     /** @internal */
-    [ENTITY_SYMBOLS.PHYSICAL_TABLE]: T["table"] = {} as any;
+    [ENTITY_SYMBOLS.PHYSICAL_TABLE]: T["table"] = {} as T["table"];
 
     /** @internal */
-    [ENTITY_SYMBOLS.COLUMNS]: T["columns"] = {} as any;
+    [ENTITY_SYMBOLS.COLUMNS]: T["columns"] = {} as T["columns"];
 
     [ENTITY_SYMBOLS.ENTITY_STRATEGY]: Record<string, KeyStrategy> = {};
 
@@ -199,7 +199,7 @@ export function dynamoEntity<
     columns: TColumnsMap | ((columnsTypes: ColumnsBuilder) => TColumnsMap),
     strategies?: StrategyCallback<
         BuildColumns<TName, TColumnsMap>,
-        TTable["_"] extends PhysicalTableConfig ? TTable["_"] : any
+        TTable["_"]
     >,
 ): EntityWithColumns<{
     name: TName;
@@ -209,12 +209,11 @@ export function dynamoEntity<
     const parsedColumns: TColumnsMap =
         typeof columns === "function" ? columns(getColumnBuilders()) : columns;
 
-    const tempEntity = {} as Entity;
     const builtColumns = Object.fromEntries(
         Object.entries(parsedColumns).map(([name, colBuilderBase]) => {
             const colBuilder = colBuilderBase as ColumnBuider;
             colBuilder.setName(name);
-            const column = colBuilder.build(tempEntity as any);
+            const column = colBuilder.build({} as unknown as AnyTable);
             return [name, column];
         }),
     ) as BuildColumns<TName, TColumnsMap>;
@@ -227,7 +226,11 @@ export function dynamoEntity<
 
     const entity = Object.assign(rawEntity, builtColumns);
 
-    return entity as any;
+    return entity as unknown as EntityWithColumns<{
+        name: TName;
+        table: TTable;
+        columns: BuildColumns<TName, TColumnsMap>;
+    }>;
 }
 
 export function dynamoTable<

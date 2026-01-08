@@ -30,7 +30,7 @@ export class JsonColumnBuilder<
     ): Column<MakeColumnConfig<T, TTableName>> {
         return new JsonColumn<MakeColumnConfig<T, TTableName>>(
             table,
-            this.config as ColumnRuntimeConfig<any, any>,
+            this.config as ColumnRuntimeConfig<T["data"], object>,
         );
     }
 }

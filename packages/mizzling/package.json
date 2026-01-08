@@ -11,13 +11,14 @@
     "lint": "eslint \"src/**/*.ts\""
   },
   "dependencies": {
-    "commander": "^14.0.2",
+    "@aws-sdk/client-dynamodb": "3.962.0",
+    "@aws-sdk/credential-provider-ini": "3.962.0",
+    "@aws-sdk/lib-dynamodb": "3.962.0",
     "@clack/prompts": "^0.11.0",
-    "@aws-sdk/client-dynamodb": "^3.962.0",
-    "@aws-sdk/lib-dynamodb": "^3.962.0",
-    "@aws-sdk/credential-provider-ini": "^3.964.0",
-    "mizzle": "workspace:*",
-    "@mizzle/shared": "workspace:*"
+    "@mizzle/shared": "workspace:*",
+    "@smithy/node-http-handler": "^4.4.7",
+    "commander": "^14.0.2",
+    "mizzle": "workspace:*"
   },
   "devDependencies": {
     "@mizzle/tsconfig": "workspace:*",

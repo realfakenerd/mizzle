@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 import { DataGenerator } from "./data-gen";
 
 describe("DataGenerator", () => {
@@ -12,7 +12,7 @@ describe("DataGenerator", () => {
         expect(item).toHaveProperty("email");
         expect(item).toHaveProperty("age");
         expect(item).toHaveProperty("active");
-        
+
         expect(typeof item.pk).toBe("string");
         expect(typeof item.sk).toBe("string");
         expect(item.pk).toBe("USER#1");

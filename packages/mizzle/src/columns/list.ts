@@ -28,7 +28,7 @@ export class ListColumnBuilder<
     ): Column<MakeColumnConfig<T, TTableName>> {
         return new ListColumn<MakeColumnConfig<T, TTableName>>(
             table,
-            this.config as ColumnRuntimeConfig<any, any>,
+            this.config as ColumnRuntimeConfig<T["data"], object>,
         );
     }
 }

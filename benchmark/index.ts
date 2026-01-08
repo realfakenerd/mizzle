@@ -116,7 +116,7 @@ async function main() {
 
             // Collect results
             const opResults: ExtendedMetrics[] = bench.tasks.map(task => {
-                const result = task.result;
+                const result = task.result as any;
                 const resourceMetrics = collector.get(task.name);
                 
                 if (!result || result.error) {

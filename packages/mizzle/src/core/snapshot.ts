@@ -3,13 +3,20 @@ import { writeFile, readFile, mkdir, readdir } from "fs/promises";
 import { existsSync } from "fs";
 import { PhysicalTable, Entity } from "./table";
 import { TABLE_SYMBOLS, ENTITY_SYMBOLS } from "@mizzle/shared";
+import { Column } from "./column";
+import type {
+    AttributeDefinition,
+    KeySchemaElement,
+    GlobalSecondaryIndex,
+    LocalSecondaryIndex,
+} from "@aws-sdk/client-dynamodb";
 
 export interface TableSnapshot {
-  TableName: string;
-  AttributeDefinitions: { AttributeName: string; AttributeType: string }[];
-  KeySchema: { AttributeName: string; KeyType: "HASH" | "RANGE" }[];
-  GlobalSecondaryIndexes?: any[];
-  LocalSecondaryIndexes?: any[];
+    TableName: string;
+    AttributeDefinitions: AttributeDefinition[];
+    KeySchema: KeySchemaElement[];
+    GlobalSecondaryIndexes?: GlobalSecondaryIndex[];
+    LocalSecondaryIndexes?: LocalSecondaryIndex[];
 }
 
 export interface MizzleSnapshot {
@@ -80,29 +87,29 @@ function physicalTableToSnapshot(table: PhysicalTable, entities: Entity[]): Tabl
     const attributeDefinitionsMap = new Map<string, string>(); // Name -> Type
 
     // PK
-    const pk = table[TABLE_SYMBOLS.PARTITION_KEY] as any;
+    const pk = table[TABLE_SYMBOLS.PARTITION_KEY] as Column;
     attributeDefinitionsMap.set(pk.name, pk.getDynamoType());
 
     // SK
-    const sk = table[TABLE_SYMBOLS.SORT_KEY] as any;
+    const sk = table[TABLE_SYMBOLS.SORT_KEY] as Column | undefined;
     if (sk) {
         attributeDefinitionsMap.set(sk.name, sk.getDynamoType());
     }
 
-    const keySchema: { AttributeName: string; KeyType: "HASH" | "RANGE" }[] = [
+    const keySchema: KeySchemaElement[] = [
         { AttributeName: pk.name, KeyType: "HASH" }
     ];
     if (sk) {
-        keySchema.push({ AttributeName: sk.name, KeyType: "RANGE" as const });
+        keySchema.push({ AttributeName: sk.name, KeyType: "RANGE" });
     }
 
-    const gsis: any[] = [];
-    const lsis: any[] = [];
+    const gsis: GlobalSecondaryIndex[] = [];
+    const lsis: LocalSecondaryIndex[] = [];
 
     const indexes = table[TABLE_SYMBOLS.INDEXES] || {};
     for (const [indexName, indexBuilder] of Object.entries(indexes)) {
-        const type = (indexBuilder as any).type;
-        const config = (indexBuilder as any).config;
+        const type = (indexBuilder as { type: string }).type;
+        const config = (indexBuilder as { config: { pk?: string; sk?: string } }).config;
 
         if (type === 'gsi') {
             if (config.pk) {
@@ -114,15 +121,15 @@ function physicalTableToSnapshot(table: PhysicalTable, entities: Entity[]): Tabl
                 attributeDefinitionsMap.set(config.sk, skType);
             }
 
-            const gsiDef: any = {
+            const gsiDef: GlobalSecondaryIndex = {
                 IndexName: indexName,
                 KeySchema: [
-                    { AttributeName: config.pk, KeyType: "HASH" }
+                    { AttributeName: config.pk!, KeyType: "HASH" }
                 ],
                 Projection: { ProjectionType: "ALL" }
             };
             if (config.sk) {
-                gsiDef.KeySchema.push({ AttributeName: config.sk, KeyType: "RANGE" });
+                gsiDef.KeySchema!.push({ AttributeName: config.sk, KeyType: "RANGE" });
             }
             gsis.push(gsiDef);
 
@@ -132,11 +139,11 @@ function physicalTableToSnapshot(table: PhysicalTable, entities: Entity[]): Tabl
                 attributeDefinitionsMap.set(config.sk, skType);
             }
 
-             const lsiDef: any = {
+             const lsiDef: LocalSecondaryIndex = {
                 IndexName: indexName,
                 KeySchema: [
                     { AttributeName: pk.name, KeyType: "HASH" },
-                    { AttributeName: config.sk, KeyType: "RANGE" }
+                    { AttributeName: config.sk!, KeyType: "RANGE" }
                 ],
                 Projection: { ProjectionType: "ALL" }
              };
@@ -165,14 +172,14 @@ function physicalTableToSnapshot(table: PhysicalTable, entities: Entity[]): Tabl
 }
 
 function resolveColumnType(columnName: string, table: PhysicalTable, entities: Entity[]): string {
-    const pk = table[TABLE_SYMBOLS.PARTITION_KEY] as any;
+    const pk = table[TABLE_SYMBOLS.PARTITION_KEY] as Column;
     if (pk.name === columnName) return pk.getDynamoType();
     
-    const sk = table[TABLE_SYMBOLS.SORT_KEY] as any;
+    const sk = table[TABLE_SYMBOLS.SORT_KEY] as Column | undefined;
     if (sk && sk.name === columnName) return sk.getDynamoType();
 
     for (const entity of entities) {
-        const columns = entity[ENTITY_SYMBOLS.COLUMNS] as Record<string, any> | undefined;
+        const columns = entity[ENTITY_SYMBOLS.COLUMNS] as Record<string, Column> | undefined;
         if (columns) {
             const col = columns[columnName];
             if (col) {

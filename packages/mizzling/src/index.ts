@@ -21,8 +21,9 @@ program
   .action(async () => {
     try {
         await initCommand();
-    } catch (e: any) {
-        p.log.error(e.message);
+    } catch (e) {
+        const message = e instanceof Error ? e.message : String(e);
+        p.log.error(message);
         process.exit(1);
     }
   });
@@ -35,8 +36,9 @@ program
     try {
         const config = await loadConfig();
         await generateCommand({ config, name: options.name });
-    } catch (e: any) {
-        p.log.error(e.message);
+    } catch (e) {
+        const message = e instanceof Error ? e.message : String(e);
+        p.log.error(message);
         process.exit(1);
     }
   });
@@ -49,8 +51,9 @@ program
     try {
         const config = await loadConfig();
         await pushCommand({ config, force: options.yes });
-    } catch (e: any) {
-        p.log.error(e.message);
+    } catch (e) {
+        const message = e instanceof Error ? e.message : String(e);
+        p.log.error(message);
         process.exit(1);
     }
   });
@@ -62,8 +65,9 @@ program
     try {
         const config = await loadConfig();
         await listCommand({ config });
-    } catch (e: any) {
-        p.log.error(e.message);
+    } catch (e) {
+        const message = e instanceof Error ? e.message : String(e);
+        p.log.error(message);
         process.exit(1);
     }
   });
@@ -75,8 +79,9 @@ program
     try {
         const config = await loadConfig();
         await dropCommand({ config });
-    } catch (e: any) {
-        p.log.error(e.message);
+    } catch (e) {
+        const message = e instanceof Error ? e.message : String(e);
+        p.log.error(message);
         process.exit(1);
     }
   });

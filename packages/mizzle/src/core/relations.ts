@@ -90,7 +90,7 @@ export function defineRelations<TEntity extends Entity>(
         entity,
         config,
         [RELATION_SYMBOLS.RELATION_CONFIG]: true
-    } as any;
+    } as unknown as RelationsDefinition<TEntity>;
 }
 
 /**
@@ -111,7 +111,7 @@ export interface InternalRelationalSchema {
 /**
  * Extract metadata from a flat schema definition.
  */
-export function extractMetadata(schema: Record<string, any>): InternalRelationalSchema {
+export function extractMetadata(schema: Record<string, unknown>): InternalRelationalSchema {
     const metadata: InternalRelationalSchema = {
         entities: {},
     };

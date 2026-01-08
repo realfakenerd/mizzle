@@ -6,17 +6,17 @@ import { BaseBuilder } from "./base";
 
 export class UpdateBuilder<
     TEntity extends Entity,
-    TResult = any,
+    TResult = unknown,
 > extends BaseBuilder<TEntity, TResult> {
     static readonly [ENTITY_SYMBOLS.ENTITY_KIND]: string = "UpdateBuilder";
 
     private _setValues: Partial<InferInsertModel<TEntity>> = {};
-    private _addValues: Record<string, any> = {};
+    private _addValues: Record<string, unknown> = {};
     private _removeValues: string[] = [];
-    private _deleteValues: Record<string, any> = {};
+    private _deleteValues: Record<string, unknown> = {};
     private _whereClause?: Expression;
     private _returnValues?: "NONE" | "ALL_OLD" | "UPDATED_OLD" | "ALL_NEW" | "UPDATED_NEW";
-    private _explicitKey?: Record<string, any>;
+    private _explicitKey?: Record<string, unknown>;
 
     constructor(
         entity: TEntity,
@@ -25,7 +25,7 @@ export class UpdateBuilder<
         super(entity, client);
     }
 
-    key(keyObject: Record<string, any>): this {
+    key(keyObject: Record<string, unknown>): this {
         this._explicitKey = keyObject;
         return this;
     }
@@ -35,7 +35,7 @@ export class UpdateBuilder<
         return this;
     }
 
-    add(values: Record<string, any>): this {
+    add(values: Record<string, unknown>): this {
         this._addValues = { ...this._addValues, ...values };
         return this;
     }
@@ -45,7 +45,7 @@ export class UpdateBuilder<
         return this;
     }
 
-    delete(values: Record<string, any>): this {
+    delete(values: Record<string, unknown>): this {
         this._deleteValues = { ...this._deleteValues, ...values };
         return this;
     }
@@ -84,7 +84,7 @@ export class UpdateBuilder<
         return response.Attributes as TResult;
     }
 
-    private resolveUpdateKeys(): Record<string, any> {
+    private resolveUpdateKeys(): Record<string, unknown> {
         if (this._explicitKey) {
             return this._explicitKey;
         }
@@ -95,7 +95,7 @@ export class UpdateBuilder<
 
     private buildUpdateExpression() {
         const attributeNames: Record<string, string> = {};
-        const attributeValues: Record<string, any> = {};
+        const attributeValues: Record<string, unknown> = {};
         const updateExpressions: string[] = [];
         let placeholderCounter = 0;
 
