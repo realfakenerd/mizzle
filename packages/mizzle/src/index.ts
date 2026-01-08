@@ -9,6 +9,7 @@ export * from "./builders/relational-builder";
 export * from "./core/table";
 export * from "./core/strategies";
 export * from "./core/relations";
+export * from "./core/errors";
 export * from "./columns";
 export * from "./db";
 export * from "./indexes";

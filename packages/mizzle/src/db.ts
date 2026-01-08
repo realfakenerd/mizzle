@@ -8,6 +8,19 @@ import { UpdateBuilder } from "./builders/update";
 import { DeleteBuilder } from "./builders/delete";
 import { extractMetadata, type InternalRelationalSchema } from "./core/relations";
 
+export interface RetryConfig {
+    /**
+     * Maximum number of retry attempts for transient errors.
+     * @default 3
+     */
+    maxAttempts: number;
+    /**
+     * Base delay in milliseconds for exponential backoff.
+     * @default 100
+     */
+    baseDelay: number;
+}
+
 export type QuerySchema<TSchema extends Record<string, unknown>> = {
     [K in keyof TSchema as TSchema[K] extends Entity ? K : never]: RelationnalQueryBuilder<TSchema[K] extends Entity ? TSchema[K] : never>;
 };
@@ -18,6 +31,7 @@ export type QuerySchema<TSchema extends Record<string, unknown>> = {
 export class DynamoDB<TSchema extends Record<string, unknown> = Record<string, unknown>> {
     private docClient: DynamoDBDocumentClient;
     private schema?: InternalRelationalSchema;
+    private retryConfig: RetryConfig;
 
     /**
      * Access relational queries for entities defined in the schema.
@@ -29,8 +43,12 @@ export class DynamoDB<TSchema extends Record<string, unknown> = Record<string, u
      */
     public readonly query: QuerySchema<TSchema>;
 
-    constructor(client: DynamoDBClient, relations?: TSchema) {
+    constructor(client: DynamoDBClient, relations?: TSchema, retry?: Partial<RetryConfig>) {
         this.docClient = DynamoDBDocumentClient.from(client);
+        this.retryConfig = {
+            maxAttempts: retry?.maxAttempts ?? 3,
+            baseDelay: retry?.baseDelay ?? 100,
+        };
         
         if (relations) {
             this.schema = extractMetadata(relations);
@@ -108,6 +126,10 @@ export interface MizzleConfig<TSchema extends Record<string, unknown> = Record<s
      * Relational schema definition.
      */
     relations?: TSchema;
+    /**
+     * Retry configuration for transient errors.
+     */
+    retry?: Partial<RetryConfig>;
 }
 
 /**
@@ -128,11 +150,11 @@ export function mizzle<TSchema extends Record<string, unknown> = Record<string, 
     }
     
     if ("client" in config && config.client instanceof DynamoDBClient) {
-        return new DynamoDB(config.client, config.relations);
+        return new DynamoDB(config.client, config.relations, config.retry);
     }
     // Fallback for cases where instanceof might fail due to multiple SDK versions
     if ("client" in config && config.client) {
-        return new DynamoDB(config.client as DynamoDBClient, config.relations);
+        return new DynamoDB(config.client as DynamoDBClient, config.relations, config.retry);
     }
     return new DynamoDB(config as unknown as DynamoDBClient);
 }
