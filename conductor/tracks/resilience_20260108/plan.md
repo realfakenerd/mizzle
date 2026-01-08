@@ -7,7 +7,7 @@
 - [x] Task: Implement `ItemSizeExceededError` custom error class 5f06ec8
 - [x] Task: Conductor - User Manual Verification 'Foundation & Client Configuration' (Protocol in workflow.md) 3aa82cf
 
-## Phase 2: Exponential Backoff & Jitter
+## Phase 2: Exponential Backoff & Jitter [checkpoint: d55184e]
 - [x] Task: Create `RetryHandler` utility 0226eab
     - Implement a utility function/class that takes an operation and retry settings.
     - Implement exponential backoff logic with jitter.
@@ -15,7 +15,7 @@
     - Identify the central point where AWS SDK calls are made.
     - Wrap these calls with the `RetryHandler`.
     - Handle specific retryable exceptions: `ProvisionedThroughputExceededException`, `RequestLimitExceeded`, `InternalServerError`, `ServiceUnavailable`.
-- [ ] Task: Conductor - User Manual Verification 'Exponential Backoff & Jitter' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Exponential Backoff & Jitter' (Protocol in workflow.md) d55184e
 
 ## Phase 3: Smart Batching Resilience
 - [ ] Task: Implement `BatchGetItem` recursive retry logic
