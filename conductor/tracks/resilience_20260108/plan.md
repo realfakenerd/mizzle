@@ -28,10 +28,10 @@
     - Ensure `BatchGet` and `BatchWrite` operations return a structure like `{ succeeded: T[], failed: T[] }` when retries are exhausted.
 - [x] Task: Conductor - User Manual Verification 'Smart Batching Resilience' (Protocol in workflow.md) 27c8042
 
-## Phase 4: Client-Side Validation
-- [~] Task: Implement `calculateItemSize` utility
+## Phase 4: Client-Side Validation [checkpoint: 5abfa66]
+- [x] Task: Implement `calculateItemSize` utility 5abfa66
     - Create a utility to estimate the byte size of a DynamoDB item.
-- [ ] Task: Add size validation to write operations
+- [x] Task: Add size validation to write operations 5abfa66
     - Inject a check in `insert`, `update`, and `BatchWriteItem` before the network request.
     - Throw `ItemSizeExceededError` if any item > 400KB.
-- [ ] Task: Conductor - User Manual Verification 'Client-Side Validation' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Client-Side Validation' (Protocol in workflow.md) 5abfa66
