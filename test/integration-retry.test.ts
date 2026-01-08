@@ -1,26 +1,27 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { mizzle } from "mizzle";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "@mizzle/shared";
 
-// Mock DynamoDBDocumentClient.from to return our mock
+// Mock send method
 const mockSend = vi.fn();
 const mockDocClient = {
     send: mockSend,
-    middlewareStack: {},
+    middlewareStack: {
+        add: vi.fn(),
+        remove: vi.fn(),
+    },
 };
 
-vi.mock("@aws-sdk/lib-dynamodb", async () => {
-    const actual = await vi.importActual<typeof import("@aws-sdk/lib-dynamodb")>("@aws-sdk/lib-dynamodb");
-    return {
-        ...actual,
-        DynamoDBDocumentClient: {
-            from: () => mockDocClient,
-        },
-    };
-});
-
 describe("Integration Retry", () => {
+    beforeEach(() => {
+        vi.spyOn(DynamoDBDocumentClient, "from").mockReturnValue(mockDocClient as any);
+    });
+
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
     const mockTable = {
         [ENTITY_SYMBOLS.PHYSICAL_TABLE]: {
            [TABLE_SYMBOLS.TABLE_NAME]: "test-table",

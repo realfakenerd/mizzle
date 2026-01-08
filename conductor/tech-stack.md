@@ -3,8 +3,9 @@
 ## Core Technologies
 
 - **Language:** [TypeScript](https://www.typescriptlang.org/) (v5+) - Provides strict type safety and a modern development experience.
-- **Runtime & Tooling:** [Bun](https://bun.sh/) - Used as the fast all-in-one JavaScript runtime, package manager, and test runner.
+- **Runtime & Tooling:** [Bun](https://bun.sh/) - Used as the fast all-in-one JavaScript runtime, package manager.
 - **Monorepo Management:** [Turborepo](https://turbo.build/) - Orchestrates the build pipeline and provides intelligent caching across packages.
+- **Test Runner:** [Vitest](https://vitest.dev) - A blazing fast unit test framework powered by Vite.
 
 ## Data & Storage
 

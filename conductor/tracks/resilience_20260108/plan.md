@@ -11,7 +11,7 @@
 - [x] Task: Create `RetryHandler` utility 0226eab
     - Implement a utility function/class that takes an operation and retry settings.
     - Implement exponential backoff logic with jitter.
-- [ ] Task: Integrate `RetryHandler` into core request execution
+- [x] Task: Integrate `RetryHandler` into core request execution 4a06505
     - Identify the central point where AWS SDK calls are made.
     - Wrap these calls with the `RetryHandler`.
     - Handle specific retryable exceptions: `ProvisionedThroughputExceededException`, `RequestLimitExceeded`, `InternalServerError`, `ServiceUnavailable`.
