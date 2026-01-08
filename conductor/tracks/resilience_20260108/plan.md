@@ -1,10 +1,10 @@
 # Plan: Transparent DynamoDB Error Handling & Smart Retries
 
 ## Phase 1: Foundation & Client Configuration
-- [ ] Task: Define `RetryConfig` type and update `MizzleConfig`
+- [x] Task: Define `RetryConfig` type and update `MizzleConfig` 5f06ec8
     - Create types for retry configuration (maxAttempts, baseDelay).
     - Update the core `Mizzle` initialization to accept and store these settings.
-- [ ] Task: Implement `ItemSizeExceededError` custom error class
+- [x] Task: Implement `ItemSizeExceededError` custom error class 5f06ec8
 - [ ] Task: Conductor - User Manual Verification 'Foundation & Client Configuration' (Protocol in workflow.md)
 
 ## Phase 2: Exponential Backoff & Jitter

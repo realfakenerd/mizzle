@@ -1,0 +1,17 @@
+{
+    "mcpServers": {
+        "playwright": {
+            "command": "npx",
+            "args": ["-y", "@playwright/mcp"]
+        },
+        "genkit": {
+            "command": "bunx",
+            "args": [
+                "genkit-cli",
+                "mcp",
+                "--no-update-notification",
+                "--non-interactive"
+            ]
+        }
+    }
+}

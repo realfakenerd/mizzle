@@ -19,7 +19,6 @@ const benchOptions: BenchOptions = {
     warmupTime: 200,
     warmupIterations: 5,
     throws: true,
-    iterations: 1000
 };
 
 describe("DynamoDB ORM Benchmarks", () => {

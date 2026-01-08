@@ -4,7 +4,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-## [ ] Track: DynamoDB error handling, retries, smart batching, and client-side validation.
+## [~] Track: DynamoDB error handling, retries, smart batching, and client-side validation.
 *Link: [./conductor/tracks/resilience_20260108/](./conductor/tracks/resilience_20260108/)*
 
 ---
