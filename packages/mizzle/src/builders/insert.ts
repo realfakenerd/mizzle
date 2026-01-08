@@ -5,6 +5,8 @@ import { BaseBuilder } from "./base";
 import { Column } from "../core/column";
 import { KeyStrategy } from "../core/strategies";
 import { type IMizzleClient } from "../core/client";
+import { calculateItemSize } from "../core/validation";
+import { ItemSizeExceededError } from "../core/errors";
 
 export class InsertBuilder<TEntity extends Entity> {
     static readonly [ENTITY_SYMBOLS.ENTITY_KIND]: string = "InsertBuilder";
@@ -63,6 +65,12 @@ class InsertBase<
                     if (skValue) finalItem[indexBuilder.config.sk] = skValue;
                 }
             }
+        }
+
+        // Size validation
+        const size = calculateItemSize(finalItem);
+        if (size > 400 * 1024) {
+            throw new ItemSizeExceededError(`Item size of ${Math.round(size / 1024)}KB exceeds the 400KB limit.`);
         }
 
         const command = new PutCommand({

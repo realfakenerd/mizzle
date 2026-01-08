@@ -29,7 +29,7 @@
 - [x] Task: Conductor - User Manual Verification 'Smart Batching Resilience' (Protocol in workflow.md) 27c8042
 
 ## Phase 4: Client-Side Validation
-- [ ] Task: Implement `calculateItemSize` utility
+- [~] Task: Implement `calculateItemSize` utility
     - Create a utility to estimate the byte size of a DynamoDB item.
 - [ ] Task: Add size validation to write operations
     - Inject a check in `insert`, `update`, and `BatchWriteItem` before the network request.

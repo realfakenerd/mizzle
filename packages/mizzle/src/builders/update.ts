@@ -4,6 +4,8 @@ import { Entity, type InferInsertModel } from "../core/table";
 import { type Expression } from "../expressions/operators";
 import { BaseBuilder } from "./base";
 import { type IMizzleClient } from "../core/client";
+import { calculateItemSize } from "../core/validation";
+import { ItemSizeExceededError } from "../core/errors";
 
 export class UpdateBuilder<
     TEntity extends Entity,
@@ -65,6 +67,13 @@ export class UpdateBuilder<
         const keys = this.resolveUpdateKeys();
         const { updateExpression, attributeNames, attributeValues } =
             this.buildUpdateExpression();
+
+        // Estimate size for Update
+        // Update size is basically keys + attribute values.
+        const size = calculateItemSize({ ...keys, ...attributeValues });
+        if (size > 400 * 1024) {
+            throw new ItemSizeExceededError(`Estimated update size of ${Math.round(size / 1024)}KB exceeds the 400KB limit.`);
+        }
 
         const command = new UpdateCommand({
             TableName: this.tableName,

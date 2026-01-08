@@ -3,6 +3,8 @@ import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "@mizzle/shared";
 import { Entity, type InferInsertModel } from "../core/table";
 import { BaseBuilder } from "./base";
 import type { IMizzleClient } from "../core/client";
+import { calculateItemSize } from "../core/validation";
+import { ItemSizeExceededError } from "../core/errors";
 
 export type BatchWriteOperation<TEntity extends Entity> = 
     | { type: "put", item: InferInsertModel<TEntity> }
@@ -40,9 +42,17 @@ class BatchWriteBase<
 
         const requests = this.ops.map(op => {
             if (op.type === "put") {
+                const item = op.item as Record<string, unknown>;
+                
+                // Size validation
+                const size = calculateItemSize(item);
+                if (size > 400 * 1024) {
+                    throw new ItemSizeExceededError(`Item in batch exceeds the 400KB limit.`);
+                }
+
                 return {
                     PutRequest: {
-                        Item: op.item as Record<string, unknown>
+                        Item: item
                     }
                 };
             } else {
