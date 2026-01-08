@@ -7,19 +7,7 @@ import type { Entity, InferInsertModel } from "./core/table";
 import { UpdateBuilder } from "./builders/update";
 import { DeleteBuilder } from "./builders/delete";
 import { extractMetadata, type InternalRelationalSchema } from "./core/relations";
-
-export interface RetryConfig {
-    /**
-     * Maximum number of retry attempts for transient errors.
-     * @default 3
-     */
-    maxAttempts: number;
-    /**
-     * Base delay in milliseconds for exponential backoff.
-     * @default 100
-     */
-    baseDelay: number;
-}
+import type { RetryConfig } from "./core/retry";
 
 export type QuerySchema<TSchema extends Record<string, unknown>> = {
     [K in keyof TSchema as TSchema[K] extends Entity ? K : never]: RelationnalQueryBuilder<TSchema[K] extends Entity ? TSchema[K] : never>;

@@ -11,7 +11,8 @@
             "mizzle/snapshot": ["packages/mizzle/src/core/snapshot.ts"],
             "mizzle/diff": ["packages/mizzle/src/core/diff.ts"],
             "mizzle/introspection": ["packages/mizzle/src/core/introspection.ts"],
-            "mizzle/db": ["packages/mizzle/src/db.ts"]
+            "mizzle/db": ["packages/mizzle/src/db.ts"],
+            "mizzle/core/retry": ["packages/mizzle/src/core/retry.ts"]
         },
         "noUnusedLocals": false,
         "noUnusedParameters": false,
