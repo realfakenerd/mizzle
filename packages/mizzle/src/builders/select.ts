@@ -84,31 +84,29 @@ export class SelectBase<
         // Implementation will follow in next tasks
         const self = this;
         return (async function* () {
-            const results = await self.execute();
-            for (const result of results) {
-                yield result;
+            const { items } = await self.fetchPage();
+            for (const item of items) {
+                yield item;
             }
         })();
     }
 
-    override async execute(): Promise<TResult[]> {
+    private async fetchPage(exclusiveStartKey?: Record<string, any>): Promise<{ items: TResult[], lastEvaluatedKey?: Record<string, any> }> {
         const resolution = this.resolveKeys(this._whereClause, undefined, this._forcedIndexName);
 
-        let results: Record<string, any>[];
-
-        // GetItem (PK + SK)
-        // Only if it's on the main table and both keys are present.
-        if (resolution.hasPartitionKey && resolution.hasSortKey && !resolution.indexName) {
-            results = await this.executeGet(resolution.keys);
+        if (resolution.hasPartitionKey && resolution.hasSortKey && !resolution.indexName && !exclusiveStartKey) {
+            const items = await this.executeGet(resolution.keys);
+            return { items };
         } else if (resolution.hasPartitionKey || resolution.indexName) {
-            // Query (PK only or Index)
-            results = await this.executeQuery(resolution);
+            return await this.executeQuery(resolution, exclusiveStartKey);
         } else {
-            // Scan (No keys resolved)
-            results = await this.executeScan();
+            return await this.executeScan(exclusiveStartKey);
         }
+    }
 
-        return results.map(item => this.mapToLogical(item)) as TResult[];
+    override async execute(): Promise<TResult[]> {
+        const { items } = await this.fetchPage();
+        return items;
     }
 
     private async executeGet(keys: Record<string, unknown>): Promise<TResult[]> {
@@ -119,12 +117,13 @@ export class SelectBase<
         });
 
         const result = await this.client.send(command);
-        return result.Item ? ([result.Item] as TResult[]) : [];
+        return result.Item ? ([this.mapToLogical(result.Item)] as TResult[]) : [];
     }
 
     private async executeQuery(
         resolution: StrategyResolution,
-    ): Promise<TResult[]> {
+        exclusiveStartKey?: Record<string, any>,
+    ): Promise<{ items: TResult[], lastEvaluatedKey?: Record<string, any> }> {
         const { expressionAttributeNames, expressionAttributeValues, addName, addValue } = this.createExpressionContext();
 
         const keyParts: string[] = [];
@@ -150,13 +149,17 @@ export class SelectBase<
             Limit: this._pageSizeVal ?? this._limitVal,
             ScanIndexForward: this._sortForward,
             ConsistentRead: resolution.indexName ? undefined : this._consistentReadVal,
+            ExclusiveStartKey: exclusiveStartKey,
         });
 
         const response = await this.client.send(command);
-        return (response.Items || []) as TResult[];
+        return {
+            items: (response.Items || []).map(item => this.mapToLogical(item)) as TResult[],
+            lastEvaluatedKey: response.LastEvaluatedKey,
+        };
     }
 
-    private async executeScan(): Promise<TResult[]> {
+    private async executeScan(exclusiveStartKey?: Record<string, any>): Promise<{ items: TResult[], lastEvaluatedKey?: Record<string, any> }> {
         const { expressionAttributeNames, expressionAttributeValues, addName, addValue } = this.createExpressionContext();
 
         const filterExpression = this._whereClause 
@@ -170,9 +173,13 @@ export class SelectBase<
             ExpressionAttributeValues: Object.keys(expressionAttributeValues).length > 0 ? expressionAttributeValues : undefined,
             Limit: this._pageSizeVal ?? this._limitVal,
             ConsistentRead: this._consistentReadVal,
+            ExclusiveStartKey: exclusiveStartKey,
         });
 
         const response = await this.client.send(command);
-        return (response.Items || []) as TResult[];
+        return {
+            items: (response.Items || []).map(item => this.mapToLogical(item)) as TResult[],
+            lastEvaluatedKey: response.LastEvaluatedKey,
+        };
     }
 }
