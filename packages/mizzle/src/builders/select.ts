@@ -80,6 +80,17 @@ export class SelectBase<
         return this;
     }
 
+    iterator(): AsyncIterableIterator<TResult> {
+        // Implementation will follow in next tasks
+        const self = this;
+        return (async function* () {
+            const results = await self.execute();
+            for (const result of results) {
+                yield result;
+            }
+        })();
+    }
+
     override async execute(): Promise<TResult[]> {
         const resolution = this.resolveKeys(this._whereClause, undefined, this._forcedIndexName);
 
