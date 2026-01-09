@@ -7,7 +7,7 @@
     - Implement the `tx` object passed to the callback, which provides the subset of builder methods compatible with transactions.
 - [ ] Task: Conductor - User Manual Verification 'Transaction API & Types' (Protocol in workflow.md)
 
-## Phase 2: Execution & Idempotency
+## Phase 2: Execution & Idempotency [checkpoint: 21f9e1f]
 - [x] Task: Implement `db.transaction()` wrapper 92c119c
     - Implement the main entry point that accepts the token and executes the callback.
     - Validate the 100-item limit.
