@@ -10,21 +10,21 @@
 - [x] Task: Implement `.pageSize()` logic c0bc104
     - Update the internal command builder to map this to AWS SDK's `Limit`.
     - Ensure it is distinct from the total `.limit()` used for result truncation.
-- [ ] Task: Conductor - User Manual Verification 'Consistency Toggle & Page Size Hint' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Consistency Toggle & Page Size Hint' (Protocol in workflow.md)
 
 ## Phase 2: Async Iterator Foundation
-- [ ] Task: Define `AsyncIterator` types
+- [x] Task: Define `AsyncIterator` types d266fb8
     - Ensure the return type of `.iterator()` correctly reflects the entity type.
-- [ ] Task: Implement internal `fetchPage` utility
+- [x] Task: Implement internal `fetchPage` utility bc3c479
     - Create a helper that executes a single DynamoDB request and returns the items and `LastEvaluatedKey`.
-- [ ] Task: Implement the `.iterator()` method on Select/Scan/Query builders
+- [x] Task: Implement the `.iterator()` method on Select/Scan/Query builders e830e89
     - This method should return an object implementing `Symbol.asyncIterator`.
 - [ ] Task: Conductor - User Manual Verification 'Async Iterator Foundation' (Protocol in workflow.md)
 
 ## Phase 3: Pagination Logic & Termination
-- [ ] Task: Implement loop for `LastEvaluatedKey`
+- [x] Task: Implement loop for `LastEvaluatedKey` e830e89
     - The iterator should internally track the pagination token and trigger new `fetchPage` calls when the current buffer is empty.
-- [ ] Task: Integrate `.limit()` with iteration
+- [x] Task: Integrate `.limit()` with iteration e830e89
     - Ensure the iterator stops yielding items (and stops making network requests) once the total global limit is reached.
 - [ ] Task: Conductor - User Manual Verification 'Pagination Logic & Termination' (Protocol in workflow.md)
 
