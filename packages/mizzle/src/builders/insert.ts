@@ -21,7 +21,7 @@ export class InsertBuilder<TEntity extends Entity> {
     }
 }
 
-class InsertBase<
+export class InsertBase<
     TEntity extends Entity,
     TResult = undefined,
 > extends BaseBuilder<TEntity, TResult> {
