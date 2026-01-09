@@ -23,9 +23,9 @@
     - Add logic to catch SDK exceptions and extract the detailed cancellation reasons from the response.
 - [ ] Task: Conductor - User Manual Verification 'Error Handling & Parsing' (Protocol in workflow.md)
 
-## Phase 4: Integration & Verification
-- [ ] Task: Integration tests for successful transactions
+## Phase 4: Integration & Verification [checkpoint: 4075ff3]
+- [x] Task: Integration tests for successful transactions 73c4858
     - Test multi-table/multi-item atomic updates.
-- [ ] Task: Integration tests for failed transactions
+- [x] Task: Integration tests for failed transactions 73c4858
     - Force a `ConditionalCheckFailed` in one of the operations and verify the `TransactionFailedError` content.
-- [ ] Task: Conductor - User Manual Verification 'Integration & Verification' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Integration & Verification' (Protocol in workflow.md) 4075ff3
