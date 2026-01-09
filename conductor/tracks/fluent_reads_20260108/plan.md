@@ -1,6 +1,6 @@
 # Plan: Fluent Reads - Auto-Pagination & Consistency
 
-## Phase 1: Consistency Toggle & Page Size Hint
+## Phase 1: Consistency Toggle & Page Size Hint [checkpoint: 34a3187]
 - [x] Task: Update Query Builder Types c0bc104
     - Add `.consistentRead(enabled?: boolean)` to the common builder interface.
     - Add `.pageSize(n: number)` to the common builder interface.
