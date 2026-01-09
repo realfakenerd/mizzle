@@ -22,7 +22,7 @@ Consolidate `select.ts` and `query-builder.ts` into a unified query architecture
 - [x] Task: Integrate the recursive functional expression builder for complex filtering.
 - [x] Task: Refactor the query logic to eliminate redundant code and optimize performance.
 - [x] Task: Remove packages/mizzle/src/builders/query-builder.ts and update all references to use the unified builder.
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: Unified Query Architecture' (Protocol in workflow.md)
+- [~] Task: Conductor - User Manual Verification 'Phase 2: Unified Query Architecture' (Protocol in workflow.md)
 
 ## Phase 3: Column Organization Refactor
 Clean up and reorganize column exports to remove duplication and improve package structure.
