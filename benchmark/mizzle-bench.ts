@@ -14,35 +14,12 @@ import {
 import { TABLE_NAME, REGION, ENDPOINT } from "./env";
 import type { BenchmarkItem } from "./data-gen";
 
-// Define the physical table
-const table = dynamoTable(TABLE_NAME, {
-    pk: string("pk").partitionKey(),
-    sk: string("sk").sortKey(),
-});
-
-// Define the entity
-const User = dynamoEntity(
-    table,
-    "User",
-    {
-        id: string("id"),
-        name: string("name"),
-        email: string("email"),
-        age: number("age"),
-        active: boolean("active"),
-        createdAt: string("createdAt"),
-        payload: string("payload"),
-    },
-    (cols) => ({
-        pk: prefixKey("USER#", cols.id),
-        sk: staticKey("METADATA"),
-    })
-);
-
 export class MizzleBench {
     private db: DynamoDB;
+    private User: any;
 
     constructor() {
+        const tableName = process.env.MIZZLE_BENCH_TABLE || TABLE_NAME;
         const client = new DynamoDBClient({
             region: REGION,
             endpoint: ENDPOINT,
@@ -52,12 +29,37 @@ export class MizzleBench {
             },
         });
         this.db = mizzle(client);
+
+        // Define the physical table
+        const table = dynamoTable(tableName, {
+            pk: string("pk").partitionKey(),
+            sk: string("sk").sortKey(),
+        });
+
+        // Define the entity
+        this.User = dynamoEntity(
+            table,
+            "User",
+            {
+                id: string("id"),
+                name: string("name"),
+                email: string("email"),
+                age: number("age"),
+                active: boolean("active"),
+                createdAt: string("createdAt"),
+                payload: string("payload"),
+            },
+            (cols) => ({
+                pk: prefixKey("USER#", cols.id),
+                sk: staticKey("METADATA"),
+            })
+        );
     }
 
     async putItem(item: BenchmarkItem): Promise<void> {
         const id = item.pk.replace("USER#", "");
         
-        await this.db.insert(User).values({
+        await this.db.insert(this.User).values({
             id: id,
             name: item.name,
             email: item.email,
@@ -72,8 +74,8 @@ export class MizzleBench {
         const id = pk.replace("USER#", "");
         const results = await this.db
             .select()
-            .from(User)
-            .where(eq(User.id, id))
+            .from(this.User)
+            .where(eq(this.User.id, id))
             .execute();
         
         if (results.length === 0) return undefined;
@@ -96,16 +98,16 @@ export class MizzleBench {
         const { pk: __pk, sk: __sk, ...validUpdates } = updates as any;
         
         await this.db
-            .update(User)
+            .update(this.User)
             .set(validUpdates)
-            .where(eq(User.id, id))
+            .where(eq(this.User.id, id))
             .execute();
     }
 
     async deleteItem(pk: string, _sk: string): Promise<void> {
         const id = pk.replace("USER#", "");
         await this.db
-            .delete(User, { id } as any)
+            .delete(this.User, { id } as any)
             .execute();
     }
 
@@ -113,8 +115,8 @@ export class MizzleBench {
         const id = pk.replace("USER#", "");
         const results = await this.db
             .select()
-            .from(User)
-            .where(eq(User.id, id))
+            .from(this.User)
+            .where(eq(this.User.id, id))
             .execute();
         
         return results.map(user => ({
@@ -132,7 +134,7 @@ export class MizzleBench {
     async scanItems(): Promise<BenchmarkItem[]> {
         const results = await this.db
             .select()
-            .from(User)
+            .from(this.User)
             .execute();
         
         return results.map(user => ({

@@ -1,18 +1,17 @@
-import { expect, test, describe, mock } from "vitest";
+import { expect, test, describe, vi } from "vitest";
 import { pushCommand } from "../../packages/mizzling/src/commands/push";
 import { PhysicalTable } from "mizzle/table";
 import { TABLE_SYMBOLS } from "@mizzle/shared";
 
 // Mock Clack
-const mockClack = {
-    text: mock(() => Promise.resolve("migration")),
-    confirm: mock(() => Promise.resolve(true)),
-    intro: mock(() => {}),
-    outro: mock(() => {}),
+vi.mock("@clack/prompts", () => ({
+    text: vi.fn(() => Promise.resolve("migration")),
+    confirm: vi.fn(() => Promise.resolve(true)),
+    intro: vi.fn(() => {}),
+    outro: vi.fn(() => {}),
     spinner: () => ({ start: () => {}, stop: () => {}, message: () => {} }),
     isCancel: () => false,
-};
-mock.module("@clack/prompts", () => mockClack);
+}));
 
 // Mock Table
 const mockTable = (name: string) => {
@@ -55,7 +54,7 @@ const createMockClient = () => {
 };
 
 describe("Push Command", () => {
-    const mockDiscover = mock();
+    const mockDiscover = vi.fn();
 
     test("should create table if it does not exist in remote", async () => {
         // Setup

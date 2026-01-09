@@ -1,6 +1,5 @@
 export * from "@mizzle/shared";
 export * from "./expressions/operators";
-export * from "./builders/query-builder";
 export * from "./builders/insert";
 export * from "./builders/select";
 export * from "./builders/update";

@@ -1,16 +1,8 @@
-import { expect, test, describe, beforeEach, mock, spyOn } from "vitest";
+import { expect, test, describe, beforeEach, vi } from "vitest";
 import { listCommand } from "../../packages/mizzling/src/commands/list";
 
-// Mock Clack
-const mockClack = {
-    intro: mock(() => {}),
-    outro: mock(() => {}),
-    spinner: () => ({ start: () => {}, stop: () => {}, message: () => {} }),
-};
-mock.module("@clack/prompts", () => mockClack);
-
 // Mock Console
-const logSpy = spyOn(console, "log").mockImplementation(() => {});
+const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 
 // Manual Mock Client
 const createMockClient = (tables: any[]) => {

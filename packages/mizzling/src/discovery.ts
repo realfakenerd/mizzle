@@ -1,6 +1,6 @@
 import { type MizzleConfig } from "./config";
 import { PhysicalTable, Entity } from "mizzle/table";
-import { Glob } from "bun";
+import fg from "fast-glob";
 import { stat } from "fs/promises";
 import { resolve } from "path";
 
@@ -50,8 +50,8 @@ export async function discoverSchema(config: MizzleConfig): Promise<{ tables: Ph
         continue;
     }
 
-    const glob = new Glob(searchPattern);
-    for await (const file of glob.scan({ cwd: process.cwd(), absolute: true })) {
+    const files = await fg(searchPattern, { absolute: true });
+    for (const file of files) {
         await processFile(file);
     }
   }

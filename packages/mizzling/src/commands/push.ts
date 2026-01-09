@@ -61,8 +61,7 @@ export async function pushCommand(options: PushOptions) {
                     }),
                 );
             } else if (change.type === "delete") {
-                s.message(`Deleting table: ${change.tableName}`);
-                await client.send(new DeleteTableCommand({ TableName: change.tableName }));
+                console.log(`Untracked table found: ${change.tableName} (Skipping deletion)`);
             } else if (change.type === "update") {
                 s.message(`Updating table: ${change.tableName} (Not fully implemented)`);
             }

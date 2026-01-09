@@ -1,12 +1,27 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import { dynamoTable, dynamoEntity } from "mizzle/table";
 import { mizzle } from "mizzle/db";
 import { string, uuid } from "mizzle/columns";
 
-const client = new DynamoDBClient({
-    region: "us-east-1",
+// Mock DynamoDBDocumentClient.from to return a mock doc client
+vi.mock("@aws-sdk/lib-dynamodb", async (importOriginal) => {
+    const original = await importOriginal<any>();
+    return {
+        ...original,
+        DynamoDBDocumentClient: {
+            from: vi.fn(() => ({
+                send: vi.fn(async () => ({ Items: [] })),
+            })),
+        },
+    };
 });
+
+const client = {
+    config: { protocol: "https:" },
+    send: vi.fn(),
+} as unknown as DynamoDBClient;
 
 const table = dynamoTable("mizzle-test", {
     pk: string("pk"),

@@ -12,60 +12,65 @@ const client = new DynamoDBClient({
     },
 });
 
-const UserEntity = new Entity({
-    model: {
-        entity: "user",
-        version: "1",
-        service: "benchmark"
-    },
-    attributes: {
-        id: {
-            type: "string",
-            required: true,
-        },
-        sk_val: {
-            type: "string",
-            required: true,
-        },
-        name: {
-            type: "string",
-        },
-        email: {
-            type: "string",
-        },
-        age: {
-            type: "number",
-        },
-        active: {
-            type: "boolean",
-        },
-        createdAt: {
-            type: "string",
-        },
-        payload: {
-            type: "string",
-        },
-    },
-    indexes: {
-        primary: {
-            pk: {
-                field: "pk",
-                composite: ["id"],
-                template: "${id}"
-            },
-            sk: {
-                field: "sk",
-                composite: ["sk_val"],
-                template: "${sk_val}"
-            }
-        }
-    }
-}, { client, table: TABLE_NAME });
-
 export class ElectroDBBench {
+    private UserEntity: any;
+
+    constructor() {
+        const tableName = process.env.MIZZLE_BENCH_TABLE || TABLE_NAME;
+        this.UserEntity = new Entity({
+            model: {
+                entity: "user",
+                version: "1",
+                service: "benchmark"
+            },
+            attributes: {
+                id: {
+                    type: "string",
+                    required: true,
+                },
+                sk_val: {
+                    type: "string",
+                    required: true,
+                },
+                name: {
+                    type: "string",
+                },
+                email: {
+                    type: "string",
+                },
+                age: {
+                    type: "number",
+                },
+                active: {
+                    type: "boolean",
+                },
+                createdAt: {
+                    type: "string",
+                },
+                payload: {
+                    type: "string",
+                },
+            },
+            indexes: {
+                primary: {
+                    pk: {
+                        field: "pk",
+                        composite: ["id"],
+                        template: "${id}"
+                    },
+                    sk: {
+                        field: "sk",
+                        composite: ["sk_val"],
+                        template: "${sk_val}"
+                    }
+                }
+            }
+        }, { client, table: tableName });
+    }
+
     async putItem(item: BenchmarkItem): Promise<void> {
         // item.pk is "USER#1", item.sk is "METADATA"
-        await UserEntity.put({
+        await this.UserEntity.put({
             id: item.pk,
             sk_val: item.sk,
             name: item.name,
@@ -78,7 +83,7 @@ export class ElectroDBBench {
     }
 
     async getItem(pk: string, sk: string): Promise<BenchmarkItem | undefined> {
-        const { data } = await UserEntity.get({ id: pk, sk_val: sk }).go();
+        const { data } = await this.UserEntity.get({ id: pk, sk_val: sk }).go();
         if (!data) return undefined;
         return {
             pk: data.id,
@@ -93,16 +98,16 @@ export class ElectroDBBench {
     }
 
     async updateItem(pk: string, sk: string, updates: Partial<BenchmarkItem>): Promise<void> {
-        await UserEntity.update({ id: pk, sk_val: sk }).set(updates).go();
+        await this.UserEntity.update({ id: pk, sk_val: sk }).set(updates).go();
     }
 
     async deleteItem(pk: string, sk: string): Promise<void> {
-        await UserEntity.delete({ id: pk, sk_val: sk }).go();
+        await this.UserEntity.delete({ id: pk, sk_val: sk }).go();
     }
 
     async queryItems(pk: string): Promise<BenchmarkItem[]> {
-        const { data } = await UserEntity.query.primary({ id: pk }).go();
-        return data.map(item => ({
+        const { data } = await this.UserEntity.query.primary({ id: pk }).go();
+        return data.map((item: any) => ({
             pk: item.id,
             sk: item.sk_val,
             name: item.name!,
@@ -115,8 +120,8 @@ export class ElectroDBBench {
     }
 
     async scanItems(): Promise<BenchmarkItem[]> {
-        const { data } = await UserEntity.scan.go();
-        return data.map(item => ({
+        const { data } = await this.UserEntity.scan.go();
+        return data.map((item: any) => ({
             pk: item.id,
             sk: item.sk_val,
             name: item.name!,

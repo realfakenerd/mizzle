@@ -10,12 +10,17 @@ const client = new DynamoDBClient({
     },
 });
 
+export function getTableName() {
+    return process.env.MIZZLE_BENCH_TABLE || TABLE_NAME;
+}
+
 export async function createTable() {
-    console.log(`Creating table ${TABLE_NAME}...`);
+    const tableName = getTableName();
+    console.log(`Creating table ${tableName}...`);
     try {
         await client.send(
             new CreateTableCommand({
-                TableName: TABLE_NAME,
+                TableName: tableName,
                 KeySchema: [
                     { AttributeName: "pk", KeyType: "HASH" },
                     { AttributeName: "sk", KeyType: "RANGE" },
@@ -41,11 +46,12 @@ export async function createTable() {
 }
 
 export async function deleteTable() {
-    console.log(`Deleting table ${TABLE_NAME}...`);
+    const tableName = getTableName();
+    console.log(`Deleting table ${tableName}...`);
     try {
         await client.send(
             new DeleteTableCommand({
-                TableName: TABLE_NAME,
+                TableName: tableName,
             })
         );
         console.log("Table deleted.");
@@ -59,16 +65,25 @@ export async function deleteTable() {
 }
 
 export async function waitForTable() {
+    const tableName = getTableName();
     console.log("Waiting for table to be active...");
     let active = false;
     while (!active) {
-        const { Table } = await client.send(
-            new DescribeTableCommand({ TableName: TABLE_NAME })
-        );
-        if (Table?.TableStatus === "ACTIVE") {
-            active = true;
-        } else {
-            await new Promise((resolve) => setTimeout(resolve, 500));
+        try {
+            const { Table } = await client.send(
+                new DescribeTableCommand({ TableName: tableName })
+            );
+            if (Table?.TableStatus === "ACTIVE") {
+                active = true;
+            } else {
+                await new Promise((resolve) => setTimeout(resolve, 500));
+            }
+        } catch (e: any) {
+            if (e.name === "ResourceNotFoundException") {
+                await new Promise((resolve) => setTimeout(resolve, 500));
+            } else {
+                throw e;
+            }
         }
     }
     console.log("Table is active.");

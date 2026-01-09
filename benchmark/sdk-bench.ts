@@ -13,8 +13,10 @@ import type { BenchmarkItem } from "./data-gen";
 
 export class AWSSDKBench {
     private docClient: DynamoDBDocumentClient;
+    private tableName: string;
 
     constructor() {
+        this.tableName = process.env.MIZZLE_BENCH_TABLE || TABLE_NAME;
         const client = new DynamoDBClient({
             region: REGION,
             endpoint: ENDPOINT,
@@ -29,7 +31,7 @@ export class AWSSDKBench {
     async putItem(item: BenchmarkItem): Promise<void> {
         await this.docClient.send(
             new PutCommand({
-                TableName: TABLE_NAME,
+                TableName: this.tableName,
                 Item: item,
             })
         );
@@ -38,7 +40,7 @@ export class AWSSDKBench {
     async getItem(pk: string, sk: string): Promise<BenchmarkItem | undefined> {
         const response = await this.docClient.send(
             new GetCommand({
-                TableName: TABLE_NAME,
+                TableName: this.tableName,
                 Key: { pk, sk },
             })
         );
@@ -60,7 +62,7 @@ export class AWSSDKBench {
 
         await this.docClient.send(
             new UpdateCommand({
-                TableName: TABLE_NAME,
+                TableName: this.tableName,
                 Key: { pk, sk },
                 UpdateExpression: `SET ${updateExpressions.join(", ")}`,
                 ExpressionAttributeNames: expressionAttributeNames,
@@ -72,7 +74,7 @@ export class AWSSDKBench {
     async deleteItem(pk: string, sk: string): Promise<void> {
         await this.docClient.send(
             new DeleteCommand({
-                TableName: TABLE_NAME,
+                TableName: this.tableName,
                 Key: { pk, sk },
             })
         );
@@ -81,7 +83,7 @@ export class AWSSDKBench {
     async queryItems(pk: string): Promise<BenchmarkItem[]> {
         const response = await this.docClient.send(
             new QueryCommand({
-                TableName: TABLE_NAME,
+                TableName: this.tableName,
                 KeyConditionExpression: "pk = :pk",
                 ExpressionAttributeValues: {
                     ":pk": pk,
@@ -94,7 +96,7 @@ export class AWSSDKBench {
     async scanItems(): Promise<BenchmarkItem[]> {
         const response = await this.docClient.send(
             new ScanCommand({
-                TableName: TABLE_NAME,
+                TableName: this.tableName,
             })
         );
         return (response.Items as BenchmarkItem[]) || [];

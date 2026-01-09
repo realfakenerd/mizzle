@@ -5,23 +5,23 @@ This plan outlines the steps to unify the query and update builders and refactor
 ## Phase 1: Unified Update Architecture
 Merge the functionality of the integrated `update.ts` and the standalone `update-builder.ts` into a single, robust implementation.
 
-- [ ] Task: Research and define the final API surface for the Unified Update Builder.
-- [ ] Task: Create comprehensive integration tests covering all update scenarios (Red Phase).
-- [ ] Task: Implement the Unified Update Builder core logic and strategy resolution (Green Phase).
-- [ ] Task: Port functional expression building logic from `update-builder.ts`.
-- [ ] Task: Refactor the implementation for clarity and performance.
-- [ ] Task: Remove `packages/mizzle/src/builders/update-builder.ts` and update all references to use the unified builder.
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Unified Update Architecture' (Protocol in workflow.md)
+- [x] Task: Research and define the final API surface for the Unified Update Builder.
+- [x] Task: Create comprehensive integration tests covering all update scenarios (Red Phase).
+- [x] Task: Implement the Unified Update Builder core logic and strategy resolution (Green Phase).
+- [x] Task: Port functional expression building logic from `update-builder.ts`.
+- [x] Task: Refactor the implementation for clarity and performance.
+- [x] Task: Remove `packages/mizzle/src/builders/update-builder.ts` and update all references to use the unified builder.
+- [x] Task: Conductor - User Manual Verification 'Phase 1: Unified Update Architecture' (Protocol in workflow.md)
 
 ## Phase 2: Unified Query Architecture
 Consolidate `select.ts` and `query-builder.ts` into a unified query architecture that intelligently handles Get, Query, and Scan operations.
 
-- [ ] Task: Research and define the final API surface for the Unified Query Builder.
-- [ ] Task: Create comprehensive integration tests for Get, Query, and Scan operations (Red Phase).
-- [ ] Task: Implement the Unified Query Builder with optimized execution path selection (Green Phase).
-- [ ] Task: Integrate the recursive functional expression builder for complex filtering.
-- [ ] Task: Refactor the query logic to eliminate redundant code and optimize performance.
-- [ ] Task: Remove `packages/mizzle/src/builders/query-builder.ts` and update all references to use the unified builder.
+- [x] Task: Research and define the final API surface for the Unified Query Builder.
+- [x] Task: Create comprehensive integration tests for Get, Query, and Scan operations (Red Phase).
+- [x] Task: Implement the Unified Query Builder with optimized execution path selection (Green Phase).
+- [x] Task: Integrate the recursive functional expression builder for complex filtering.
+- [x] Task: Refactor the query logic to eliminate redundant code and optimize performance.
+- [x] Task: Remove packages/mizzle/src/builders/query-builder.ts and update all references to use the unified builder.
 - [ ] Task: Conductor - User Manual Verification 'Phase 2: Unified Query Architecture' (Protocol in workflow.md)
 
 ## Phase 3: Column Organization Refactor

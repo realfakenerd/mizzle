@@ -8,6 +8,7 @@ describe("MizzleBench", () => {
     const gen = new DataGenerator();
 
     beforeAll(async () => {
+        process.env.MIZZLE_BENCH_TABLE = "MizzleBench_Mizzle";
         await deleteTable();
         await createTable();
         await waitForTable();

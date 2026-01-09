@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { createTable, deleteTable, waitForTable } from "./setup";
+import { createTable, deleteTable, waitForTable, getTableName } from "./setup";
 import { DynamoDBClient, DescribeTableCommand } from "@aws-sdk/client-dynamodb";
-import { TABLE_NAME, REGION, ENDPOINT } from "./env";
+import { REGION, ENDPOINT } from "./env";
 
 const client = new DynamoDBClient({
     region: REGION,
@@ -14,21 +14,24 @@ const client = new DynamoDBClient({
 
 describe("Benchmark Setup", () => {
     beforeAll(async () => {
+        process.env.MIZZLE_BENCH_TABLE = "MizzleBenchmark_SetupTest";
         await deleteTable();
     });
 
     afterAll(async () => {
         await deleteTable();
+        delete process.env.MIZZLE_BENCH_TABLE;
     });
 
     it("should create and delete the benchmark table", async () => {
+        const tableName = getTableName();
         // Create table
         await createTable();
         await waitForTable();
 
         // Verify it exists
         const { Table } = await client.send(
-            new DescribeTableCommand({ TableName: TABLE_NAME })
+            new DescribeTableCommand({ TableName: tableName })
         );
         expect(Table).toBeDefined();
         expect(Table?.TableStatus).toBe("ACTIVE");
@@ -39,7 +42,7 @@ describe("Benchmark Setup", () => {
         // Verify it's gone (or at least deleting)
         try {
             const { Table: TableAfterDelete } = await client.send(
-                new DescribeTableCommand({ TableName: TABLE_NAME })
+                new DescribeTableCommand({ TableName: tableName })
             );
             // It might still be in DELETING status
             expect(TableAfterDelete?.TableStatus).toBe("DELETING");

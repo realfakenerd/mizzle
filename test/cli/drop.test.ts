@@ -1,27 +1,24 @@
-import { expect, test, describe, beforeEach, spyOn } from "vitest";
+import { expect, test, describe, beforeEach, vi } from "vitest";
 import { dropCommand } from "../../packages/mizzling/src/commands/drop";
 import * as prompts from "@clack/prompts";
 
 // Mock Console
-const logSpy = spyOn(console, "log").mockImplementation(() => {});
+const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 
 // Mock Prompts
-const introSpy = spyOn(prompts, "intro").mockImplementation(() => {});
-const outroSpy = spyOn(prompts, "outro").mockImplementation(() => {});
-const multiselectSpy = spyOn(prompts, "multiselect");
-const confirmSpy = spyOn(prompts, "confirm");
-const cancelSpy = spyOn(prompts, "cancel").mockImplementation(() => {});
-const isCancelSpy = spyOn(prompts, "isCancel").mockImplementation(
-    (val): val is symbol => val === Symbol("clack:cancel"),
-);
-spyOn(prompts, "spinner").mockImplementation(
-    () =>
-        ({
-            start: () => {},
-            stop: () => {},
-            message: () => {},
-        }) as any,
-);
+vi.mock("@clack/prompts", () => ({
+    intro: vi.fn(),
+    outro: vi.fn(),
+    multiselect: vi.fn(),
+    confirm: vi.fn(),
+    cancel: vi.fn(),
+    isCancel: vi.fn((val) => val === Symbol.for("clack:cancel")),
+    spinner: vi.fn(() => ({
+        start: vi.fn(),
+        stop: vi.fn(),
+        message: vi.fn(),
+    })),
+}));
 
 // Manual Mock Client
 const createMockClient = (tables: any[]) => {
@@ -41,12 +38,7 @@ const createMockClient = (tables: any[]) => {
 
 describe("Drop Command", () => {
     beforeEach(() => {
-        logSpy.mockClear();
-        introSpy.mockClear();
-        outroSpy.mockClear();
-        multiselectSpy.mockClear();
-        confirmSpy.mockClear();
-        cancelSpy.mockClear();
+        vi.clearAllMocks();
     });
 
     test("should handle no tables found", async () => {
@@ -58,16 +50,16 @@ describe("Drop Command", () => {
         expect(console.log).toHaveBeenCalledWith(
             expect.stringContaining("No tables found"),
         );
-        expect(multiselectSpy).not.toHaveBeenCalled();
+        expect(prompts.multiselect).not.toHaveBeenCalled();
     });
 
     test("should delete selected tables after confirmation", async () => {
         const mockTables = [{ TableName: "users" }, { TableName: "posts" }];
         const client = createMockClient(mockTables);
-        const sendSpy = spyOn(client, "send");
+        const sendSpy = vi.spyOn(client, "send");
 
-        multiselectSpy.mockResolvedValueOnce(["users"] as any);
-        confirmSpy.mockResolvedValueOnce(true as any);
+        (prompts.multiselect as any).mockResolvedValueOnce(["users"] as any);
+        (prompts.confirm as any).mockResolvedValueOnce(true as any);
 
         await dropCommand({
             config: { schema: "dummy", out: "dummy" } as any,
@@ -80,10 +72,10 @@ describe("Drop Command", () => {
         );
 
         // Verify multiselect was called with options
-        expect(multiselectSpy).toHaveBeenCalled();
+        expect(prompts.multiselect).toHaveBeenCalled();
 
         // Verify confirm was called
-        expect(confirmSpy).toHaveBeenCalled();
+        expect(prompts.confirm).toHaveBeenCalled();
 
         // Verify DeleteTable was called for 'users'
         // Note: The order of calls depends on implementation, but we expect at least one DeleteTableCommand
@@ -95,16 +87,16 @@ describe("Drop Command", () => {
         expect(deleteCall).toBeDefined();
         expect(deleteCall![0].input.TableName).toBe("users");
 
-        expect(outroSpy).toHaveBeenCalled();
+        expect(prompts.outro).toHaveBeenCalled();
     });
 
     test("should not delete if confirmation is rejected", async () => {
         const mockTables = [{ TableName: "users" }];
         const client = createMockClient(mockTables);
-        const sendSpy = spyOn(client, "send");
+        const sendSpy = vi.spyOn(client, "send");
 
-        multiselectSpy.mockResolvedValueOnce(["users"] as any);
-        confirmSpy.mockResolvedValueOnce(false as any); // User says No
+        (prompts.multiselect as any).mockResolvedValueOnce(["users"] as any);
+        (prompts.confirm as any).mockResolvedValueOnce(false as any); // User says No
 
         await dropCommand({
             config: { schema: "dummy", out: "dummy" } as any,
@@ -129,16 +121,16 @@ describe("Drop Command", () => {
         const client = createMockClient(mockTables);
 
         // Simulate cancellation symbol
-        const cancelSymbol = Symbol("clack:cancel");
-        multiselectSpy.mockResolvedValueOnce(cancelSymbol as any);
-        isCancelSpy.mockReturnValueOnce(true);
+        const cancelSymbol = Symbol.for("clack:cancel");
+        (prompts.multiselect as any).mockResolvedValueOnce(cancelSymbol as any);
+        vi.mocked(prompts.isCancel).mockReturnValueOnce(true);
 
         await dropCommand({
             config: { schema: "dummy", out: "dummy" } as any,
             client,
         });
 
-        expect(cancelSpy).toHaveBeenCalled();
-        expect(confirmSpy).not.toHaveBeenCalled();
+        expect(prompts.cancel).toHaveBeenCalled();
+        expect(prompts.confirm).not.toHaveBeenCalled();
     });
 });

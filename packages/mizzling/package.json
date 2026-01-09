@@ -18,6 +18,7 @@
     "@mizzle/shared": "workspace:*",
     "@smithy/node-http-handler": "^4.4.7",
     "commander": "^14.0.2",
+    "fast-glob": "^3.3.3",
     "mizzle": "workspace:*"
   },
   "devDependencies": {

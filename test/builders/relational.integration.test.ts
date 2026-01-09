@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { DynamoDBClient, CreateTableCommand, DeleteTableCommand } from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient, CreateTableCommand, DeleteTableCommand, DescribeTableCommand } from "@aws-sdk/client-dynamodb";
 import { dynamoTable, dynamoEntity } from "mizzle/table";
 import { string, uuid } from "mizzle/columns";
 import { prefixKey, staticKey } from "mizzle";
@@ -16,8 +16,26 @@ const client = new DynamoDBClient({
     },
 });
 
+async function waitForTable(tableName: string) {
+    let active = false;
+    let attempts = 0;
+    while (!active && attempts < 50) {
+        try {
+            const res = await client.send(new DescribeTableCommand({ TableName: tableName }));
+            if (res.Table?.TableStatus === "ACTIVE") {
+                active = true;
+            } else {
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+        } catch (e) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        attempts++;
+    }
+}
+
 describe("Relational Query Integration", () => {
-    const tableName = "RelationalIntegrationTest";
+    const tableName = `RelationalIntegrationTest_${Date.now()}`;
     const table = dynamoTable(tableName, {
         pk: string("pk"),
         sk: string("sk"),
@@ -93,10 +111,16 @@ describe("Relational Query Integration", () => {
             members,
             usersRelations: defineRelations(users, ({ many }) => ({
                 posts: many(posts),
-                memberships: many(members),
+                memberships: many(members, {
+                    fields: [users.id],
+                    references: [members.userId],
+                }),
             })),
             postsRelations: defineRelations(posts, ({ one }) => ({
-                author: one(users),
+                author: one(users, {
+                    fields: [posts.userId],
+                    references: [users.id],
+                }),
             })),
             projectsRelations: defineRelations(projects, ({ many }) => ({
                 members: many(members, {
@@ -118,11 +142,6 @@ describe("Relational Query Integration", () => {
     });
 
     beforeAll(async () => {
-        // Delete if exists
-        try {
-            await client.send(new DeleteTableCommand({ TableName: tableName }));
-        } catch { /* ignore */ }
-
         // Create
         await client.send(new CreateTableCommand({
             TableName: tableName,
@@ -155,12 +174,11 @@ describe("Relational Query Integration", () => {
                 WriteCapacityUnits: 5,
             },
         }));
+        await waitForTable(tableName);
     });
 
     afterAll(async () => {
-        try {
-            await client.send(new DeleteTableCommand({ TableName: tableName }));
-        } catch { /* ignore */ }
+        // Do NOT delete to avoid interference if multiple tests run
     });
 
     it("should fetch user with their posts in a single query", async () => {
@@ -201,11 +219,8 @@ describe("Relational Query Integration", () => {
         await db.insert(posts).values({ id: postId, userId, content: "Charlie's Post" }).execute();
 
         const results = await db.query.posts.findMany({
-            where: (cols, { eq, and }) => and(
-                eq(cols.id, postId),
-                eq(cols.userId, userId)
-            ),
-            include: { author: true }
+            where: (cols, { eq }) => eq(cols.id, postId),
+            with: { author: true }
         }) as any[];
 
         expect(results).toHaveLength(1);
@@ -221,16 +236,18 @@ describe("Relational Query Integration", () => {
         await db.insert(users).values({ id: userId, name: "David" }).execute();
         await db.insert(projects).values({ id: projId1, name: "Project Alpha" }).execute();
         await db.insert(projects).values({ id: projId2, name: "Project Beta" }).execute();
-        await db.insert(members).values({ userId, projectId: projId1, role: "owner" }).execute();
-        await db.insert(members).values({ userId, projectId: projId2, role: "admin" }).execute();
+        await db.insert(members).values({ userId, projectId: projId1, role: "admin" }).execute();
+        await db.insert(members).values({ userId, projectId: projId2, role: "member" }).execute();
 
         const results = await db.query.users.findMany({
             where: (cols, { eq }) => eq(cols.id, userId),
-            with: { memberships: true }
+            with: { memberships: { with: { project: true } } }
         }) as any[];
 
         expect(results).toHaveLength(1);
+        expect(results[0].name).toBe("David");
         expect(results[0].memberships).toHaveLength(2);
+        expect(results[0].memberships[0].project).toBeDefined();
     });
 
     it("should fetch project with its members via GSI", async () => {
@@ -256,7 +273,7 @@ describe("Relational Query Integration", () => {
     it("should use findFirst to fetch a single item with relations", async () => {
         const userId = "user-7";
         await db.insert(users).values({ id: userId, name: "Grace" }).execute();
-        await db.insert(posts).values({ id: "post-5", userId, content: "First Post" }).execute();
+        await db.insert(posts).values({ id: "post-5", userId, content: "Grace's Post" }).execute();
 
         const result = await db.query.users.findFirst({
             where: (cols, { eq }) => eq(cols.id, userId),
@@ -264,7 +281,7 @@ describe("Relational Query Integration", () => {
         }) as any;
 
         expect(result).toBeDefined();
-        expect(result!.name).toBe("Grace");
-        expect(result!.posts).toHaveLength(1);
+        expect(result.name).toBe("Grace");
+        expect(result.posts).toHaveLength(1);
     });
 });

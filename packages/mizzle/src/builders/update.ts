@@ -6,6 +6,7 @@ import { BaseBuilder } from "./base";
 import { type IMizzleClient } from "../core/client";
 import { calculateItemSize } from "../core/validation";
 import { ItemSizeExceededError } from "../core/errors";
+import { buildExpression } from "../expressions/builder";
 
 export class UpdateBuilder<
     TEntity extends Entity,
@@ -14,9 +15,9 @@ export class UpdateBuilder<
     static readonly [ENTITY_SYMBOLS.ENTITY_KIND]: string = "UpdateBuilder";
 
     private _setValues: Partial<InferInsertModel<TEntity>> = {};
-    private _addValues: Record<string, unknown> = {};
-    private _removeValues: string[] = [];
-    private _deleteValues: Record<string, unknown> = {};
+    private _addValues: Partial<InferInsertModel<TEntity>> = {};
+    private _removeValues: (keyof InferInsertModel<TEntity>)[] = [];
+    private _deleteValues: Partial<InferInsertModel<TEntity>> = {};
     private _whereClause?: Expression;
     private _returnValues?: "NONE" | "ALL_OLD" | "UPDATED_OLD" | "ALL_NEW" | "UPDATED_NEW";
     private _explicitKey?: Record<string, unknown>;
@@ -38,17 +39,17 @@ export class UpdateBuilder<
         return this;
     }
 
-    add(values: Record<string, unknown>): this {
+    add(values: Partial<InferInsertModel<TEntity>>): this {
         this._addValues = { ...this._addValues, ...values };
         return this;
     }
 
-    remove(...fields: string[]): this {
+    remove(...fields: (keyof InferInsertModel<TEntity>)[]): this {
         this._removeValues.push(...fields);
         return this;
     }
 
-    delete(values: Record<string, unknown>): this {
+    delete(values: Partial<InferInsertModel<TEntity>>): this {
         this._deleteValues = { ...this._deleteValues, ...values };
         return this;
     }
@@ -65,12 +66,19 @@ export class UpdateBuilder<
 
     override async execute(): Promise<TResult> {
         const keys = this.resolveUpdateKeys();
-        const { updateExpression, attributeNames, attributeValues } =
-            this.buildUpdateExpression();
+
+        const { expressionAttributeNames, expressionAttributeValues, addName, addValue } = this.createExpressionContext("up_");
+
+        const { updateExpression } = this.buildUpdateExpression(addName, addValue);
+        
+        let conditionExpression: string | undefined;
+        if (this._whereClause) {
+            conditionExpression = buildExpression(this._whereClause, addName, addValue);
+        }
 
         // Estimate size for Update
         // Update size is basically keys + attribute values.
-        const size = calculateItemSize({ ...keys, ...attributeValues });
+        const size = calculateItemSize({ ...keys, ...expressionAttributeValues });
         if (size > 400 * 1024) {
             throw new ItemSizeExceededError(`Estimated update size of ${Math.round(size / 1024)}KB exceeds the 400KB limit.`);
         }
@@ -79,13 +87,14 @@ export class UpdateBuilder<
             TableName: this.tableName,
             Key: keys,
             UpdateExpression: updateExpression,
+            ConditionExpression: conditionExpression,
             ExpressionAttributeNames:
-                Object.keys(attributeNames).length > 0
-                    ? attributeNames
+                Object.keys(expressionAttributeNames).length > 0
+                    ? expressionAttributeNames
                     : undefined,
             ExpressionAttributeValues:
-                Object.keys(attributeValues).length > 0
-                    ? attributeValues
+                Object.keys(expressionAttributeValues).length > 0
+                    ? expressionAttributeValues
                     : undefined,
             ReturnValues: this._returnValues,
         });
@@ -103,49 +112,40 @@ export class UpdateBuilder<
         return resolved.keys;
     }
 
-    private buildUpdateExpression() {
-        const attributeNames: Record<string, string> = {};
-        const attributeValues: Record<string, unknown> = {};
+    private buildUpdateExpression(
+        addName: (name: string) => string,
+        addValue: (value: unknown) => string,
+    ) {
         const updateExpressions: string[] = [];
-        let placeholderCounter = 0;
-
-        const getPlaceholders = (key: string) => {
-            const id = placeholderCounter++;
-            const namePlaceholder = `#n${id}`;
-            const valuePlaceholder = `:v${id}`;
-            attributeNames[namePlaceholder] = key;
-            return { namePlaceholder, valuePlaceholder };
-        };
 
         if (Object.keys(this._setValues).length > 0) {
             const setParts: string[] = [];
             for (const [key, value] of Object.entries(this._setValues)) {
-                const { namePlaceholder, valuePlaceholder } =
-                    getPlaceholders(key);
-                attributeValues[valuePlaceholder] = value;
-                setParts.push(`${namePlaceholder} = ${valuePlaceholder}`);
+                if (value !== undefined) {
+                    setParts.push(`${addName(key)} = ${addValue(value)}`);
+                }
             }
-            updateExpressions.push(`SET ${setParts.join(", ")}`);
+            if (setParts.length > 0) {
+                updateExpressions.push(`SET ${setParts.join(", ")}`);
+            }
         }
 
         if (Object.keys(this._addValues).length > 0) {
             const addParts: string[] = [];
             for (const [key, value] of Object.entries(this._addValues)) {
-                const { namePlaceholder, valuePlaceholder } =
-                    getPlaceholders(key);
-                attributeValues[valuePlaceholder] = value;
-                addParts.push(`${namePlaceholder} ${valuePlaceholder}`);
+                if (value !== undefined) {
+                    addParts.push(`${addName(key)} ${addValue(value)}`);
+                }
             }
-            updateExpressions.push(`ADD ${addParts.join(", ")}`);
+            if (addParts.length > 0) {
+                updateExpressions.push(`ADD ${addParts.join(", ")}`);
+            }
         }
 
         if (this._removeValues.length > 0) {
             const removeParts: string[] = [];
             for (const field of this._removeValues) {
-                const id = placeholderCounter++;
-                const namePlaceholder = `#n${id}`;
-                attributeNames[namePlaceholder] = field;
-                removeParts.push(namePlaceholder);
+                removeParts.push(addName(field as string));
             }
             updateExpressions.push(`REMOVE ${removeParts.join(", ")}`);
         }
@@ -153,18 +153,17 @@ export class UpdateBuilder<
         if (Object.keys(this._deleteValues).length > 0) {
             const deleteParts: string[] = [];
             for (const [key, value] of Object.entries(this._deleteValues)) {
-                const { namePlaceholder, valuePlaceholder } =
-                    getPlaceholders(key);
-                attributeValues[valuePlaceholder] = value;
-                deleteParts.push(`${namePlaceholder} ${valuePlaceholder}`);
+                if (value !== undefined) {
+                    deleteParts.push(`${addName(key)} ${addValue(value)}`);
+                }
             }
-            updateExpressions.push(`DELETE ${deleteParts.join(", ")}`);
+            if (deleteParts.length > 0) {
+                updateExpressions.push(`DELETE ${deleteParts.join(", ")}`);
+            }
         }
 
         return {
             updateExpression: updateExpressions.join(" "),
-            attributeNames,
-            attributeValues,
         };
     }
 }

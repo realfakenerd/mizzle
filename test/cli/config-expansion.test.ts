@@ -1,4 +1,4 @@
-import { expect, test, describe, beforeEach, afterEach, spyOn } from "vitest";
+import { expect, test, describe, beforeEach, afterEach, vi } from "vitest";
 import {
     loadConfig,
     defineConfig,
@@ -9,6 +9,10 @@ import { join } from "path";
 import { tmpdir } from "os";
 import * as credentialProviders from "@aws-sdk/credential-provider-ini";
 
+vi.mock("@aws-sdk/credential-provider-ini", () => ({
+    fromIni: vi.fn(),
+}));
+
 const TEMP_DIR = join(tmpdir(), "mizzle-config-expansion-test-" + Date.now());
 
 describe("Config Expansion", () => {
@@ -17,6 +21,7 @@ describe("Config Expansion", () => {
     beforeEach(() => {
         mkdirSync(TEMP_DIR, { recursive: true });
         process.chdir(TEMP_DIR);
+        vi.clearAllMocks();
     });
 
     afterEach(() => {
@@ -114,15 +119,13 @@ describe("Config Expansion", () => {
     });
 
     test("getClient should use profile if provided", async () => {
-        const fromIniSpy = spyOn(credentialProviders, "fromIni");
         const config = {
             schema: "./schema.ts",
             out: "./out",
             profile: "my-profile",
         };
         getClient(config);
-        expect(fromIniSpy).toHaveBeenCalledWith({ profile: "my-profile" });
-        fromIniSpy.mockRestore();
+        expect(credentialProviders.fromIni).toHaveBeenCalledWith({ profile: "my-profile" });
     });
 
     test("getClient should use maxAttempts if provided", async () => {

@@ -1,5 +1,5 @@
 import { expect, test, describe, beforeAll, afterAll } from "vitest";
-import { spawn } from "bun";
+import { spawnSync } from "child_process";
 import { mkdirSync, rmSync, readdirSync, writeFileSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";
@@ -50,9 +50,9 @@ export default defineConfig({
 
     test("MIZZLE_OUT should override config.out", async () => {
         // Run generate with MIZZLE_OUT pointing to ENV_MIGRATIONS_DIR
-        const generateProc = spawn(
+        const result = spawnSync(
+            "bun",
             [
-                "bun",
                 "packages/mizzling/src/index.ts",
                 "generate",
                 "--name",
@@ -65,25 +65,17 @@ export default defineConfig({
                     MIZZLE_CONFIG: CONFIG_FILE,
                     MIZZLE_OUT: ENV_MIGRATIONS_DIR,
                 },
-                stdout: "pipe",
-                stderr: "pipe",
+                encoding: "utf-8",
             },
         );
 
-        const exitCode = await generateProc.exited;
-        if (exitCode !== 0) {
+        if (result.status !== 0) {
             console.error("Generate failed!");
-            console.error(
-                "STDOUT:",
-                await new Response(generateProc.stdout).text(),
-            );
-            console.error(
-                "STDERR:",
-                await new Response(generateProc.stderr).text(),
-            );
+            console.error("STDOUT:", result.stdout);
+            console.error("STDERR:", result.stderr);
         }
 
-        expect(exitCode).toBe(0);
+        expect(result.status).toBe(0);
 
         // Should have created migration in ENV_MIGRATIONS_DIR, NOT MIGRATIONS_DIR
         expect(

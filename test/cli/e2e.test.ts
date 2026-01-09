@@ -1,5 +1,5 @@
 import { expect, test, describe, beforeAll, afterAll } from "vitest";
-import { spawn } from "bun";
+import { spawn } from "child_process";
 import { mkdirSync, rmSync, existsSync, readdirSync, writeFileSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";
@@ -9,6 +9,25 @@ const TEMP_DIR = join(tmpdir(), "mizzle-e2e-test-" + Date.now());
 const MIGRATIONS_DIR = join(TEMP_DIR, "migrations");
 const SCHEMA_FILE = join(TEMP_DIR, "schema.ts");
 const CONFIG_FILE = join(TEMP_DIR, "mizzle.config.ts");
+
+function runCommand(args: string[], env: Record<string, string>): Promise<{ code: number, stdout: string, stderr: string }> {
+    return new Promise((resolve) => {
+        const proc = spawn("bun", args, {
+            cwd: process.cwd(),
+            env: { ...process.env, ...env },
+        });
+
+        let stdout = "";
+        let stderr = "";
+
+        proc.stdout.on("data", (data) => stdout += data.toString());
+        proc.stderr.on("data", (data) => stderr += data.toString());
+
+        proc.on("close", (code) => {
+            resolve({ code: code || 0, stdout, stderr });
+        });
+    });
+}
 
 describe("CLI End-to-End Migration Lifecycle", () => {
     beforeAll(() => {
@@ -53,25 +72,15 @@ export default defineConfig({
 
     test("Full lifecycle: generate -> push -> list -> drop", async () => {
         // 1. Generate
-        const generateProc = spawn(
+        const { code: generateExit, stdout: genStdout, stderr: genStderr } = await runCommand(
             [
-                "bun",
                 "packages/mizzling/src/index.ts",
                 "generate",
                 "--name",
                 "initial",
             ],
-            {
-                cwd: process.cwd(),
-                env: { ...process.env, MIZZLE_CONFIG: CONFIG_FILE },
-                stdout: "pipe",
-                stderr: "pipe",
-            },
+            { MIZZLE_CONFIG: CONFIG_FILE }
         );
-
-        const generateExit = await generateProc.exited;
-        const genStdout = await new Response(generateProc.stdout).text();
-        const genStderr = await new Response(generateProc.stderr).text();
 
         if (generateExit !== 0 || !existsSync(MIGRATIONS_DIR)) {
             console.error("Generate failed or migrations dir missing!");
@@ -85,41 +94,24 @@ export default defineConfig({
         ).toBe(true);
 
         // 2. Push
-        const pushProc = spawn(
-            ["bun", "packages/mizzling/src/index.ts", "push", "--yes"],
-            {
-                cwd: process.cwd(),
-                env: { ...process.env, MIZZLE_CONFIG: CONFIG_FILE },
-                stdout: "pipe",
-                stderr: "pipe",
-            },
+        const { code: pushExit, stdout: pushStdout, stderr: pushStderr } = await runCommand(
+            ["packages/mizzling/src/index.ts", "push", "--yes"],
+            { MIZZLE_CONFIG: CONFIG_FILE }
         );
 
-        const pushExit = await pushProc.exited;
         if (pushExit !== 0) {
             console.error("Push failed!");
-            console.error(
-                "STDOUT:",
-                await new Response(pushProc.stdout).text(),
-            );
-            console.error(
-                "STDERR:",
-                await new Response(pushProc.stderr).text(),
-            );
+            console.error("STDOUT:", pushStdout);
+            console.error("STDERR:", pushStderr);
         }
         expect(pushExit).toBe(0);
 
         // 3. List
-        const listProc = spawn(
-            ["bun", "packages/mizzling/src/index.ts", "list"],
-            {
-                cwd: process.cwd(),
-                env: { ...process.env, MIZZLE_CONFIG: CONFIG_FILE },
-                stdout: "pipe",
-            },
+        const { stdout: listOutput } = await runCommand(
+            ["packages/mizzling/src/index.ts", "list"],
+            { MIZZLE_CONFIG: CONFIG_FILE }
         );
 
-        const listOutput = await new Response(listProc.stdout).text();
         expect(listOutput).toContain("e2e_test_table");
 
         // 4. Cleanup: Drop the table manually to leave clean state

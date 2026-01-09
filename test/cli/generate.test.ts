@@ -4,8 +4,7 @@ import {
     describe,
     beforeEach,
     afterEach,
-    mock,
-    spyOn,
+    vi,
 } from "vitest";
 import { generateCommand } from "../../packages/mizzling/src/commands/generate";
 import { PhysicalTable } from "mizzle/table";
@@ -15,15 +14,13 @@ import { join } from "path";
 import { tmpdir } from "os";
 
 // Mock Clack
-const mockClack = {
-    text: mock(() => Promise.resolve("migration")),
-    confirm: mock(() => Promise.resolve(true)),
-    intro: mock(() => {}),
-    outro: mock(() => {}),
-    spinner: () => ({ start: () => {}, stop: () => {} }),
-    isCancel: () => false,
-};
-mock.module("@clack/prompts", () => mockClack);
+vi.mock("@clack/prompts", () => ({
+    intro: vi.fn(),
+    outro: vi.fn(),
+    text: vi.fn(() => Promise.resolve("migration")),
+    isCancel: vi.fn(() => false),
+    cancel: vi.fn(),
+}));
 
 // Helper to create mock table
 const mockTable = (name: string) => {
@@ -59,7 +56,7 @@ describe("Generate Command", () => {
     });
 
     // Mock discoverSchema to return our tables
-    const mockDiscover = mock();
+    const mockDiscover = vi.fn();
 
     test("should create initial snapshot and migration if none exist", async () => {
         // Setup
@@ -115,8 +112,8 @@ describe("Generate Command", () => {
 
     test("should handle errors gracefully", async () => {
         mockDiscover.mockRejectedValue(new Error("Discovery failed"));
-        const errorSpy = spyOn(console, "error").mockImplementation(() => {});
-        const processExitSpy = spyOn(process, "exit").mockImplementation(
+        const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+        const processExitSpy = vi.spyOn(process, "exit").mockImplementation(
             (() => {}) as any,
         );
 

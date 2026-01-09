@@ -1,7 +1,7 @@
 import { type IMizzleClient } from "../core/client";
 import { Entity } from "../core/table";
 import { QueryPromise } from "./query-promise";
-import { resolveTableName } from "@mizzle/shared";
+import { resolveTableName, mapToLogical } from "@mizzle/shared";
 import { resolveStrategies, type StrategyResolution } from "../core/strategies";
 import { type Expression } from "../expressions/operators";
 import { ENTITY_SYMBOLS } from "@mizzle/shared";
@@ -30,5 +30,35 @@ export abstract class BaseBuilder<
         providedValues?: Record<string, unknown>,
     ): StrategyResolution {
         return resolveStrategies(this.entity, whereClause, providedValues);
+    }
+
+    protected createExpressionContext(prefix = "") {
+        const expressionAttributeNames: Record<string, string> = {};
+        const expressionAttributeValues: Record<string, unknown> = {};
+        let nameCount = 0;
+        let valueCount = 0;
+
+        const addName = (name: string) => {
+            const placeholder = `#${prefix}n${nameCount++}`;
+            expressionAttributeNames[placeholder] = name;
+            return placeholder;
+        };
+
+        const addValue = (value: unknown) => {
+            const placeholder = `:${prefix}v${valueCount++}`;
+            expressionAttributeValues[placeholder] = value;
+            return placeholder;
+        };
+
+        return {
+            expressionAttributeNames,
+            expressionAttributeValues,
+            addName,
+            addValue,
+        };
+    }
+
+    protected mapToLogical(item: Record<string, unknown>): Record<string, unknown> {
+        return mapToLogical(this.entity, item);
     }
 }

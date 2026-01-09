@@ -4,13 +4,16 @@ import {
     ScanCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "@mizzle/shared";
-import type { Column } from "../core/column";
+import { Column } from "../core/column";
 import type { SelectedFields as SelectedFieldsBase } from "../core/operations";
-import { type Expression } from "../expressions/operators";
+import { 
+    type Expression,
+} from "../expressions/operators";
 import { Entity, type InferSelectModel } from "../core/table";
 import { BaseBuilder } from "./base";
 import type { StrategyResolution } from "../core/strategies";
 import type { IMizzleClient } from "../core/client";
+import { buildExpression } from "../expressions/builder";
 
 export type SelectedFields = SelectedFieldsBase<Column>;
 
@@ -25,14 +28,17 @@ export class SelectBuilder<TSelection extends SelectedFields | undefined> {
     }
 }
 
-class SelectBase<
+export class SelectBase<
     TEntity extends Entity,
     TSelection extends SelectedFields | undefined = undefined,
     TResult = TSelection extends undefined ? InferSelectModel<TEntity> : Record<string, unknown>,
 > extends BaseBuilder<TEntity, TResult[]> {
     static readonly [ENTITY_SYMBOLS.ENTITY_KIND]: string = "SelectBase";
 
-    private whereClause?: Expression;
+    private _whereClause?: Expression;
+    private _limitVal?: number;
+    private _sortForward: boolean = true;
+    private _forcedIndexName?: string;
 
     constructor(
         entity: TEntity,
@@ -43,25 +49,43 @@ class SelectBase<
     }
 
     where(expression: Expression): this {
-        this.whereClause = expression;
+        this._whereClause = expression;
+        return this;
+    }
+
+    limit(val: number): this {
+        this._limitVal = val;
+        return this;
+    }
+
+    sort(forward: boolean): this {
+        this._sortForward = forward;
+        return this;
+    }
+
+    index(name: string): this {
+        this._forcedIndexName = name;
         return this;
     }
 
     override async execute(): Promise<TResult[]> {
-        const resolution = this.resolveKeys(this.whereClause);
+        const resolution = this.resolveKeys(this._whereClause, undefined, this._forcedIndexName);
+
+        let results: Record<string, any>[];
 
         // GetItem (PK + SK)
+        // Only if it's on the main table and both keys are present.
         if (resolution.hasPartitionKey && resolution.hasSortKey && !resolution.indexName) {
-            return this.executeGet(resolution.keys);
+            results = await this.executeGet(resolution.keys);
+        } else if (resolution.hasPartitionKey || resolution.indexName) {
+            // Query (PK only or Index)
+            results = await this.executeQuery(resolution);
+        } else {
+            // Scan (No keys resolved)
+            results = await this.executeScan();
         }
 
-        // Query (PK only or Index)
-        if (resolution.hasPartitionKey || resolution.indexName) {
-            return this.executeQuery(resolution);
-        }
-
-        // Scan (No keys resolved)
-        return this.executeScan();
+        return results.map(item => this.mapToLogical(item)) as TResult[];
     }
 
     private async executeGet(keys: Record<string, unknown>): Promise<TResult[]> {
@@ -77,57 +101,52 @@ class SelectBase<
     private async executeQuery(
         resolution: StrategyResolution,
     ): Promise<TResult[]> {
-        let pkName: string;
-        let skName: string | undefined;
-        const physicalTable = this.physicalTable;
+        const { expressionAttributeNames, expressionAttributeValues, addName, addValue } = this.createExpressionContext();
 
-        if (resolution.indexName) {
-            const indexes = physicalTable[TABLE_SYMBOLS.INDEXES];
-            const indexBuilder = indexes?.[resolution.indexName] as { config: { pk: string; sk?: string } } | undefined;
-            if (!indexes || !indexBuilder) {
-                throw new Error(
-                    `Index ${resolution.indexName} not found on table definition.`,
-                );
-            }
-            pkName = indexBuilder.config.pk;
-            skName = indexBuilder.config.sk;
-        } else {
-            pkName = (physicalTable[TABLE_SYMBOLS.PARTITION_KEY] as Column).name;
-            skName = (physicalTable[TABLE_SYMBOLS.SORT_KEY] as Column | undefined)?.name;
+        const keyParts: string[] = [];
+        const keyAttrNames = new Set<string>();
+        for (const [key, value] of Object.entries(resolution.keys)) {
+            keyParts.push(`${addName(key)} = ${addValue(value)}`);
+            keyAttrNames.add(key);
         }
-
-        const pkValue = resolution.keys[pkName];
-
-        let keyConditionExpression = `${pkName} = :pk`;
-        const expressionAttributeValues: Record<string, unknown> = {
-            ":pk": pkValue,
-        };
-
-        if (resolution.hasSortKey && skName && resolution.keys[skName] !== undefined) {
-            keyConditionExpression += ` AND ${skName} = :sk`;
-            expressionAttributeValues[":sk"] = resolution.keys[skName];
-        }
+        const keyConditionExpression = keyParts.join(" AND ");
+        
+        // DynamoDB does NOT allow primary key attributes in FilterExpression
+        const filterExpression = this._whereClause 
+            ? buildExpression(this._whereClause, addName, addValue, keyAttrNames)
+            : undefined;
 
         const command = new QueryCommand({
             TableName: this.tableName,
             IndexName: resolution.indexName,
             KeyConditionExpression: keyConditionExpression,
-            ExpressionAttributeValues: expressionAttributeValues,
+            FilterExpression: filterExpression || undefined,
+            ExpressionAttributeNames: Object.keys(expressionAttributeNames).length > 0 ? expressionAttributeNames : undefined,
+            ExpressionAttributeValues: Object.keys(expressionAttributeValues).length > 0 ? expressionAttributeValues : undefined,
+            Limit: this._limitVal,
+            ScanIndexForward: this._sortForward,
         });
 
-        const result = await this.client.send(command);
-        return (result.Items ?? []) as TResult[];
+        const response = await this.client.send(command);
+        return (response.Items || []) as TResult[];
     }
 
     private async executeScan(): Promise<TResult[]> {
-        // WARN: Scanning is expensive!
+        const { expressionAttributeNames, expressionAttributeValues, addName, addValue } = this.createExpressionContext();
+
+        const filterExpression = this._whereClause 
+            ? buildExpression(this._whereClause, addName, addValue)
+            : undefined;
+
         const command = new ScanCommand({
             TableName: this.tableName,
+            FilterExpression: filterExpression,
+            ExpressionAttributeNames: Object.keys(expressionAttributeNames).length > 0 ? expressionAttributeNames : undefined,
+            ExpressionAttributeValues: Object.keys(expressionAttributeValues).length > 0 ? expressionAttributeValues : undefined,
+            Limit: this._limitVal,
         });
 
-        // TODO: Apply filter expression from this.whereClause if strictly scanning
-
-        const result = await this.client.send(command);
-        return (result.Items ?? []) as TResult[];
+        const response = await this.client.send(command);
+        return (response.Items || []) as TResult[];
     }
 }

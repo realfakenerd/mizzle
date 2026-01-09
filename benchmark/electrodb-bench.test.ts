@@ -8,6 +8,7 @@ describe("ElectroDBBench", () => {
     const gen = new DataGenerator();
 
     beforeAll(async () => {
+        process.env.MIZZLE_BENCH_TABLE = "MizzleBench_Electro";
         await deleteTable();
         await createTable();
         await waitForTable();
