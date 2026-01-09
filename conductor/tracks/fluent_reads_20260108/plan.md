@@ -1,13 +1,13 @@
 # Plan: Fluent Reads - Auto-Pagination & Consistency
 
 ## Phase 1: Consistency Toggle & Page Size Hint
-- [ ] Task: Update Query Builder Types
+- [x] Task: Update Query Builder Types c0bc104
     - Add `.consistentRead(enabled?: boolean)` to the common builder interface.
     - Add `.pageSize(n: number)` to the common builder interface.
-- [ ] Task: Implement `.consistentRead()` logic
+- [x] Task: Implement `.consistentRead()` logic c0bc104
     - Update the internal command builder to map the toggle to AWS SDK's `ConsistentRead`.
     - Write tests for `GetItem`, `Query`, and `Scan` commands.
-- [ ] Task: Implement `.pageSize()` logic
+- [x] Task: Implement `.pageSize()` logic c0bc104
     - Update the internal command builder to map this to AWS SDK's `Limit`.
     - Ensure it is distinct from the total `.limit()` used for result truncation.
 - [ ] Task: Conductor - User Manual Verification 'Consistency Toggle & Page Size Hint' (Protocol in workflow.md)
