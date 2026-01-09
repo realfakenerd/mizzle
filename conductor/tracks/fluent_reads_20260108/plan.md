@@ -28,7 +28,7 @@
     - Ensure the iterator stops yielding items (and stops making network requests) once the total global limit is reached.
 - [x] Task: Conductor - User Manual Verification 'Pagination Logic & Termination' (Protocol in workflow.md)
 
-## Phase 4: Integration & Performance
+## Phase 4: Integration & Performance [checkpoint: 158fe54]
 - [x] Task: Integration tests with large datasets 3243e1c
     - Create a test case that inserts >1MB of data (forcing multiple pages).
     - Verify that `.iterator()` consumes all items correctly.
