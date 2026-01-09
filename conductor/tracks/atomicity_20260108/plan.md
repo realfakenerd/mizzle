@@ -16,10 +16,10 @@
     - Ensure `ClientRequestToken` is correctly passed.
 - [ ] Task: Conductor - User Manual Verification 'Execution & Idempotency' (Protocol in workflow.md)
 
-## Phase 3: Error Handling & Parsing
-- [ ] Task: Implement `TransactionFailedError`
+## Phase 3: Error Handling & Parsing [checkpoint: daa73c3]
+- [x] Task: Implement `TransactionFailedError` 19d4baa
     - Create the custom error class with a structured `reasons` property.
-- [ ] Task: Implement `CancellationReasons` parser
+- [x] Task: Implement `CancellationReasons` parser ab8bf38
     - Add logic to catch SDK exceptions and extract the detailed cancellation reasons from the response.
 - [ ] Task: Conductor - User Manual Verification 'Error Handling & Parsing' (Protocol in workflow.md)
 
