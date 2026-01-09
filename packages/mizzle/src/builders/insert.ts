@@ -47,7 +47,8 @@ export class InsertBase<
         return this as unknown as InsertBase<TEntity, InferInsertModel<TEntity>>;
     }
 
-    override async execute(): Promise<TResult> {
+    /** @internal */
+    buildItem(): Record<string, unknown> {
         const itemToSave = this.processValues(this.valuesData);
         const resolution = this.resolveKeys(undefined, itemToSave);
         
@@ -73,6 +74,12 @@ export class InsertBase<
                 }
             }
         }
+
+        return finalItem;
+    }
+
+    override async execute(): Promise<TResult> {
+        const finalItem = this.buildItem();
 
         // Size validation
         const size = calculateItemSize(finalItem);

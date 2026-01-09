@@ -8,10 +8,10 @@
 - [ ] Task: Conductor - User Manual Verification 'Transaction API & Types' (Protocol in workflow.md)
 
 ## Phase 2: Execution & Idempotency
-- [ ] Task: Implement `db.transaction()` wrapper
+- [x] Task: Implement `db.transaction()` wrapper dee5339
     - Implement the main entry point that accepts the token and executes the callback.
     - Validate the 100-item limit.
-- [ ] Task: Map Mizzle operations to AWS TransactWriteItems
+- [x] Task: Map Mizzle operations to AWS TransactWriteItems dee5339
     - Convert the array of Mizzle builders returned by the callback into the raw SDK command structure.
     - Ensure `ClientRequestToken` is correctly passed.
 - [ ] Task: Conductor - User Manual Verification 'Execution & Idempotency' (Protocol in workflow.md)

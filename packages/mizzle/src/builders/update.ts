@@ -81,6 +81,11 @@ export class UpdateBuilder<
         return this._whereClause;
     }
 
+    /** @internal */
+    public override createExpressionContext(prefix = "") {
+        return super.createExpressionContext(prefix);
+    }
+
     override async execute(): Promise<TResult> {
         const keys = this.resolveUpdateKeys();
 
@@ -120,7 +125,8 @@ export class UpdateBuilder<
         return response.Attributes as TResult;
     }
 
-    private resolveUpdateKeys(): Record<string, unknown> {
+    /** @internal */
+    public resolveUpdateKeys(): Record<string, unknown> {
         if (this._explicitKey) {
             return this._explicitKey;
         }

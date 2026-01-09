@@ -8,6 +8,7 @@ import { UpdateBuilder } from "./builders/update";
 import { DeleteBuilder } from "./builders/delete";
 import { BatchGetBuilder } from "./builders/batch-get";
 import { BatchWriteBuilder, type BatchWriteOperation } from "./builders/batch-write";
+import { TransactionProxy } from "./builders/transaction";
 import { extractMetadata, type InternalRelationalSchema } from "./core/relations";
 import { RetryHandler, type RetryConfig } from "./core/retry";
 import { MizzleClient, type IMizzleClient } from "./core/client";
@@ -125,6 +126,30 @@ export class DynamoDB<TSchema extends Record<string, unknown> = Record<string, u
         keys: Partial<InferInsertModel<T>>,
     ): DeleteBuilder<T> {
         return new DeleteBuilder(table, this.docClient, keys as Record<string, unknown>);
+    }
+
+    /**
+     * Execute multiple operations atomically in a transaction.
+     * 
+     * @param token ClientRequestToken for idempotency.
+     * @param callback Callback that returns an array of operations.
+     */
+    async transaction(
+        token: string,
+        callback: (tx: TransactionProxy) => any[] | Promise<any[]>
+    ): Promise<void> {
+        const proxy = new TransactionProxy(this.docClient);
+        const operations = await callback(proxy);
+        
+        if (operations.length === 0) return;
+        if (operations.length > 100) {
+            throw new Error("DynamoDB transactions are limited to 100 items.");
+        }
+
+        // Executor will be implemented in transaction.ts
+        const { TransactionExecutor } = await import("./builders/transaction");
+        const executor = new TransactionExecutor(this.docClient);
+        await executor.execute(token, operations);
     }
 }
 

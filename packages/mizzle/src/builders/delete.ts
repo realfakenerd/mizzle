@@ -32,6 +32,19 @@ export class DeleteBuilder<
         return this._keys;
     }
 
+    /** @internal */
+    public override resolveKeys(
+        whereClause?: Expression,
+        providedValues?: Record<string, unknown>,
+    ) {
+        return super.resolveKeys(whereClause, providedValues);
+    }
+
+    /** @internal */
+    public override createExpressionContext(prefix = "") {
+        return super.createExpressionContext(prefix);
+    }
+
     override async execute(): Promise<TResult> {
         const resolution = this.resolveKeys(undefined, this._keys);
 

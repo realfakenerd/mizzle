@@ -17,7 +17,7 @@ export abstract class BaseBuilder<
         super();
     }
 
-    protected get tableName(): string {
+    public get tableName(): string {
         return resolveTableName(this.entity);
     }
 
