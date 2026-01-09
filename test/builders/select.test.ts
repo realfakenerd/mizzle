@@ -309,4 +309,25 @@ describe("Select Consistency and PageSize", () => {
         const result = await mizzle(client).select().from(user).pageSize(1).execute();
         expect(result).toHaveLength(1);
     });
+
+    it("should yield items via iterator", async () => {
+        const iterator = mizzle(client).select().from(user).iterator();
+        const items = [];
+        for await (const item of iterator) {
+            items.push(item);
+        }
+        expect(items).toHaveLength(1);
+    });
+
+    it("should respect limit in iterator", async () => {
+        // Insert one more item to test limit
+        await docClient.send(new PutCommand({ TableName: tableName, Item: { pk: "USER#2", sk: "METADATA", id: "2", name: "Bob" } }));
+        
+        const iterator = mizzle(client).select().from(user).limit(1).iterator();
+        const items = [];
+        for await (const item of iterator) {
+            items.push(item);
+        }
+        expect(items).toHaveLength(1);
+    });
 });

@@ -81,13 +81,24 @@ export class SelectBase<
     }
 
     iterator(): AsyncIterableIterator<TResult> {
-        // Implementation will follow in next tasks
         const self = this;
         return (async function* () {
-            const { items } = await self.fetchPage();
-            for (const item of items) {
-                yield item;
-            }
+            let count = 0;
+            let lastEvaluatedKey: Record<string, any> | undefined = undefined;
+
+            do {
+                const result = await self.fetchPage(lastEvaluatedKey);
+                
+                for (const item of result.items) {
+                    yield item;
+                    count++;
+                    if (self._limitVal !== undefined && count >= self._limitVal) {
+                        return;
+                    }
+                }
+
+                lastEvaluatedKey = result.lastEvaluatedKey;
+            } while (lastEvaluatedKey);
         })();
     }
 
