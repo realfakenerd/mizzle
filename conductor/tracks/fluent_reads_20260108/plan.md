@@ -19,19 +19,19 @@
     - Create a helper that executes a single DynamoDB request and returns the items and `LastEvaluatedKey`.
 - [x] Task: Implement the `.iterator()` method on Select/Scan/Query builders e830e89
     - This method should return an object implementing `Symbol.asyncIterator`.
-- [ ] Task: Conductor - User Manual Verification 'Async Iterator Foundation' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Async Iterator Foundation' (Protocol in workflow.md)
 
 ## Phase 3: Pagination Logic & Termination
 - [x] Task: Implement loop for `LastEvaluatedKey` e830e89
     - The iterator should internally track the pagination token and trigger new `fetchPage` calls when the current buffer is empty.
 - [x] Task: Integrate `.limit()` with iteration e830e89
     - Ensure the iterator stops yielding items (and stops making network requests) once the total global limit is reached.
-- [ ] Task: Conductor - User Manual Verification 'Pagination Logic & Termination' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Pagination Logic & Termination' (Protocol in workflow.md)
 
 ## Phase 4: Integration & Performance
-- [ ] Task: Integration tests with large datasets
+- [x] Task: Integration tests with large datasets 3243e1c
     - Create a test case that inserts >1MB of data (forcing multiple pages).
     - Verify that `.iterator()` consumes all items correctly.
-- [ ] Task: Verify memory efficiency
+- [x] Task: Verify memory efficiency 3243e1c
     - Ensure items are not being accumulated in an internal array during iteration.
-- [ ] Task: Conductor - User Manual Verification 'Integration & Performance' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Integration & Performance' (Protocol in workflow.md)
