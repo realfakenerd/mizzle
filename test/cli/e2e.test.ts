@@ -38,7 +38,7 @@ describe("CLI End-to-End Migration Lifecycle", () => {
             SCHEMA_FILE,
             `
 import { dynamoTable, dynamoEntity } from "${join(process.cwd(), "packages/mizzle/src/core/table")}";
-import { string } from "${join(process.cwd(), "packages/mizzle/src/columns/all")}";
+import { string } from "${join(process.cwd(), "packages/mizzle/src/columns/index")}";
 import { staticKey } from "${join(process.cwd(), "packages/mizzle/src/core/strategies")}";
 
 export const testTable = dynamoTable("e2e_test_table", {

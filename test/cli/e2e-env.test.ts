@@ -21,7 +21,7 @@ describe("CLI E2E Environment Overrides", () => {
             SCHEMA_FILE,
             `
 import { dynamoTable } from "${join(process.cwd(), "packages/mizzle/src/core/table")}";
-import { string } from "${join(process.cwd(), "packages/mizzle/src/columns/all")}";
+import { string } from "${join(process.cwd(), "packages/mizzle/src/columns/index")}";
 
 export const testTable = dynamoTable("e2e_env_test_table", {
     pk: string("pk"),

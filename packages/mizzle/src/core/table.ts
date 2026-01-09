@@ -6,7 +6,7 @@ import type {
     ColumnBuider,
     ColumnBuilderBase,
 } from "./column-builder";
-import { getColumnBuilders, type ColumnsBuilder } from "../columns/all";
+import { getColumnBuilders, type ColumnsBuilder } from "../columns";
 import type { IndexBuilder } from "../indexes";
 import type { OpitionalKeyOnly, RequiredKeyOnly } from "./operations";
 import type { KeyStrategy } from "./strategies";

@@ -27,7 +27,7 @@ Consolidate `select.ts` and `query-builder.ts` into a unified query architecture
 ## Phase 3: Column Organization Refactor
 Clean up and reorganize column exports to remove duplication and improve package structure.
 
-- [ ] Task: Analyze current column file structure and identify optimal organization.
-- [ ] Task: Refactor column source files and remove duplicate blocks in `packages/mizzle/src/columns/all.ts`.
-- [ ] Task: Verify that all package-level exports and external imports remain functional.
+- [~] Task: Analyze current column file structure and identify optimal organization.
+- [~] Task: Refactor column source files and remove duplicate blocks in `packages/mizzle/src/columns/all.ts`.
+- [~] Task: Verify that all package-level exports and external imports remain functional.
 - [ ] Task: Conductor - User Manual Verification 'Phase 3: Column Organization Refactor' (Protocol in workflow.md)
