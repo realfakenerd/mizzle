@@ -19,7 +19,8 @@ Mizzle is a light and type-safe ORM for DynamoDB built with TypeScript. It is de
 
 ## Key Features
 
-- **Fluent Query Builder:** A familiar `db.select()`, `db.update()`, and `db.delete()` API for intuitive data access and modification, mirroring the ergonomics of Drizzle ORM.
+- **Fluent Query Builder:** A familiar `db.select()`, `db.update()`, and `db.delete()` API for intuitive data access and modification. Includes a high-level Expression Builder for updates with automatic reserved word safety and atomic helpers (`add`, `append`, `remove`, etc.).
+- **Auto-Pagination:** Effortless handling of large result sets via Async Iterators (`.iterator()`), abstracting away manual `LastEvaluatedKey` management while respecting limits and page size hints.
 - **Automatic Resilience:** Transparent handling of transient DynamoDB errors (throttling, 5xx) via exponential backoff and jitter.
 - **Smart Batching:** Transparently retries partial failures in Batch operations (`UnprocessedKeys`, `UnprocessedItems`) until completion.
 - **Fail-Fast Validation:** Client-side item size checks to prevent network requests for items exceeding the 400KB limit.
@@ -27,7 +28,9 @@ Mizzle is a light and type-safe ORM for DynamoDB built with TypeScript. It is de
 - **Smart Key Management:** Automatic UUID generation (v7) and flexible key prefixing strategies to handle complex partition and sort key requirements.
 - **Entity Mapping:** Seamlessly map application-level entities to physical DynamoDB tables.
     - **Migration CLI (`mizzling`):** A dedicated CLI package for managing DynamoDB schema, supporting snapshots, automated migration scripts, interactive initialization, and table management.
-    - **Modular Library:** The core library supports clean subpath imports like `mizzle/columns` and `mizzle/table` for a better developer     - **Flexible Configuration:** Enhanced support for multiple environments via AWS Profiles, explicit credentials, and environment variable overrides (`MIZZLE_REGION`, `MIZZLE_ENDPOINT`, etc.).
+    - **Modular Library:** The core library supports clean subpath imports like `mizzle/columns` and `mizzle/table` for a better developer experience.
+    - **Unified Builder Architecture:** A single, robust implementation for both Query (Get, Query, Scan) and Update operations, ensuring consistent behavior across all data access patterns.
+    - **Flexible Configuration:** Enhanced support for multiple environments via AWS Profiles, explicit credentials, and environment variable overrides (`MIZZLE_REGION`, `MIZZLE_ENDPOINT`, etc.).
     - **Documentation Site:** A comprehensive documentation website built with Astro and Starlight, featuring conceptual guides, API reference, and a CLI guide.
 
 ## Constraints & Requirements

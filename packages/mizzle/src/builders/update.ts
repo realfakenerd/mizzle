@@ -71,6 +71,16 @@ export class UpdateBuilder<
         return this;
     }
 
+    /** @internal */
+    get state() {
+        return this._state;
+    }
+
+    /** @internal */
+    get whereClause() {
+        return this._whereClause;
+    }
+
     override async execute(): Promise<TResult> {
         const keys = this.resolveUpdateKeys();
 

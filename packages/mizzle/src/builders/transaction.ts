@@ -1,5 +1,5 @@
 import { Entity } from "../core/table";
-import { InsertBuilder, InsertBase } from "./insert";
+import { InsertBuilder } from "./insert";
 import { UpdateBuilder } from "./update";
 import { DeleteBuilder } from "./delete";
 import { Expression } from "../expressions/operators";
@@ -30,12 +30,6 @@ export class ConditionCheckBuilder<TEntity extends Entity> extends BaseBuilder<T
         return this._whereClause;
     }
 }
-
-export type TransactOperation = 
-    | { type: "put"; builder: InsertBase<any, any> }
-    | { type: "update"; builder: UpdateBuilder<any, any> }
-    | { type: "delete"; builder: DeleteBuilder<any, any> }
-    | { type: "conditionCheck"; builder: ConditionCheckBuilder<any> };
 
 export class TransactionProxy {
     constructor(private client: IMizzleClient) {}

@@ -5,6 +5,7 @@ export * from "./builders/insert";
 export * from "./builders/select";
 export * from "./builders/update";
 export * from "./builders/delete";
+export * from "./builders/transaction";
 export * from "./builders/batch-get";
 export * from "./builders/batch-write";
 export * from "./builders/relational-builder";

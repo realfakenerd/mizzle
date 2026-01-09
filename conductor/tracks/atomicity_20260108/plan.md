@@ -1,9 +1,9 @@
 # Plan: Atomicity - Transaction Builder
 
 ## Phase 1: Transaction API & Types
-- [ ] Task: Define Transactional Operation Types
+- [x] Task: Define Transactional Operation Types 4fc25f1
     - Create internal types for `TransactPut`, `TransactUpdate`, `TransactDelete`, and `TransactConditionCheck`.
-- [ ] Task: Create the `TransactionProxy` object
+- [~] Task: Create the `TransactionProxy` object
     - Implement the `tx` object passed to the callback, which provides the subset of builder methods compatible with transactions.
 - [ ] Task: Conductor - User Manual Verification 'Transaction API & Types' (Protocol in workflow.md)
 

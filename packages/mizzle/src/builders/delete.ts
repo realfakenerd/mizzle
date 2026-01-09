@@ -27,6 +27,11 @@ export class DeleteBuilder<
         return this;
     }
 
+    /** @internal */
+    get keys() {
+        return this._keys;
+    }
+
     override async execute(): Promise<TResult> {
         const resolution = this.resolveKeys(undefined, this._keys);
 

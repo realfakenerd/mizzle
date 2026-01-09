@@ -25,6 +25,8 @@ export class InsertBase<
     TEntity extends Entity,
     TResult = undefined,
 > extends BaseBuilder<TEntity, TResult> {
+    static readonly [ENTITY_SYMBOLS.ENTITY_KIND]: string = "InsertBase";
+
     private shouldReturnValues = false;
 
     constructor(
@@ -33,6 +35,11 @@ export class InsertBase<
         private valuesData: InferInsertModel<TEntity>,
     ) {
         super(entity, client);
+    }
+
+    /** @internal */
+    get values() {
+        return this.valuesData;
     }
 
     returning(): InsertBase<TEntity, InferInsertModel<TEntity>> {
