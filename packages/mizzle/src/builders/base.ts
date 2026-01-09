@@ -39,9 +39,15 @@ export abstract class BaseBuilder<
         let valueCount = 0;
 
         const addName = (name: string) => {
-            const placeholder = `#${prefix}n${nameCount++}`;
-            expressionAttributeNames[placeholder] = name;
-            return placeholder;
+            const segments = name.split(".");
+            const placeholders = segments.map(segment => {
+                // Check if we already mapped this name segment to avoid redundancy?
+                // Actually, simple counter is fine for now and safer against collisions.
+                const placeholder = `#${prefix}n${nameCount++}`;
+                expressionAttributeNames[placeholder] = segment;
+                return placeholder;
+            });
+            return placeholders.join(".");
         };
 
         const addValue = (value: unknown) => {
