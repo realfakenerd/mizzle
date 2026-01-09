@@ -6,9 +6,10 @@ import { DeleteBuilder } from "./delete";
 import { Expression } from "../expressions/operators";
 import { BaseBuilder } from "./base";
 import { IMizzleClient } from "../core/client";
-import { ENTITY_SYMBOLS } from "@mizzle/shared";
+import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "@mizzle/shared";
 import { buildExpression } from "../expressions/builder";
 import { buildUpdateExpressionString } from "../expressions/update-builder";
+import { TransactionFailedError } from "../core/errors";
 
 export class ConditionCheckBuilder<TEntity extends Entity> extends BaseBuilder<TEntity, void> {
     static readonly [ENTITY_SYMBOLS.ENTITY_KIND]: string = "ConditionCheckBuilder";
@@ -78,7 +79,21 @@ export class TransactionExecutor {
             ClientRequestToken: token,
         });
 
-        await this.client.send(command);
+        try {
+            await this.client.send(command);
+        } catch (error: any) {
+            if (error.name === "TransactionCanceledException" || error.__type?.includes("TransactionCanceledException")) {
+                const reasons = (error.CancellationReasons || []).map((reason: any, index: number) => ({
+                    index,
+                    code: reason.Code,
+                    message: reason.Message,
+                    item: reason.Item
+                })).filter((reason: any) => reason.code !== "None");
+                
+                throw new TransactionFailedError("Transaction canceled by server.", reasons);
+            }
+            throw error;
+        }
     }
 
     private mapToTransactItem(builder: any): any {
