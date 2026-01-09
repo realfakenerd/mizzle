@@ -37,6 +37,8 @@ export class SelectBase<
 
     private _whereClause?: Expression;
     private _limitVal?: number;
+    private _pageSizeVal?: number;
+    private _consistentReadVal?: boolean;
     private _sortForward: boolean = true;
     private _forcedIndexName?: string;
 
@@ -55,6 +57,16 @@ export class SelectBase<
 
     limit(val: number): this {
         this._limitVal = val;
+        return this;
+    }
+
+    pageSize(val: number): this {
+        this._pageSizeVal = val;
+        return this;
+    }
+
+    consistentRead(enabled: boolean = true): this {
+        this._consistentReadVal = enabled;
         return this;
     }
 
@@ -92,6 +104,7 @@ export class SelectBase<
         const command = new GetCommand({
             TableName: this.tableName,
             Key: keys,
+            ConsistentRead: this._consistentReadVal,
         });
 
         const result = await this.client.send(command);
@@ -123,8 +136,9 @@ export class SelectBase<
             FilterExpression: filterExpression || undefined,
             ExpressionAttributeNames: Object.keys(expressionAttributeNames).length > 0 ? expressionAttributeNames : undefined,
             ExpressionAttributeValues: Object.keys(expressionAttributeValues).length > 0 ? expressionAttributeValues : undefined,
-            Limit: this._limitVal,
+            Limit: this._pageSizeVal ?? this._limitVal,
             ScanIndexForward: this._sortForward,
+            ConsistentRead: resolution.indexName ? undefined : this._consistentReadVal,
         });
 
         const response = await this.client.send(command);
@@ -143,7 +157,8 @@ export class SelectBase<
             FilterExpression: filterExpression,
             ExpressionAttributeNames: Object.keys(expressionAttributeNames).length > 0 ? expressionAttributeNames : undefined,
             ExpressionAttributeValues: Object.keys(expressionAttributeValues).length > 0 ? expressionAttributeValues : undefined,
-            Limit: this._limitVal,
+            Limit: this._pageSizeVal ?? this._limitVal,
+            ConsistentRead: this._consistentReadVal,
         });
 
         const response = await this.client.send(command);

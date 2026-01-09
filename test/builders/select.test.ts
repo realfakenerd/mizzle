@@ -245,3 +245,68 @@ describe("Select Command with GSI", () => {
         ]));
     });
 });
+
+describe("Select Consistency and PageSize", () => {
+    const tableName = "TestTable_Consistency";
+    const table = dynamoTable(tableName, {
+        pk: string("pk"),
+        sk: string("sk"),
+    });
+
+    const user = dynamoEntity(
+        table,
+        "User",
+        {
+            id: uuid(),
+            name: string(),
+        },
+        (cols) => ({
+            pk: prefixKey("USER#", cols.id),
+            sk: staticKey("METADATA"),
+        }),
+    );
+
+    beforeAll(async () => {
+        try {
+            await client.send(new CreateTableCommand({
+                TableName: tableName,
+                KeySchema: [
+                    { AttributeName: "pk", KeyType: "HASH" },
+                    { AttributeName: "sk", KeyType: "RANGE" },
+                ],
+                AttributeDefinitions: [
+                    { AttributeName: "pk", AttributeType: "S" },
+                    { AttributeName: "sk", AttributeType: "S" },
+                ],
+                ProvisionedThroughput: { ReadCapacityUnits: 5, WriteCapacityUnits: 5 },
+            }));
+            await docClient.send(new PutCommand({ TableName: tableName, Item: { pk: "USER#1", sk: "METADATA", id: "1", name: "Alice" } }));
+        } catch { /* ignore */ }
+    });
+
+    afterAll(async () => {
+        try {
+            await client.send(new DeleteTableCommand({ TableName: tableName }));
+        } catch { /* ignore */ }
+    });
+
+    it("should allow consistentRead on Get", async () => {
+        const result = await mizzle(client).select().from(user).where(eq(user.id, "1")).consistentRead().execute();
+        expect(result).toHaveLength(1);
+    });
+
+    it("should allow consistentRead on Query", async () => {
+        const result = await mizzle(client).select().from(user).where(eq(user.id, "1")).consistentRead().execute();
+        expect(result).toHaveLength(1);
+    });
+
+    it("should allow consistentRead on Scan", async () => {
+        const result = await mizzle(client).select().from(user).consistentRead().execute();
+        expect(result).toHaveLength(1);
+    });
+
+    it("should respect pageSize hint", async () => {
+        const result = await mizzle(client).select().from(user).pageSize(1).execute();
+        expect(result).toHaveLength(1);
+    });
+});
