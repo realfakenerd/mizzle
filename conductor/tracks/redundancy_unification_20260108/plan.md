@@ -24,10 +24,10 @@ Consolidate `select.ts` and `query-builder.ts` into a unified query architecture
 - [x] Task: Remove packages/mizzle/src/builders/query-builder.ts and update all references to use the unified builder.
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Unified Query Architecture' (Protocol in workflow.md) 258ee3b
 
-## Phase 3: Column Organization Refactor
+## Phase 3: Column Organization Refactor [checkpoint: 1715062]
 Clean up and reorganize column exports to remove duplication and improve package structure.
 
-- [~] Task: Analyze current column file structure and identify optimal organization.
-- [~] Task: Refactor column source files and remove duplicate blocks in `packages/mizzle/src/columns/all.ts`.
-- [~] Task: Verify that all package-level exports and external imports remain functional.
-- [ ] Task: Conductor - User Manual Verification 'Phase 3: Column Organization Refactor' (Protocol in workflow.md)
+- [x] Task: Analyze current column file structure and identify optimal organization. 1715062
+- [x] Task: Refactor column source files and remove duplicate blocks in `packages/mizzle/src/columns/all.ts`. 1715062
+- [x] Task: Verify that all package-level exports and external imports remain functional. 1715062
+- [x] Task: Conductor - User Manual Verification 'Phase 3: Column Organization Refactor' (Protocol in workflow.md) 1715062
