@@ -1,4 +1,5 @@
 export interface BenchmarkItem {
+    id: string;
     pk: string;
     sk: string;
     name: string;
@@ -11,8 +12,10 @@ export interface BenchmarkItem {
 
 export class DataGenerator {
     generateItem(index: number): BenchmarkItem {
+        const id = String(index);
         return {
-            pk: `USER#${index}`,
+            id,
+            pk: `USER#${id}`,
             sk: "METADATA",
             name: `User ${index}`,
             email: `user${index}@example.com`,

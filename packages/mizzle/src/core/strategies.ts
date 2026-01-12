@@ -115,7 +115,7 @@ export function resolveStrategies(
     providedValues?: Record<string, unknown>,
     forcedIndexName?: string
 ): StrategyResolution {
-    const strategies = entity[ENTITY_SYMBOLS.ENTITY_STRATEGY] as unknown as Record<string, { pk: KeyStrategy, sk?: KeyStrategy }>;
+    const strategies = entity[ENTITY_SYMBOLS.ENTITY_STRATEGY] as unknown as Record<string, any>;
     const physicalTable = entity[ENTITY_SYMBOLS.PHYSICAL_TABLE] as any;
 
     const pkCol = physicalTable[TABLE_SYMBOLS.PARTITION_KEY] as Column;
@@ -197,7 +197,7 @@ export function resolveStrategies(
     }
 
     if (strategies.pk) {
-        const pkValue = resolveKeyStrategy(strategies.pk.pk, availableValues);
+        const pkValue = resolveKeyStrategy(strategies.pk, availableValues);
         if (pkValue) {
             result.keys[pkCol.name] = pkValue;
             result.hasPartitionKey = true;
@@ -205,7 +205,7 @@ export function resolveStrategies(
     }
 
     if (strategies.sk) {
-        const skValue = resolveKeyStrategy(strategies.sk.pk, availableValues);
+        const skValue = resolveKeyStrategy(strategies.sk, availableValues);
         if (skValue) {
             if (skCol) {
                 result.keys[skCol.name] = skValue;

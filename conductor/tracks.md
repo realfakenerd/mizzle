@@ -4,10 +4,10 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-## [~] Track: Type-safe Transaction Builder with explicit idempotency and structured error parsing.
-*Link: [./conductor/tracks/atomicity_20260108/](./conductor/tracks/atomicity_20260108/)*
+## [~] Track: Code documentation expansion (API references, internals, and guides)
+*Link: [./conductor/tracks/documentation_20260112/](./conductor/tracks/documentation_20260112/)*
 
 ---
 
-## [x] Track: Technical Debt & Type Safety Refinement: Expose JSON column and enforce strict type safety via ESLint (no-explicit-any).
-*Link: [./conductor/tracks/tech_debt_type_safety_20260108/](./conductor/tracks/tech_debt_type_safety_20260108/)*
+## [ ] Track: Date / Timestamp (date) Column Type
+*Link: [./conductor/tracks/date_column_20260112/](./conductor/tracks/date_column_20260112/)*
