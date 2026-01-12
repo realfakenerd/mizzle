@@ -34,9 +34,6 @@ export class BooleanColumnBuilder<
 export class BooleanColumn<
     T extends ColumnBaseConfig<"boolean", "BOOL">,
 > extends Column<T> {
-    getDynamoType(): string {
-        return "BOOL";
-    }
 }
 
 export function boolean(): BooleanColumnInitial<"">;

@@ -84,7 +84,9 @@ export abstract class Column<
         this.columnType = config.columnType as T["columnType"];
     }
 
-    abstract getDynamoType(): string;
+    getDynamoType(): string {
+        return this.columnType;
+    }
 
     mapFromDynamoValue(value: unknown): unknown {
         return value;

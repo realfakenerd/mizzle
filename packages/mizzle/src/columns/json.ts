@@ -37,10 +37,6 @@ export class JsonColumnBuilder<
 export class JsonColumn<
     T extends ColumnBaseConfig<"json", "S">,
 > extends Column<T> {
-    override getDynamoType(): string {
-        return "json";
-    }
-
     override mapToDynamoValue(value: T["data"]): string {
         return JSON.stringify(value);
     }

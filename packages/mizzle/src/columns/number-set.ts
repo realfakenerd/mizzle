@@ -38,9 +38,6 @@ export class NumberSetColumnBuilder<
 export class NumberSetColumn<
     T extends ColumnBaseConfig<"numberSet", "NS">,
 > extends Column<T> {
-    override getDynamoType(): string {
-        return "numberSet";
-    }
 }
 
 export function numberSet(): NumberSetColumnInitial<"">;

@@ -48,9 +48,6 @@ export class StringSetColumnBuilder<
 export class StringSetColumn<
     T extends ColumnBaseConfig<"string", "SS">,
 > extends Column<T> {
-    override getDynamoType(): string {
-        return "SS";
-    }
 }
 
 export function stringSet(): StringSetColumnInitial<"">;

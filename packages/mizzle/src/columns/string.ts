@@ -53,9 +53,6 @@ class StringColumnBuilder<
 export class StringColumn<
     T extends ColumnBaseConfig<"string", "S">,
 > extends Column<T> {
-    override getDynamoType(): string {
-        return "S";
-    }
 }
 
 export function string(): StringColumnInitial<"">;

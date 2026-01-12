@@ -37,9 +37,6 @@ export class MapColumnBuilder<
 export class MapColumn<
     T extends ColumnBaseConfig<"map", "M">,
 > extends Column<T> {
-    override getDynamoType(): string {
-        return "map";
-    }
 }
 
 export function map(): MapColumnInitial<"">;

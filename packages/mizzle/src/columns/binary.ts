@@ -37,9 +37,6 @@ export class BinaryColumnBuilder<
 export class BinaryColumn<
     T extends ColumnBaseConfig<"binary", "B">,
 > extends Column<T> {
-    override getDynamoType(): string {
-        return "binary";
-    }
 }
 
 export function binary(): BinaryBuilderInitial<"">;

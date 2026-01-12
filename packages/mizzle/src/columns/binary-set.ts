@@ -11,14 +11,14 @@ import {
 import type { AnyTable } from "../core/table";
 
 export type BinarySetColumnInitial<TName extends string> =
-    BinnarySetColumnBuilder<{
+    BinarySetColumnBuilder<{
         name: TName;
         dataType: "binarySet";
         columnType: "BS";
         data: Set<Uint8Array>;
     }>;
 
-export class BinnarySetColumnBuilder<
+export class BinarySetColumnBuilder<
     T extends ColumnBuilderBaseConfig<"binarySet", "BS">,
 > extends ColumnBuider<T> {
     constructor(name: T["name"]) {
@@ -27,7 +27,7 @@ export class BinnarySetColumnBuilder<
 
     override build<TTableName extends string>(
         table: AnyTable,
-    ): Column<MakeColumnConfig<T, TTableName>> {
+    ): BinarySetColumn<MakeColumnConfig<T, TTableName>> {
         return new BinarySetColumn<MakeColumnConfig<T, TTableName>>(
             table,
             this.config as any,
@@ -38,9 +38,6 @@ export class BinnarySetColumnBuilder<
 export class BinarySetColumn<
     T extends ColumnBaseConfig<"binarySet", "BS">,
 > extends Column<T> {
-    override getDynamoType(): string {
-        return "binarySet";
-    }
 }
 
 export function binarySet(): BinarySetColumnInitial<"">;
@@ -48,5 +45,5 @@ export function binarySet<TName extends string>(
     name: TName,
 ): BinarySetColumnInitial<TName>;
 export function binarySet(name?: string) {
-    return new BinnarySetColumnBuilder(name ?? "");
+    return new BinarySetColumnBuilder(name ?? "");
 }

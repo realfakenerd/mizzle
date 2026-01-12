@@ -46,9 +46,6 @@ export class NumberColumnBuilder<
 export class NumberColumn<
     T extends ColumnBaseConfig<"number", "N">,
 > extends Column<T> {
-    override getDynamoType(): string {
-        return "N";
-    }
 }
 
 export function number(): NumberColumnInitial<"">;

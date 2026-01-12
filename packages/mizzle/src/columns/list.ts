@@ -36,9 +36,6 @@ export class ListColumnBuilder<
 export class ListColumn<
     T extends ColumnBaseConfig<"array", "L">,
 > extends Column<T> {
-    override getDynamoType(): string {
-        return "array";
-    }
 }
 
 export function list(): ListColumnInitial<"">;

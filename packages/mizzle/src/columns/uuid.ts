@@ -40,9 +40,6 @@ export class UUIDColumnBuilder<
 export class UUIDColumn<
     T extends ColumnBaseConfig<"string", "S">,
 > extends Column<T> {
-    override getDynamoType(): string {
-        return "S";
-    }
 }
 
 export function uuid(): UUIDColumnInitial<"">;
