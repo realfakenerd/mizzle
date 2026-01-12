@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { ItemSizeExceededError } from "mizzle";
+import { ItemSizeExceededError } from "@aurios/mizzle";
 
 describe("ItemSizeExceededError", () => {
     it("should be an instance of Error", () => {

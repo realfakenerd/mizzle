@@ -3,7 +3,7 @@ import {
     saveSnapshot,
     loadSnapshot,
     type MizzleSnapshot,
-} from "mizzle/snapshot";
+} from "@aurios/mizzle/snapshot";
 import { mkdirSync, rmSync, existsSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";

@@ -9,7 +9,7 @@
     "@aws-sdk/node-http-handler": "^3.374.0",
     "dynamoose": "^4.0.4",
     "electrodb": "^3.5.3",
-    "mizzle": "workspace:*",
+    "@aurios/mizzle": "workspace:*",
     "tinybench": "^6.0.0"
   },
   "devDependencies": {

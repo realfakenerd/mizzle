@@ -14,7 +14,7 @@ Key Strategies are functions that define how your logical entity fields are mapp
 Used for keys that have a constant value for every item of a particular entity type.
 
 ```typescript
-import { staticKey } from "mizzle";
+import { staticKey } from "@aurios/mizzle";
 
 // SK will always be "METADATA" for this entity
 sk: staticKey("METADATA")
@@ -25,7 +25,7 @@ sk: staticKey("METADATA")
 Commonly used for Partition Keys to group entities while keeping them unique.
 
 ```typescript
-import { prefixKey } from "mizzle";
+import { prefixKey } from "@aurios/mizzle";
 
 // PK will be "USER#<id>"
 pk: prefixKey("USER#", cols.id)
@@ -36,7 +36,7 @@ pk: prefixKey("USER#", cols.id)
 Useful for Sort Keys where you want to hierarchical data or multiple attributes combined.
 
 ```typescript
-import { compositeKey } from "mizzle";
+import { compositeKey } from "@aurios/mizzle";
 
 // SK will be "ORG#<orgId>#DEPT#<deptId>"
 sk: compositeKey("#", "ORG", cols.orgId, "DEPT", cols.deptId)
@@ -47,7 +47,7 @@ sk: compositeKey("#", "ORG", cols.orgId, "DEPT", cols.deptId)
 When using Single-Table Design, your physical table usually has generic names for its keys.
 
 ```typescript
-import { dynamoTable, string } from "mizzle";
+import { dynamoTable, string } from "@aurios/mizzle";
 
 export const mainTable = dynamoTable("MainTable", {
   pk: string("pk"),
@@ -60,7 +60,7 @@ export const mainTable = dynamoTable("MainTable", {
 You can map multiple entities to the same `mainTable`.
 
 ```typescript
-import { dynamoEntity, uuid, string, prefixKey, staticKey } from "mizzle";
+import { dynamoEntity, uuid, string, prefixKey, staticKey } from "@aurios/mizzle";
 import { mainTable } from "./schema";
 
 // User Entity

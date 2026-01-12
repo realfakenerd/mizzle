@@ -67,7 +67,7 @@ The CLI relies on `mizzle.config.ts` to find your schema definitions and connect
 
 ```typescript
 // mizzle.config.ts
-import { defineConfig } from "mizzling";
+import { defineConfig } from "@aurios/mizzling";
 
 export default defineConfig({
   schema: "./src/db/schema.ts",

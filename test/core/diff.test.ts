@@ -1,7 +1,7 @@
 import { expect, test, describe } from "vitest";
-import { compareSchema } from "mizzle/diff";
-import { PhysicalTable } from "mizzle/table";
-import { type MizzleSnapshot } from "mizzle/snapshot";
+import { compareSchema } from "@aurios/mizzle/diff";
+import { PhysicalTable } from "@aurios/mizzle/table";
+import { type MizzleSnapshot } from "@aurios/mizzle/snapshot";
 import { TABLE_SYMBOLS, ENTITY_SYMBOLS } from "@mizzle/shared";
 
 // Mock helpers

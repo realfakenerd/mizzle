@@ -1,11 +1,11 @@
 import { describe, it, expect, vi } from "vitest";
 import { TransactionExecutor, ConditionCheckBuilder } from "../../packages/mizzle/src/builders/transaction";
-import { dynamoTable, dynamoEntity } from "mizzle/table";
-import { string, number } from "mizzle/columns";
+import { dynamoTable, dynamoEntity } from "@aurios/mizzle/table";
+import { string, number } from "@aurios/mizzle/columns";
 import type { IMizzleClient } from "../../packages/mizzle/src/core/client";
-import { mizzle } from "mizzle/db";
+import { mizzle } from "@aurios/mizzle/db";
 import { eq, and } from "../../packages/mizzle/src/expressions/operators";
-import { add, prefixKey } from "mizzle";
+import { add, prefixKey } from "@aurios/mizzle";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 
 describe("TransactionExecution Mapping", () => {

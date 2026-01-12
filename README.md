@@ -30,7 +30,7 @@ Key Strategies (like `prefixKey`) automatically handle the construction of PK/SK
 First, define the structure of your DynamoDB table. This matches your `Serverless.yml` or Terraform definition.
 
 ```ts
-import { dynamoTable, string } from "mizzle";
+import { dynamoTable, string } from "@aurios/mizzle";
 
 // Defines the physical table structure
 export const myTable = dynamoTable("MyDynamoTable", {
@@ -57,7 +57,7 @@ import {
     list,
     prefixKey,
     staticKey,
-} from "mizzle";
+} from "@aurios/mizzle";
 
 export const user = dynamoEntity(
     myTable,
@@ -84,7 +84,7 @@ export const user = dynamoEntity(
 
 ```ts
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { mizzle } from "mizzle";
+import { mizzle } from "@aurios/mizzle";
 
 const client = new DynamoDBClient({ region: "us-east-1" });
 const db = mizzle(client);
@@ -119,7 +119,7 @@ console.log(newUser.pk); // "USER#018c..."
 If you provide enough filters to resolve the Primary Key, Mizzle uses `GetItem`.
 
 ```ts
-import { eq } from "mizzle";
+import { eq } from "@aurios/mizzle";
 
 const result = await db.select().from(user).where(eq(user.id, newUser.id));
 // Returns an array with the user
@@ -181,7 +181,7 @@ Mizzle includes a CLI to manage your DynamoDB schema and track changes over time
 Create a `mizzle.config.ts` in your project root:
 
 ```ts
-import { defineConfig } from "mizzle";
+import { defineConfig } from "@aurios/mizzle";
 
 export default defineConfig({
     schema: "./schema.ts", // Path to your schema definitions

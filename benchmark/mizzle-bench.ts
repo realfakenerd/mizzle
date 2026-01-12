@@ -10,7 +10,7 @@ import {
     staticKey,
     eq,
     type DynamoDB
-} from "mizzle";
+} from "@aurios/mizzle";
 import { TABLE_NAME, REGION, ENDPOINT } from "./env";
 import type { BenchmarkItem } from "./data-gen";
 

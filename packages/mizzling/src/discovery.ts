@@ -1,5 +1,5 @@
 import { type MizzleConfig } from "./config";
-import { PhysicalTable, Entity } from "mizzle/table";
+import { PhysicalTable, Entity } from "@aurios/mizzle/table";
 import { TABLE_SYMBOLS, ENTITY_SYMBOLS } from "@mizzle/shared";
 import fg from "fast-glob";
 import { stat } from "fs/promises";

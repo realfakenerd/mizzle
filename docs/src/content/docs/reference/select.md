@@ -10,7 +10,7 @@ The `select` builder is used to retrieve data from your DynamoDB tables. It inte
 ```typescript
 import { db } from "./db";
 import { users } from "./schema";
-import { eq } from "mizzle";
+import { eq } from "@aurios/mizzle";
 
 const result = await db
   .select()

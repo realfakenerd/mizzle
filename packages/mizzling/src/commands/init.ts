@@ -61,7 +61,7 @@ export async function initCommand() {
     return;
   }
 
-  const configContent = `import { defineConfig } from "mizzle";
+  const configContent = `import { defineConfig } from "@aurios/mizzle";
 
 export default defineConfig({
   schema: "${schema}",

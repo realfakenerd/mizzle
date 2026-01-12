@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
-import { date } from "mizzle/columns";
-import { dynamoTable, dynamoEntity } from "mizzle/table";
-import { InsertBase, UpdateBuilder, eq, buildExpression } from "mizzle";
+import { date } from "@aurios/mizzle/columns";
+import { dynamoTable, dynamoEntity } from "@aurios/mizzle/table";
+import { InsertBase, UpdateBuilder, eq, buildExpression } from "@aurios/mizzle";
 
 describe("date column", () => {
     it("should define a date column", () => {

@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { json } from "mizzle/columns";
-import { dynamoTable, dynamoEntity } from "mizzle/table";
+import { json } from "@aurios/mizzle/columns";
+import { dynamoTable, dynamoEntity } from "@aurios/mizzle/table";
 
 describe("json column", () => {
   it("should define a json column", () => {

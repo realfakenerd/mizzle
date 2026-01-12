@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { dynamoTable, dynamoEntity } from "mizzle/table";
-import { string, uuid, number, list } from "mizzle/columns";
-import { prefixKey, staticKey, add, append, remove, ifNotExists } from "mizzle";
+import { dynamoTable, dynamoEntity } from "@aurios/mizzle/table";
+import { string, uuid, number, list } from "@aurios/mizzle/columns";
+import { prefixKey, staticKey, add, append, remove, ifNotExists } from "@aurios/mizzle";
 import { DynamoDBClient, CreateTableCommand, DeleteTableCommand } from "@aws-sdk/client-dynamodb";
-import { mizzle } from "mizzle/db";
+import { mizzle } from "@aurios/mizzle/db";
 import { eq } from "../packages/mizzle/src/expressions/operators";
 
 const client = new DynamoDBClient({

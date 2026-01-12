@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { dynamoTable, dynamoEntity } from "mizzle/table";
-import { string, uuid } from "mizzle/columns";
-import { prefixKey, staticKey } from "mizzle";
-import { defineRelations, extractMetadata } from "mizzle";
+import { dynamoTable, dynamoEntity } from "@aurios/mizzle/table";
+import { string, uuid } from "@aurios/mizzle/columns";
+import { prefixKey, staticKey } from "@aurios/mizzle";
+import { defineRelations, extractMetadata } from "@aurios/mizzle";
 import { ItemCollectionParser } from "../../packages/mizzle/src/core/parser";
 
 describe("ItemCollectionParser", () => {

@@ -9,49 +9,49 @@ export default defineConfig({
         singleFork: true,
         alias: [
             {
-                find: "mizzle/table",
+                find: "@aurios/mizzle/table",
                 replacement: path.resolve(
                     __dirname,
                     "./packages/mizzle/src/core/table",
                 ),
             },
             {
-                find: "mizzle/columns",
+                find: "@aurios/mizzle/columns",
                 replacement: path.resolve(
                     __dirname,
                     "./packages/mizzle/src/columns",
                 ),
             },
             {
-                find: "mizzle/db",
+                find: "@aurios/mizzle/db",
                 replacement: path.resolve(
                     __dirname,
                     "./packages/mizzle/src/db",
                 ),
             },
             {
-                find: "mizzle/introspection",
+                find: "@aurios/mizzle/introspection",
                 replacement: path.resolve(
                     __dirname,
                     "./packages/mizzle/src/core/introspection",
                 ),
             },
             {
-                find: "mizzle/snapshot",
+                find: "@aurios/mizzle/snapshot",
                 replacement: path.resolve(
                     __dirname,
                     "./packages/mizzle/src/core/snapshot",
                 ),
             },
             {
-                find: "mizzle/diff",
+                find: "@aurios/mizzle/diff",
                 replacement: path.resolve(
                     __dirname,
                     "./packages/mizzle/src/core/diff",
                 ),
             },
             {
-                find: "mizzle",
+                find: "@aurios/mizzle",
                 replacement: path.resolve(__dirname, "./packages/mizzle/src"),
             },
             {
@@ -62,7 +62,7 @@ export default defineConfig({
     },
     resolve: {
         alias: {
-            mizzle: path.resolve(__dirname, "./packages/mizzle/src"),
+            "@aurios/mizzle": path.resolve(__dirname, "./packages/mizzle/src"),
             "@mizzle/shared": path.resolve(__dirname, "./packages/shared/src"),
         },
     },

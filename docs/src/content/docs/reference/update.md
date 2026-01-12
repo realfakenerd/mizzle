@@ -10,7 +10,7 @@ The `update` builder provides a type-safe way to modify existing items in Dynamo
 ```typescript
 import { db } from "./db";
 import { users } from "./schema";
-import { eq } from "mizzle";
+import { eq } from "@aurios/mizzle";
 
 await db
   .update(users)

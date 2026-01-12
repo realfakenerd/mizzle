@@ -21,8 +21,8 @@ Transform Mizzle into a modular monorepo using Turborepo. This restructure separ
     - `packages/eslint-config`: Shared ESLint rules.
     - `packages/tsconfig`: Shared TypeScript base configurations.
 - **Subpath Exports:** Configure `packages/mizzle/package.json` with `exports` to allow:
-    - `import { ... } from "mizzle/columns"`
-    - `import { ... } from "mizzle/table"`
+    - `import { ... } from "@aurios/mizzle/columns"`
+    - `import { ... } from "@aurios/mizzle/table"`
 - **CLI Command:** Configure `packages/mizzling` to provide the `mizzling` binary.
 - **Workspace Management:** Use Bun workspaces and Turborepo.
 - **Centralized Testing:** Preserve root `test/` directory, testing all modular packages.
@@ -31,7 +31,7 @@ Transform Mizzle into a modular monorepo using Turborepo. This restructure separ
 - [ ] Repository structure reflects the defined package layout.
 - [ ] `turbo run build`, `turbo run test`, and `turbo run lint` execute correctly.
 - [ ] `packages/mizzling` and `packages/mizzle` successfully import from `packages/shared`.
-- [ ] A project can install `mizzle` and use `import { ... } from "mizzle/columns"`.
+- [ ] A project can install `mizzle` and use `import { ... } from "@aurios/mizzle/columns"`.
 - [ ] A project can run `mizzling` to manage migrations.
 - [ ] Turborepo caching is functional (verified by "cache hit").
 

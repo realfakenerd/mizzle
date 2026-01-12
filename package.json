@@ -35,7 +35,7 @@
         "@vitest/coverage-v8": "4.0.16",
         "eslint": "^8.57.1",
         "eslint-plugin-turbo": "latest",
-        "mizzle": "workspace:*",
+        "@aurios/mizzle": "workspace:*",
         "tsx": "^4.21.0",
         "turbo": "^2.7.3",
         "vitest": "^4.0.16"

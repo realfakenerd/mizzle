@@ -1,6 +1,6 @@
 import { expect, test, describe, vi } from "vitest";
 import { pushCommand } from "../../packages/mizzling/src/commands/push";
-import { PhysicalTable } from "mizzle/table";
+import { PhysicalTable } from "@aurios/mizzle/table";
 import { TABLE_SYMBOLS } from "@mizzle/shared";
 
 // Mock Clack

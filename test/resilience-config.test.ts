@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { mizzle, DynamoDB } from "mizzle/db";
+import { mizzle, DynamoDB } from "@aurios/mizzle/db";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 
 describe("Resilience Configuration", () => {

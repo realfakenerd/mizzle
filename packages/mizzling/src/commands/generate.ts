@@ -1,7 +1,7 @@
 import { type MizzleConfig } from "../config";
 import { discoverSchema } from "../discovery";
-import { loadSnapshot, saveSnapshot, generateSnapshot, getNextMigrationVersion } from "mizzle/snapshot";
-import { compareSchema, type SchemaChange } from "mizzle/diff";
+import { loadSnapshot, saveSnapshot, generateSnapshot, getNextMigrationVersion } from "@aurios/mizzle/snapshot";
+import { compareSchema, type SchemaChange } from "@aurios/mizzle/diff";
 import { join } from "path";
 import { writeFile, mkdir } from "fs/promises";
 import { existsSync } from "fs";
@@ -103,7 +103,7 @@ function generateMigrationScript(changes: SchemaChange[]): string {
         }
     }
 
-    return `import { Mizzle } from "mizzle";
+    return `import { Mizzle } from "@aurios/mizzle";
 
 export async function up(db: Mizzle) {
     ${upSteps.join("    ")}

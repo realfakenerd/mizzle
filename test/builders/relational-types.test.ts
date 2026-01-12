@@ -1,8 +1,8 @@
 import { describe, it, expectTypeOf } from "vitest";
-import { dynamoTable, dynamoEntity } from "mizzle/table";
-import { string, uuid } from "mizzle/columns";
-import { defineRelations } from "mizzle";
-import type { RelationalQueryOptions } from "mizzle";
+import { dynamoTable, dynamoEntity } from "@aurios/mizzle/table";
+import { string, uuid } from "@aurios/mizzle/columns";
+import { defineRelations } from "@aurios/mizzle";
+import type { RelationalQueryOptions } from "@aurios/mizzle";
 
 const table = dynamoTable("mizzle-test", {
     pk: string("pk"),

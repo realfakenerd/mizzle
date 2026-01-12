@@ -1,7 +1,7 @@
 import { expect, test, describe, beforeEach, afterEach, vi } from "vitest";
 import { generateCommand } from "../../packages/mizzling/src/commands/generate";
 import { pushCommand } from "../../packages/mizzling/src/commands/push";
-import { PhysicalTable } from "mizzle/table";
+import { PhysicalTable } from "@aurios/mizzle/table";
 import { TABLE_SYMBOLS } from "@mizzle/shared";
 import { mkdirSync, rmSync } from "fs";
 import { join } from "path";

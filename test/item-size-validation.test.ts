@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { mizzle, ItemSizeExceededError } from "mizzle";
+import { mizzle, ItemSizeExceededError } from "@aurios/mizzle";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "@mizzle/shared";

@@ -1,5 +1,5 @@
 import { expect, describe, it } from "vitest";
-import { getRemoteSnapshot } from "mizzle/introspection";
+import { getRemoteSnapshot } from "@aurios/mizzle/introspection";
 
 const createMockClient = (tables: any[]) => {
     return {

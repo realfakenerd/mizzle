@@ -27,7 +27,7 @@ In DynamoDB, you first need a physical table. Mizzle separates the definition of
 Create a `schema.ts` file:
 
 ```typescript
-import { dynamoTable, string } from "mizzle";
+import { dynamoTable, string } from "@aurios/mizzle";
 
 // This matches your actual DynamoDB table configuration
 export const myTable = dynamoTable("MyApplicationTable", {
@@ -41,7 +41,7 @@ export const myTable = dynamoTable("MyApplicationTable", {
 An Entity represents your data model (e.g., a User). You map the Entity to a Physical Table and define how its keys are generated.
 
 ```typescript
-import { dynamoEntity, string, uuid, number, prefixKey, staticKey } from "mizzle";
+import { dynamoEntity, string, uuid, number, prefixKey, staticKey } from "@aurios/mizzle";
 import { myTable } from "./schema";
 
 export const users = dynamoEntity(
@@ -68,7 +68,7 @@ Initialize the `mizzle` client by passing it an instance of the standard AWS `Dy
 
 ```typescript
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { mizzle } from "mizzle";
+import { mizzle } from "@aurios/mizzle";
 
 const client = new DynamoDBClient({ region: "us-east-1" });
 export const db = mizzle(client);
@@ -95,7 +95,7 @@ console.log(newUser.id); // The auto-generated UUID
 Mizzle intelligently routes your request to `GetItem`, `Query`, or `Scan` based on the filters you provide.
 
 ```typescript
-import { eq } from "mizzle";
+import { eq } from "@aurios/mizzle";
 
 // This will use GetItem because both PK and SK are fully resolved
 const user = await db.select()

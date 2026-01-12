@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { RetryHandler } from "../packages/mizzle/src/core/retry";
-import type { RetryConfig } from "mizzle";
+import type { RetryConfig } from "@aurios/mizzle";
 
 describe("RetryHandler", () => {
     const config: RetryConfig = {

@@ -3,8 +3,8 @@ import { TransactionProxy, ConditionCheckBuilder } from "../../packages/mizzle/s
 import { InsertBuilder } from "../../packages/mizzle/src/builders/insert";
 import { UpdateBuilder } from "../../packages/mizzle/src/builders/update";
 import { DeleteBuilder } from "../../packages/mizzle/src/builders/delete";
-import { dynamoTable, dynamoEntity } from "mizzle/table";
-import { string } from "mizzle/columns";
+import { dynamoTable, dynamoEntity } from "@aurios/mizzle/table";
+import { string } from "@aurios/mizzle/columns";
 import type { IMizzleClient } from "../../packages/mizzle/src/core/client";
 
 describe("TransactionProxy", () => {

@@ -10,7 +10,7 @@ While `select` provides high-level abstraction, the `query` builder (available v
 ```typescript
 import { db } from "./db";
 import { users } from "./schema";
-import { eq } from "mizzle";
+import { eq } from "@aurios/mizzle";
 
 const results = await db
   .query(users)

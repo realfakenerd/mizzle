@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { DynamoDBClient, CreateTableCommand, DeleteTableCommand, DescribeTableCommand } from "@aws-sdk/client-dynamodb";
-import { dynamoTable, dynamoEntity } from "mizzle/table";
-import { string, uuid } from "mizzle/columns";
-import { prefixKey, staticKey } from "mizzle";
-import { defineRelations } from "mizzle";
-import { mizzle } from "mizzle/db";
+import { dynamoTable, dynamoEntity } from "@aurios/mizzle/table";
+import { string, uuid } from "@aurios/mizzle/columns";
+import { prefixKey, staticKey } from "@aurios/mizzle";
+import { defineRelations } from "@aurios/mizzle";
+import { mizzle } from "@aurios/mizzle/db";
 import { gsi } from "../../packages/mizzle/src/indexes";
 
 const client = new DynamoDBClient({

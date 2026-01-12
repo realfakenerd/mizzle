@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { mizzle } from "mizzle";
+import { mizzle } from "@aurios/mizzle";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "@mizzle/shared";

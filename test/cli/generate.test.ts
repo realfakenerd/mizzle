@@ -7,7 +7,7 @@ import {
     vi,
 } from "vitest";
 import { generateCommand } from "../../packages/mizzling/src/commands/generate";
-import { PhysicalTable } from "mizzle/table";
+import { PhysicalTable } from "@aurios/mizzle/table";
 import { TABLE_SYMBOLS } from "@mizzle/shared";
 import { mkdirSync, rmSync, existsSync, readFileSync } from "fs";
 import { join } from "path";

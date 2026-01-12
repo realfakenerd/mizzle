@@ -1,6 +1,6 @@
 import { expect, test, describe, beforeEach, afterEach } from "vitest";
 import { discoverSchema } from "../../packages/mizzling/src/discovery";
-import { PhysicalTable, Entity } from "mizzle/table";
+import { PhysicalTable, Entity } from "@aurios/mizzle/table";
 import { writeFileSync, mkdirSync, rmSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";

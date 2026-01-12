@@ -5,8 +5,8 @@ import {
     saveSnapshot,
     loadSnapshot,
     type MizzleSnapshot,
-} from "mizzle/snapshot";
-import { PhysicalTable } from "mizzle/table";
+} from "@aurios/mizzle/snapshot";
+import { PhysicalTable } from "@aurios/mizzle/table";
 import { TABLE_SYMBOLS, ENTITY_SYMBOLS } from "@mizzle/shared";
 import { mkdirSync, rmSync, writeFileSync } from "fs";
 import { join } from "path";

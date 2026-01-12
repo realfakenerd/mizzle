@@ -14,7 +14,7 @@ Transactions allow you to perform "all-or-nothing" operations across multiple it
 ```typescript
 import { db } from "./db";
 import { users, accounts } from "./schema";
-import { add, eq } from "mizzle";
+import { add, eq } from "@aurios/mizzle";
 
 // Use a unique token (e.g., UUID) to ensure idempotency.
 // If you retry the request with the same token, DynamoDB won't execute it twice.
