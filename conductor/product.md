@@ -20,6 +20,8 @@ Mizzle is a light and type-safe ORM for DynamoDB built with TypeScript. It is de
 ## Key Features
 
 - **Fluent Query Builder:** A familiar `db.select()`, `db.update()`, and `db.delete()` API for intuitive data access and modification. Includes a high-level Expression Builder for updates with automatic reserved word safety and atomic helpers (`add`, `append`, `remove`, etc.).
+- **Native Date Support:** A first-class `date()` column type that handles automatic conversion between JavaScript `Date` objects and sortable ISO 8601 strings in DynamoDB.
+- **Automatic Timestamps:** Built-in `defaultNow()` and `onUpdateNow()` helpers for effortless `createdAt` and `updatedAt` field management.
 - **Auto-Pagination:** Effortless handling of large result sets via Async Iterators (`.iterator()`), abstracting away manual `LastEvaluatedKey` management while respecting limits and page size hints.
 - **Atomic Transactions:** A type-safe transaction builder (`db.transaction()`) for all-or-nothing operations across multiple items and tables, featuring explicit idempotency management and structured error parsing for cancellation reasons.
 - **Automatic Resilience:** Transparent handling of transient DynamoDB errors (throttling, 5xx) via exponential backoff and jitter.
