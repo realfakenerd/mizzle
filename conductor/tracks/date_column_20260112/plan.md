@@ -1,7 +1,7 @@
 # Implementation Plan: Date / Timestamp (date) Column Type
 
 ## Phase 1: Core Column Definition & Serialization
-- [ ] Task: Define `DateColumn` class and `date()` builder function
+- [~] Task: Define `DateColumn` class and `date()` builder function
     - [ ] Write tests for `date()` column serialization (Date/string/number input to ISO string storage)
     - [ ] Write tests for `date()` column deserialization (ISO string storage to Date object output)
     - [ ] Implement `DateColumn` logic and serialization/deserialization to pass tests

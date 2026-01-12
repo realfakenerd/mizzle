@@ -63,6 +63,7 @@ export abstract class Column<
     readonly notNull: boolean;
     readonly default: T["data"] | undefined;
     readonly defaultFn: () => T["data"] | undefined;
+    readonly onUpdateFn: () => T["data"] | undefined;
     readonly hasDefault: boolean;
     readonly dataType: T["dataType"];
     readonly columnType: T["columnType"];
@@ -79,6 +80,7 @@ export abstract class Column<
         this.notNull = config.notNull;
         this.default = config.default;
         this.defaultFn = config.defaultFn;
+        this.onUpdateFn = config.onUpdateFn;
         this.hasDefault = config.hasDefault;
         this.dataType = config.dataType;
         this.columnType = config.columnType as T["columnType"];

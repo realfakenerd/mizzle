@@ -138,6 +138,9 @@ export class InsertBase<
             }
 
             const finalValue = item[key];
+            item[key] = typeof (col as any).mapToDynamoValue === "function" 
+                ? (col as any).mapToDynamoValue(finalValue) 
+                : finalValue;
 
             if (["SS", "NS", "BS"].includes(col.columnType)) {
                 if (Array.isArray(finalValue)) {

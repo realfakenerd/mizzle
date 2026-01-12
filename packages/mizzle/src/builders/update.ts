@@ -38,13 +38,17 @@ export class UpdateBuilder<
     }
 
     set(values: Partial<{ [K in keyof InferInsertModel<TEntity>]: InferInsertModel<TEntity>[K] | UpdateAction }>): this {
-        partitionUpdateValues(values as Record<string, any>, this._state);
+        partitionUpdateValues(values as Record<string, any>, this._state, this.entity[ENTITY_SYMBOLS.COLUMNS] as Record<string, any>);
         return this;
     }
 
     add(values: Partial<InferInsertModel<TEntity>>): this {
+        const columns = this.entity[ENTITY_SYMBOLS.COLUMNS] as Record<string, any>;
         for (const [key, val] of Object.entries(values)) {
-            this._state.add[key] = val;
+            const col = columns[key];
+            this._state.add[key] = (col && typeof col.mapToDynamoValue === "function") 
+                ? col.mapToDynamoValue(val) 
+                : val;
         }
         return this;
     }
@@ -55,8 +59,12 @@ export class UpdateBuilder<
     }
 
     delete(values: Partial<InferInsertModel<TEntity>>): this {
+        const columns = this.entity[ENTITY_SYMBOLS.COLUMNS] as Record<string, any>;
         for (const [key, val] of Object.entries(values)) {
-            this._state.delete[key] = val;
+            const col = columns[key];
+            this._state.delete[key] = (col && typeof col.mapToDynamoValue === "function") 
+                ? col.mapToDynamoValue(val) 
+                : val;
         }
         return this;
     }
@@ -87,6 +95,16 @@ export class UpdateBuilder<
     }
 
     protected override async execute(): Promise<TResult> {
+        const columns = this.entity[ENTITY_SYMBOLS.COLUMNS] as Record<string, any>;
+        for (const [key, col] of Object.entries(columns)) {
+            if (col.onUpdateFn && !this._state.set[key] && !this._state.remove.includes(key)) {
+                const val = col.onUpdateFn();
+                this._state.set[key] = { 
+                    value: typeof col.mapToDynamoValue === "function" ? col.mapToDynamoValue(val) : val 
+                };
+            }
+        }
+
         const keys = this.resolveUpdateKeys();
 
         const { expressionAttributeNames, expressionAttributeValues, addName, addValue } = this.createExpressionContext("up_");

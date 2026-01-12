@@ -1,3 +1,4 @@
+import { type Column } from "../core/column";
 import { UpdateAction } from "./actions";
 
 export interface UpdateState {
@@ -18,30 +19,36 @@ export function createUpdateState(): UpdateState {
 
 export function partitionUpdateValues(
     values: Record<string, unknown | UpdateAction>,
-    state: UpdateState
+    state: UpdateState,
+    columns?: Record<string, Column>
 ): void {
     for (const [key, val] of Object.entries(values)) {
+        const col = columns?.[key];
+        const mapValue = (v: unknown) => (col && typeof (col as any).mapToDynamoValue === "function")
+            ? (col as any).mapToDynamoValue(v) 
+            : v;
+
         if (val instanceof UpdateAction) {
             switch (val.action) {
                 case "SET":
                     state.set[key] = {
-                        value: (val as any).value,
+                        value: mapValue((val as any).value),
                         functionName: (val as any).functionName,
                         usePathAsFirstArg: (val as any).usePathAsFirstArg,
                     };
                     break;
                 case "ADD":
-                    state.add[key] = (val as any).value;
+                    state.add[key] = mapValue((val as any).value);
                     break;
                 case "REMOVE":
                     state.remove.push(key);
                     break;
                 case "DELETE":
-                    state.delete[key] = (val as any).value;
+                    state.delete[key] = mapValue((val as any).value);
                     break;
             }
         } else if (val !== undefined) {
-            state.set[key] = { value: val };
+            state.set[key] = { value: mapValue(val) };
         }
     }
 }

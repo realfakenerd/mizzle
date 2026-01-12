@@ -1,6 +1,7 @@
 export { binary } from "./binary";
 export { binarySet } from "./binary-set";
 export { boolean } from "./boolean";
+export { date } from "./date";
 export { list } from "./list";
 export { map } from "./map";
 export { number } from "./number";
@@ -13,6 +14,7 @@ export { json } from "./json";
 import { binary } from "./binary";
 import { binarySet } from "./binary-set";
 import { boolean } from "./boolean";
+import { date } from "./date";
 import { json } from "./json";
 import { list } from "./list";
 import { map } from "./map";
@@ -27,6 +29,7 @@ export function getColumnBuilders() {
         binary,
         binarySet,
         boolean,
+        date,
         json,
         list,
         map,

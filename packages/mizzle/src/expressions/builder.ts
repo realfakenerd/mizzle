@@ -35,21 +35,24 @@ export function buildExpression(
             return undefined;
         }
         const colName = addName(cond.column.name);
+        const mapValue = (v: unknown) => typeof (cond.column as any).mapToDynamoValue === "function" 
+            ? (cond.column as any).mapToDynamoValue(v) 
+            : v;
 
         if (cond.operator === "between") {
             const valArray = cond.value as unknown[];
-            const valKey1 = addValue(valArray[0]);
-            const valKey2 = addValue(valArray[1]);
+            const valKey1 = addValue(mapValue(valArray[0]));
+            const valKey2 = addValue(mapValue(valArray[1]));
             return `${colName} BETWEEN ${valKey1} AND ${valKey2}`;
         }
 
         if (cond.operator === "in") {
             const valArray = cond.value as unknown[];
-            const valKeys = valArray.map((val) => addValue(val));
+            const valKeys = valArray.map((val) => addValue(mapValue(val)));
             return `${colName} IN (${valKeys.join(", ")})`;
         }
 
-        const valKey = addValue(cond.value);
+        const valKey = addValue(mapValue(cond.value));
         return `${colName} ${cond.operator} ${valKey}`;
     }
 
@@ -58,12 +61,15 @@ export function buildExpression(
             return undefined;
         }
         const colName = addName(cond.column.name);
+        const mapValue = (v: unknown) => typeof (cond.column as any).mapToDynamoValue === "function" 
+            ? (cond.column as any).mapToDynamoValue(v) 
+            : v;
 
         if (cond.operator === "attribute_exists") {
             return `attribute_exists(${colName})`;
         }
 
-        const valKey = addValue(cond.value);
+        const valKey = addValue(mapValue(cond.value));
         return `${cond.operator}(${colName}, ${valKey})`;
     }
 
