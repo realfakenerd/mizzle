@@ -1,43 +1,89 @@
 ---
-title: Relational Proxy & Parser
-description: How Mizzle fetches and assembles related data.
+title: Relational Proxy & Query Builder
+description: Deep dive into how Mizzle handles relational queries and the db.query proxy.
 ---
 
-Mizzle provides a powerful relational API (`db.query.users.findMany({ with: { posts: true } })`). Under the hood, this is powered by two key components: the **Relational Proxy** and the **ItemCollectionParser**.
+Mizzle provides a fluent, ORM-like API for querying relational data in DynamoDB. This is achieved through a combination of a JavaScript `Proxy` for dynamic access and a sophisticated `RelationalQueryBuilder` that handles the complexities of NoSQL data modeling, including Single-Table Design patterns.
 
-## The Challenge
+## The `db.query` Proxy
 
-DynamoDB is a NoSQL database. Unlike SQL, it doesn't have `JOIN`s. To simulate relational data fetching, Mizzle uses two strategies:
+The entry point for relational queries is `db.query`. Unlike traditional ORMs that might generate a fixed class with properties for each table, Mizzle uses a JavaScript `Proxy` to provide a dynamic API surface.
 
-1.  **Single-Table Optimization:** If the related items share the same Partition Key (PK), Mizzle fetches them all in a single request and reassembles them in memory.
-2.  **Recursive Fetching:** If the related items are in different partitions (e.g., accessed via a GSI or direct lookup), Mizzle performs parallel follow-up requests.
+When you initialize `mizzle`, you pass a `relations` schema:
 
-## 1. Item Collection Parser (Single-Table Design)
+```typescript
+const db = mizzle({ 
+  client, 
+  relations: { users, posts, comments } 
+});
+```
 
-When you query a Partition Key that contains multiple entity types (e.g., `PK=USER#123` contains the User profile AND their Posts), DynamoDB returns a flat list of items.
+Internally, `db.query` is initialized as a Proxy. When you access a property like `db.query.users`, the following happens:
 
-The `ItemCollectionParser` (in `packages/mizzle/src/core/parser.ts`) is responsible for turning this flat list into a nested object structure.
+1.  **Interception**: The Proxy's `get` trap intercepts the access to the property `"users"`.
+2.  **Schema Lookup**: It checks if `"users"` exists in the provided `relations` schema.
+3.  **Builder Instantiation**: If found, it instantiates and returns a new `RelationalQueryBuilder` for the `users` entity.
+4.  **Error Handling**: If the entity is not found in the schema, it throws a runtime error.
 
-### How it works:
+This approach allows `mizzle` to keep its runtime lightweight while providing full type safety via TypeScript generics.
 
-1.  **Identification:** The parser iterates through the raw items and checks each one against the defined `KeyStrategy` for every known entity in the schema.
-    - Does this item's `sk` start with "METADATA"? -> It's a User.
-    - Does this item's `sk` start with "POST#"? -> It's a Post.
-2.  **Separation:** It separates the "Primary" items (the ones you explicitly queried for) from the "Related" items.
-3.  **Association:** It loops through the primary items and attaches the related items based on the schema definition (One-to-One or One-to-Many).
+## Relational Query Builder
 
-## 2. Recursive Fetching (RelationalQueryBuilder)
+The `RelationalQueryBuilder` is responsible for executing queries and resolving relationships. It supports `findMany` and `findFirst` operations and handles the `with` (or `include`) option for fetching related data.
 
-If the data cannot be found in the same partition, the `RelationalQueryBuilder` (in `packages/mizzle/src/builders/relational-builder.ts`) takes over.
+### Execution Flow
 
-### The Algorithm:
+When you execute a query like:
 
-1.  **Primary Fetch:** Executes the initial query for the root entities.
-2.  **Inspection:** Checks the `with` or `include` options to see what relations are requested.
-3.  **Key Resolution:** For each relation:
-    - Extracts the necessary references from the parent item (e.g., `authorId` from a `Post`).
-    - Uses the `KeyStrategy` of the target entity to construct the lookup keys (e.g., `PK=USER#<authorId>`).
-4.  **Parallel Execution:** Triggers parallel `GetItem` or `Query` operations for the related data.
-5.  **Stitching:** Assigns the results back to the parent object.
+```typescript
+const user = await db.query.users.findFirst({
+  where: eq(users.id, "u1"),
+  with: {
+    posts: true
+  }
+});
+```
 
-This recursive process allows Mizzle to traverse deep graphs of data (e.g., User -> Posts -> Comments) efficiently, although developers should be mindful of the "N+1" query problem inherent in this approach for large datasets.
+The builder performs the following steps:
+
+1.  **Base Query**: It executes a standard DynamoDB query (or Scan/GetItem) for the root entity (in this case, `users`).
+2.  **Strategy Resolution**: It analyzes the query conditions to determine the most efficient access pattern (GetItem vs Query vs Scan) using `resolveStrategies`.
+
+### Single-Table Optimization
+
+One of Mizzle's most powerful features is its optimization for Single-Table Design.
+
+If the query targets a **Partition Key** (and no specific Index), Mizzle assumes you might be accessing an **Item Collection**.
+
+1.  **Item Collection Fetch**: Instead of just fetching the user, Mizzle modifies the query to fetch *all* items in that partition (e.g., `PK = "USER#u1"`).
+2.  **In-Memory Parsing**: It receives a raw list of items (User + Posts + Profiles, etc.) stored under that PK.
+3.  **ItemCollectionParser**: The `ItemCollectionParser` takes this mixed list and reconstructs the object graph. It filters for the requested entity (`User`) and automatically populates the requested relations (`posts`) if they were returned in the same query.
+
+This means that complex relational data can often be fetched in a **single network request**, preserving the efficiency of DynamoDB while providing the developer experience of a relational database.
+
+### Recursive Fetching (Cross-Partition)
+
+If the related data cannot be found in the same partition (e.g., a Many-to-Many relationship or a query that doesn't target the PK), Mizzle falls back to recursive fetching:
+
+1.  **Initial Fetch**: The root entities are fetched.
+2.  **Relation Mapping**: For each result, Mizzle calculates the keys required to fetch the related items.
+3.  **Parallel Execution**: It executes parallel queries for the related entities.
+4.  **Merging**: The results are merged into the final object graph.
+
+While this introduces "N+1" query characteristics (technically 1+N where N is the number of relations, parallelized), it handles the complexity of joining data across different partitions or tables automatically.
+
+## Internal Architecture
+
+### `extractMetadata`
+
+The `extractMetadata` function (in `core/relations.ts`) transforms the user-friendly schema definition into an optimized internal format. It links entities to their relation configurations, allowing the Query Builder to quickly look up target entities and foreign keys.
+
+### `resolveStrategies`
+
+Located in `core/strategies.ts`, this function is the "brain" of Mizzle's query planning. It looks at the `where` clause and the entity's definition (PKs, SKs, LSIs, GSIs) to decide:
+- Can I use `GetItem`?
+- Should I use `Query` on the table?
+- Should I use `Query` on a GSI?
+- Do I have to fallback to `Scan`?
+
+The `RelationalQueryBuilder` relies heavily on this strategy resolution to ensure that even complex relational traversals are executed as efficiently as possible on DynamoDB.
