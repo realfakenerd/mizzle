@@ -1,4 +1,3 @@
-#!/usr/bin/env bun
 import { Command } from "commander";
 import * as p from "@clack/prompts";
 import { loadConfig } from "./config";

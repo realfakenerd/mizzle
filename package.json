@@ -1,15 +1,12 @@
 {
     "name": "mizzle",
-    "module": "src/index.ts",
+    "private": true,
     "type": "module",
     "workspaces": [
         "packages/*",
         "docs",
         "benchmark"
     ],
-    "bin": {
-        "mizzle": "src/cli.ts"
-    },
     "scripts": {
         "build": "turbo run build",
         "test": "vitest run",

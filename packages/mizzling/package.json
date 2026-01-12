@@ -1,9 +1,16 @@
 {
   "name": "mizzling",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "bin": {
     "mizzling": "./dist/index.js"
+  },
+  "author": {
+    "name": "Lucas",
+    "url": "https://github.com/realfakenerd"
+  },
+  "repository": {
+    "url": "https://github.com/realfakenerd/mizzle"
   },
   "scripts": {
     "check": "tsc --noEmit",
