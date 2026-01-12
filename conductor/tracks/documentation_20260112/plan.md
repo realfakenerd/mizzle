@@ -9,7 +9,7 @@
 - [x] Task: Document Fluent Writes API in `docs/src/content/docs/reference/fluent-writes.md`. [42cf8ab]
 - [x] Task: Document Unified Select API in `docs/src/content/docs/reference/unified-select.md`. [7bb0e8e]
 - [x] Task: Document Transactions and Batch operations in `docs/src/content/docs/reference/transactions.md`. [0946ce5]
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: Public API Reference Documentation' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 2: Public API Reference Documentation' (Protocol in workflow.md) [checkpoint: 6c52de1]
 
 ## Phase 3: Internals and Architectural Guides
 - [ ] Task: Create Architectural Overview in `docs/src/content/docs/guides/architecture.md`.
