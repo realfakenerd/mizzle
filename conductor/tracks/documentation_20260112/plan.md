@@ -14,7 +14,7 @@
 ## Phase 3: Internals and Architectural Guides
 - [x] Task: Create Architectural Overview in `docs/src/content/docs/guides/architecture.md`. [64555d5]
 - [x] Task: Document Expression Builder internals in `docs/src/content/docs/internals/expression-builder.md`. [1b143e1]
-- [~] Task: Document Relational Proxy logic in `docs/src/content/docs/internals/relational-proxy.md`.
+- [x] Task: Document Relational Proxy logic in `docs/src/content/docs/internals/relational-proxy.md`. [372648a]
 - [ ] Task: Conductor - User Manual Verification 'Phase 3: Internals and Architectural Guides' (Protocol in workflow.md)
 
 ## Phase 4: Finalization and Verification
