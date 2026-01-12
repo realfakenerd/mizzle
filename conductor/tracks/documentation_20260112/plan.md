@@ -2,7 +2,7 @@
 
 ## Phase 1: Audit and Structure
 - [x] Task: Audit `packages/mizzle` and `packages/shared` for public API surfaces and internal logic candidates. [b26f7e8]
-- [ ] Task: Map existing code structures to the `docs/` site directory hierarchy.
+- [x] Task: Map existing code structures to the `docs/` site directory hierarchy. [9b8d597]
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: Audit and Structure' (Protocol in workflow.md)
 
 ## Phase 2: Public API Reference Documentation
