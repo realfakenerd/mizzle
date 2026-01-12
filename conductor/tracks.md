@@ -2,10 +2,6 @@
 
 This file tracks all major tracks for the project. Each track has its own detailed plan in its respective folder.
 
----
-
-## [x] Track: Code documentation expansion (API references, internals, and guides)
-*Link: [./conductor/tracks/documentation_20260112/](./conductor/tracks/documentation_20260112/)*
 
 ---
 
