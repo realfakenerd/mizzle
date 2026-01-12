@@ -18,7 +18,7 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 3: Internals and Architectural Guides' (Protocol in workflow.md) [checkpoint: 9f4abab]
 
 ## Phase 4: Finalization and Verification
-- [ ] Task: Update `astro.config.mjs` or sidebar configuration to include new pages.
+- [x] Task: Update `astro.config.mjs` or sidebar configuration to include new pages. [e59f7f1]
 - [ ] Task: Run local documentation server and verify all new links and rendering.
 - [ ] Task: Fix any broken links or formatting issues.
 - [ ] Task: Conductor - User Manual Verification 'Phase 4: Finalization and Verification' (Protocol in workflow.md)
