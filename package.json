@@ -20,7 +20,9 @@
         "lint": "turbo run lint && bun run lint:root",
         "check:turbo": "turbo run check check:root",
         "lint:turbo": "turbo run lint lint:root",
-        "lint:root": "eslint \"test/**/*.ts\""
+        "lint:root": "eslint \"test/**/*.ts\"",
+        "release": "turbo run build && changeset publish",
+        "version": "changeset version"
     },
     "packageManager": "bun@1.3.5",
     "devDependencies": {
