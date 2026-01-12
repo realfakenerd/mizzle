@@ -32,7 +32,7 @@ export class UUIDColumnBuilder<
     ): UUIDColumn<MakeColumnConfig<T, TTableName>> {
         return new UUIDColumn<MakeColumnConfig<T, TTableName>>(
             table,
-            this.config as ColumnBuilderRuntimeConfig<T["data"], object>,
+            this.config as any,
         );
     }
 }

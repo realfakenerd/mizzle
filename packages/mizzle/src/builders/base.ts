@@ -18,7 +18,7 @@ export abstract class BaseBuilder<
     }
 
     public get tableName(): string {
-        return resolveTableName(this.entity);
+        return resolveTableName(this.entity as any);
     }
 
     protected get physicalTable() {
@@ -28,8 +28,9 @@ export abstract class BaseBuilder<
     protected resolveKeys(
         whereClause?: Expression,
         providedValues?: Record<string, unknown>,
+        indexName?: string,
     ): StrategyResolution {
-        return resolveStrategies(this.entity, whereClause, providedValues);
+        return resolveStrategies(this.entity, whereClause, providedValues, indexName);
     }
 
     protected createExpressionContext(prefix = "") {

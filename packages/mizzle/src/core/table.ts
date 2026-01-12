@@ -199,7 +199,7 @@ export function dynamoEntity<
     columns: TColumnsMap | ((columnsTypes: ColumnsBuilder) => TColumnsMap),
     strategies?: StrategyCallback<
         BuildColumns<TName, TColumnsMap>,
-        TTable["_"]
+        TTable["_"]["config"]
     >,
 ): EntityWithColumns<{
     name: TName;

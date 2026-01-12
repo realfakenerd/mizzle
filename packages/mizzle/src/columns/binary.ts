@@ -24,12 +24,12 @@ export class BinaryColumnBuilder<
         super(name, "binary", "B");
     }
 
-    override build<TTableName extends string>(
+    build<TTableName extends string>(
         table: AnyTable,
-    ): Column<MakeColumnConfig<T, TTableName>> {
+    ): BinaryColumn<MakeColumnConfig<T, TTableName>> {
         return new BinaryColumn<MakeColumnConfig<T, TTableName>>(
             table,
-            this.config as ColumnRuntimeConfig<T["data"], object>,
+            this.config as any,
         );
     }
 }

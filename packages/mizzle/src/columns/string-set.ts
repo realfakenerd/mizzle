@@ -35,12 +35,12 @@ export class StringSetColumnBuilder<
         return this as HasDefault<this>;
     }
 
-    override build<TTableName extends string>(
+    build<TTableName extends string>(
         table: AnyTable,
-    ): Column<MakeColumnConfig<T, TTableName>> {
+    ): StringSetColumn<MakeColumnConfig<T, TTableName>> {
         return new StringSetColumn<MakeColumnConfig<T, TTableName>>(
             table,
-            this.config as ColumnRuntimeConfig<T["data"], object>,
+            this.config as any,
         );
     }
 }

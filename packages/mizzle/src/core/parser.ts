@@ -72,7 +72,7 @@ export class ItemCollectionParser {
             string,
             KeyStrategy
         >;
-        const physicalTable = entity[ENTITY_SYMBOLS.PHYSICAL_TABLE];
+        const physicalTable = entity[ENTITY_SYMBOLS.PHYSICAL_TABLE] as any;
 
         const pkName = (physicalTable[TABLE_SYMBOLS.PARTITION_KEY] as Column).name;
         const skName = (physicalTable[TABLE_SYMBOLS.SORT_KEY] as Column | undefined)

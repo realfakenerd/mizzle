@@ -128,7 +128,7 @@ export function extractMetadata(schema: Record<string, unknown>): InternalRelati
 
     // Second pass: identify relations
     for (const [, value] of Object.entries(schema)) {
-        if (value && value[RELATION_SYMBOLS.RELATION_CONFIG]) {
+        if (value && (value as any)[RELATION_SYMBOLS.RELATION_CONFIG]) {
             const definition = value as RelationsDefinition;
             // Find the key for this entity in the metadata
             const entityEntry = Object.entries(metadata.entities).find(

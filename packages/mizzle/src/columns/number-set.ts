@@ -25,12 +25,12 @@ export class NumberSetColumnBuilder<
         super(name, "numberSet", "NS");
     }
 
-    override build<TTableName extends string>(
+    build<TTableName extends string>(
         table: AnyTable,
-    ): Column<MakeColumnConfig<T, TTableName>> {
+    ): NumberSetColumn<MakeColumnConfig<T, TTableName>> {
         return new NumberSetColumn<MakeColumnConfig<T, TTableName>>(
             table,
-            this.config as ColumnRuntimeConfig<T["data"], object>,
+            this.config as any,
         );
     }
 }

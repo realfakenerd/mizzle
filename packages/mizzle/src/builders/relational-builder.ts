@@ -92,7 +92,10 @@ export class RelationnalQueryBuilder<T extends Entity> {
 
                 if (this.schema && this.entityName && (options.with || options.include) && resolution.hasPartitionKey && !resolution.indexName) {
                         const physicalTable = this.table[ENTITY_SYMBOLS.PHYSICAL_TABLE];
-                        const pkPhysicalName = (physicalTable[TABLE_SYMBOLS.PARTITION_KEY] as Column).name;
+                        // If we are here, we should have a physical table
+                        if (!physicalTable) throw new Error("Physical table not found for entity");
+                        
+                        const pkPhysicalName = ((physicalTable as any)[TABLE_SYMBOLS.PARTITION_KEY] as Column).name;
                         
                         const pkValue = resolution.keys[pkPhysicalName];
 
@@ -127,7 +130,10 @@ export class RelationnalQueryBuilder<T extends Entity> {
                         
                         await Promise.all(results.map(async (result) => {
                                 for (const [relName, relOptions] of Object.entries(relationsToFetch)) {
-                                        const relation = this.schema!.entities[this.entityName!].relations[relName];
+                                        const entityConfig = this.schema!.entities[this.entityName!];
+                                        if (!entityConfig) continue;
+
+                                        const relation = entityConfig.relations[relName];
                                         if (!relation) continue;
 
                                         // If already populated AND no nested relations requested, skip.
@@ -148,6 +154,8 @@ export class RelationnalQueryBuilder<T extends Entity> {
                                                 const mappedValues: Record<string, unknown> = {};
                                                 relation.config.fields.forEach((fieldCol, idx) => {
                                                         const refCol = relation.config.references![idx];
+                                                        if (!refCol) return;
+
                                                         const targetLogicalEntry = Object.entries(targetEntity[ENTITY_SYMBOLS.COLUMNS] as Record<string, Column>)
                                                                 .find(([_, c]) => c === refCol || c.name === refCol.name);
                                                         

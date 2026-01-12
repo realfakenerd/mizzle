@@ -23,12 +23,12 @@ export class ListColumnBuilder<
     constructor(name: T["name"]) {
         super(name, "array", "L");
     }
-    override build<TTableName extends string>(
+    build<TTableName extends string>(
         table: AnyTable,
-    ): Column<MakeColumnConfig<T, TTableName>> {
+    ): ListColumn<MakeColumnConfig<T, TTableName>> {
         return new ListColumn<MakeColumnConfig<T, TTableName>>(
             table,
-            this.config as ColumnRuntimeConfig<T["data"], object>,
+            this.config as any,
         );
     }
 }

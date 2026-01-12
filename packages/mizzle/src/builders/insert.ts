@@ -55,9 +55,9 @@ export class InsertBase<
         const finalItem: Record<string, unknown> = { ...itemToSave, ...resolution.keys };
 
         // Also resolve GSI keys if they are defined in strategies but not in resolution.keys
-        const strategies = this.entity[ENTITY_SYMBOLS.ENTITY_STRATEGY] as Record<string, { pk: KeyStrategy, sk?: KeyStrategy }>;
+        const strategies = this.entity[ENTITY_SYMBOLS.ENTITY_STRATEGY] as unknown as Record<string, { pk: KeyStrategy, sk?: KeyStrategy }>;
         const physicalTable = this.entity[ENTITY_SYMBOLS.PHYSICAL_TABLE];
-        const indexes = physicalTable[TABLE_SYMBOLS.INDEXES] || {};
+        const indexes = (physicalTable as any)?.[TABLE_SYMBOLS.INDEXES] || {};
 
         for (const [indexName, strategy] of Object.entries(strategies)) {
             if (indexName === "pk" || indexName === "sk") continue;
@@ -128,6 +128,8 @@ export class InsertBase<
 
         for (const key in columns) {
             const col = columns[key];
+            if (!col) continue;
+
             const value = item[key];
 
             if (value === undefined) {

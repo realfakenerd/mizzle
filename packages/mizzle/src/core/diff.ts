@@ -36,12 +36,12 @@ export function compareSchema(current: SchemaCurrent, snapshot: MizzleSnapshot):
 function areSnapshotsEqual(a: TableSnapshot, b: TableSnapshot): boolean {
     const sortSnapshot = (s: TableSnapshot) => {
         const copy = { ...s };
-        copy.AttributeDefinitions = [...(copy.AttributeDefinitions || [])].sort((x, y) => x.AttributeName.localeCompare(y.AttributeName));
+        copy.AttributeDefinitions = [...(copy.AttributeDefinitions || [])].sort((x, y) => (x.AttributeName || "").localeCompare(y.AttributeName || ""));
         if (copy.GlobalSecondaryIndexes) {
-            copy.GlobalSecondaryIndexes = [...copy.GlobalSecondaryIndexes].sort((x, y) => x.IndexName.localeCompare(y.IndexName));
+            copy.GlobalSecondaryIndexes = [...copy.GlobalSecondaryIndexes].sort((x, y) => (x.IndexName || "").localeCompare(y.IndexName || ""));
         }
         if (copy.LocalSecondaryIndexes) {
-            copy.LocalSecondaryIndexes = [...copy.LocalSecondaryIndexes].sort((x, y) => x.IndexName.localeCompare(y.IndexName));
+            copy.LocalSecondaryIndexes = [...copy.LocalSecondaryIndexes].sort((x, y) => (x.IndexName || "").localeCompare(y.IndexName || ""));
         }
         return copy;
     }

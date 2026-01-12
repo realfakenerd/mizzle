@@ -24,12 +24,12 @@ export class MapColumnBuilder<
         super(name, "map", "M");
     }
 
-    override build<TTableName extends string>(
+    build<TTableName extends string>(
         table: AnyTable,
-    ): Column<MakeColumnConfig<T, TTableName>> {
+    ): MapColumn<MakeColumnConfig<T, TTableName>> {
         return new MapColumn<MakeColumnConfig<T, TTableName>>(
             table,
-            this.config as ColumnRuntimeConfig<T["data"], object>,
+            this.config as any,
         );
     }
 }

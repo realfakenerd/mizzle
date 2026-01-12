@@ -9,13 +9,13 @@ import type { SelectedFields as SelectedFieldsBase } from "../core/operations";
 import { 
     type Expression,
 } from "../expressions/operators";
-import { Entity, type InferSelectModel } from "../core/table";
+import { Entity, type InferSelectModel, type PhysicalTable } from "../core/table";
 import { BaseBuilder } from "./base";
 import type { StrategyResolution } from "../core/strategies";
 import type { IMizzleClient } from "../core/client";
 import { buildExpression } from "../expressions/builder";
 
-export type SelectedFields = SelectedFieldsBase<Column>;
+export type SelectedFields = SelectedFieldsBase<Column, PhysicalTable>;
 
 export class SelectBuilder<TSelection extends SelectedFields | undefined> {
     constructor(
@@ -165,7 +165,7 @@ export class SelectBase<
 
         const response = await this.client.send(command);
         return {
-            items: (response.Items || []).map(item => this.mapToLogical(item)) as TResult[],
+            items: (response.Items || []).map((item: any) => this.mapToLogical(item)) as TResult[],
             lastEvaluatedKey: response.LastEvaluatedKey,
         };
     }
@@ -189,7 +189,7 @@ export class SelectBase<
 
         const response = await this.client.send(command);
         return {
-            items: (response.Items || []).map(item => this.mapToLogical(item)) as TResult[],
+            items: (response.Items || []).map((item: any) => this.mapToLogical(item)) as TResult[],
             lastEvaluatedKey: response.LastEvaluatedKey,
         };
     }

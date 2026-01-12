@@ -45,7 +45,7 @@ class StringColumnBuilder<
     ): StringColumn<MakeColumnConfig<T, TTableName>> {
         return new StringColumn<MakeColumnConfig<T, TTableName>>(
             table,
-            this.config as ColumnRuntimeConfig<T["data"], object>,
+            this.config as any,
         );
     }
 }

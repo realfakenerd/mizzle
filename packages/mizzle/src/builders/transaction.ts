@@ -5,7 +5,7 @@ import { UpdateBuilder } from "./update";
 import { DeleteBuilder } from "./delete";
 import { Expression } from "../expressions/operators";
 import { BaseBuilder } from "./base";
-import { IMizzleClient } from "../core/client";
+import type { IMizzleClient } from "../core/client";
 import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "@mizzle/shared";
 import { buildExpression } from "../expressions/builder";
 import { buildUpdateExpressionString } from "../expressions/update-builder";

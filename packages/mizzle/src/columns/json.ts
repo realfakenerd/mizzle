@@ -24,13 +24,12 @@ export class JsonColumnBuilder<
         super(name, "json", "S");
     }
 
-    /** @internal */
-    override build<TTableName extends string>(
+    build<TTableName extends string>(
         table: AnyTable,
-    ): Column<MakeColumnConfig<T, TTableName>> {
+    ): JsonColumn<MakeColumnConfig<T, TTableName>> {
         return new JsonColumn<MakeColumnConfig<T, TTableName>>(
             table,
-            this.config as ColumnRuntimeConfig<T["data"], object>,
+            this.config as any,
         );
     }
 }

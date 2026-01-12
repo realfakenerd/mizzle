@@ -33,13 +33,12 @@ export class NumberColumnBuilder<
         return this;
     }
 
-    /** @internal */
-    override build<TTableName extends string>(
+    build<TTableName extends string>(
         table: AnyTable,
     ): NumberColumn<MakeColumnConfig<T, TTableName>> {
         return new NumberColumn<MakeColumnConfig<T, TTableName>>(
             table,
-            this.config as ColumnBuilderRuntimeConfig<T["data"], object>,
+            this.config as any,
         );
     }
 }
