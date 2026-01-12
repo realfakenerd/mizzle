@@ -95,14 +95,18 @@ const db = mizzle(client);
 Mizzle automatically resolves the PK and SK based on your strategy and the data provided.
 
 ```ts
-const newUser = await db.insert(user).values({
-    name: "Alice",
-    email: "alice@example.com",
-    age: 30,
-    isActive: true,
-    tags: ["typescript", "dynamodb"],
-    // 'id' is auto-generated!
-}).returning().execute();
+const newUser = await db
+    .insert(user)
+    .values({
+        name: "Alice",
+        email: "alice@example.com",
+        age: 30,
+        isActive: true,
+        tags: ["typescript", "dynamodb"],
+        // 'id' is auto-generated!
+    })
+    .returning()
+    .execute();
 
 console.log(newUser.id); // e.g., "018c..."
 console.log(newUser.pk); // "USER#018c..."
@@ -111,6 +115,7 @@ console.log(newUser.pk); // "USER#018c..."
 ### 5. Select Data
 
 #### Get Item (By Primary Key)
+
 If you provide enough filters to resolve the Primary Key, Mizzle uses `GetItem`.
 
 ```ts
@@ -121,6 +126,7 @@ const result = await db.select().from(user).where(eq(user.id, newUser.id));
 ```
 
 #### Query (By Partition Key or Index)
+
 If you provide the Partition Key (and optionally Sort Key), Mizzle uses `Query`.
 
 ```ts
@@ -129,6 +135,7 @@ const admins = await db.select().from(user).where(eq(user.role, "admin"));
 ```
 
 #### Scan
+
 If no keys can be resolved, Mizzle defaults to a `Scan` (use with caution!).
 
 ```ts
@@ -140,7 +147,8 @@ const allUsers = await db.select().from(user).execute();
 Update items using a fluent builder with support for `set`, `add`, `remove`, and `delete` (for sets).
 
 ```ts
-await db.update(user)
+await db
+    .update(user)
     .set({ name: "Alice Smith" })
     .add({ age: 1 }) // Increment age
     .where(eq(user.id, "018c..."))
@@ -151,17 +159,18 @@ await db.update(user)
 
 Mizzle supports a wide range of DynamoDB types:
 
-*   `string()`: `S`
-*   `number()`: `N`
-*   `boolean()`: `BOOL`
-*   `uuid()`: `S` (Auto-generating UUID v7)
-*   `list(type)`: `L`
-*   `map({ ... })`: `M`
-*   `stringSet()`: `SS`
-*   `numberSet()`: `NS`
-*   `binary()`: `B`
-*   `binarySet()`: `BS`
-*   `json()`: `S` (Serialized JSON)
+- `string()`: `S`
+- `number()`: `N`
+- `boolean()`: `BOOL`
+- `uuid()`: `S` (Auto-generating UUID v7)
+- `list(type)`: `L`
+- `map({ ... })`: `M`
+- `stringSet()`: `SS`
+- `numberSet()`: `NS`
+- `binary()`: `B`
+- `binarySet()`: `BS`
+- `json()`: `S` (Serialized JSON)
+- `date()`: `S` (ISO 8601 String)
 
 ## CLI & Migrations
 
@@ -175,35 +184,35 @@ Create a `mizzle.config.ts` in your project root:
 import { defineConfig } from "mizzle";
 
 export default defineConfig({
-  schema: "./schema.ts",      // Path to your schema definitions
-  out: "./migrations",       // Where to store snapshots and scripts
-  region: "us-east-1",       // Optional: Target AWS region
-  endpoint: "http://localhost:8000" // Optional: For local development
+    schema: "./schema.ts", // Path to your schema definitions
+    out: "./migrations", // Where to store snapshots and scripts
+    region: "us-east-1", // Optional: Target AWS region
+    endpoint: "http://localhost:8000", // Optional: For local development
 });
 ```
 
 ### 2. Commands
 
 - **`generate`**: Scans your schema and creates a new migration if changes are detected.
-  ```bash
-  bun x mizzle generate --name add_users_table
-  ```
+    ```bash
+    bun x mizzle generate --name add_users_table
+    ```
 - **`push`**: Directly syncs your local schema with the remote DynamoDB environment.
-  ```bash
-  bun x mizzle push --yes
-  ```
+    ```bash
+    bun x mizzle push --yes
+    ```
 - **`list`**: Lists all tables in your DynamoDB environment with their keys and indexes.
-  ```bash
-  bun x mizzle list
-  ```
+    ```bash
+    bun x mizzle list
+    ```
 - **`drop`**: Interactively select and delete tables from the remote environment.
-  ```bash
-  bun x mizzle drop
-  ```
+    ```bash
+    bun x mizzle drop
+    ```
 
 ## Roadmap
 
-- [x] **Core Types:** String, Number, Boolean, UUID, List, Map, Sets.
+- [x] **Core Types:** String, Number, Boolean, UUID, List, Map, Sets, Date.
 - [x] **Insert Operation:** Type-safe insertion with auto-generated keys.
 - [x] **Select Operation:** Intelligent routing to GetItem, Query, or Scan.
 - [x] **Key Strategies:** Prefix, Static, and Composite keys.
@@ -212,4 +221,5 @@ export default defineConfig({
 - [x] **Delete Operation:** Fluent builder for `DeleteItem`.
 - [x] **Relational Queries:** `db.query.users.findMany({ with: { posts: true } })`.
 - [x] **Migration Tools:** CLI for managing table creation/updates.
-- [ ] **Transactions:** `TransactWriteItems` support.
+- [x] **Transactions:** `TransactWriteItems` and `TransactGetItems` support.
+- [ ] **Middleware:** Global hooks for before/after operations.

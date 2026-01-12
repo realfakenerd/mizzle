@@ -26,6 +26,7 @@
     "devDependencies": {
         "@aws-sdk/client-dynamodb": "3.962.0",
         "@aws-sdk/lib-dynamodb": "3.962.0",
+        "@changesets/cli": "^2.29.8",
         "@mizzle/eslint-config": "workspace:*",
         "@mizzle/shared": "workspace:*",
         "@mizzle/tsconfig": "workspace:*",

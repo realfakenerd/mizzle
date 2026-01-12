@@ -23,7 +23,7 @@ export class BatchWriteBuilder {
     }
 }
 
-class BatchWriteBase<
+export class BatchWriteBase<
     TEntity extends Entity,
 > extends BaseBuilder<TEntity, BatchWriteResult<InferInsertModel<TEntity>>> {
     static readonly [ENTITY_SYMBOLS.ENTITY_KIND]: string = "BatchWriteBase";

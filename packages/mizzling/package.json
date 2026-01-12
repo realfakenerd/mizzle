@@ -1,13 +1,13 @@
 {
   "name": "mizzling",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "type": "module",
   "bin": {
-    "mizzling": "./src/index.ts"
+    "mizzling": "./dist/index.js"
   },
   "scripts": {
     "check": "tsc --noEmit",
-    "build": "tsc --noEmit false --allowImportingTsExtensions false",
+    "build": "tsup",
     "lint": "eslint \"src/**/*.ts\""
   },
   "dependencies": {
@@ -15,14 +15,15 @@
     "@aws-sdk/credential-provider-ini": "3.962.0",
     "@aws-sdk/lib-dynamodb": "3.962.0",
     "@clack/prompts": "^0.11.0",
-    "@mizzle/shared": "workspace:*",
     "@smithy/node-http-handler": "^4.4.7",
     "commander": "^14.0.2",
-    "fast-glob": "^3.3.3",
-    "mizzle": "workspace:*"
+    "fast-glob": "^3.3.3"
   },
   "devDependencies": {
+    "@mizzle/eslint-config": "workspace:*",
+    "@mizzle/shared": "workspace:*",
     "@mizzle/tsconfig": "workspace:*",
-    "@mizzle/eslint-config": "workspace:*"
+    "mizzle": "workspace:*",
+    "tsup": "^8.5.1"
   }
 }

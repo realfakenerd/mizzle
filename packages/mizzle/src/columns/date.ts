@@ -7,6 +7,8 @@ import {
     ColumnBuider,
     type ColumnBuilderBaseConfig,
     type MakeColumnConfig,
+    type HasDefault,
+    type HasRuntimeDefault,
 } from "../core/column-builder";
 import type { AnyTable } from "../core/table";
 
@@ -25,11 +27,11 @@ export class DateColumnBuilder<
     }
 
     defaultNow(): HasRuntimeDefault<HasDefault<this>> {
-        return this.$defaultFn(() => new Date());
+        return this.$defaultFn(() => new Date() as any);
     }
 
     onUpdateNow(): HasDefault<this> {
-        return this.$onUpdateFn(() => new Date());
+        return this.$onUpdateFn(() => new Date() as any);
     }
 
     build<TTableName extends string>(

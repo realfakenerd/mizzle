@@ -17,7 +17,7 @@ export interface BatchGetResult<T> {
     failed: Partial<T>[];
 }
 
-class BatchGetBase<
+export class BatchGetBase<
     TEntity extends Entity,
     TResult = InferSelectModel<TEntity>,
 > extends BaseBuilder<TEntity, BatchGetResult<TResult>> {
