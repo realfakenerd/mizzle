@@ -32,7 +32,7 @@ Mizzle is a light and type-safe ORM for DynamoDB built with TypeScript. It is de
     - **Modular Library:** The core library supports clean subpath imports like `mizzle/columns` and `mizzle/table` for a better developer experience.
     - **Unified Builder Architecture:** A single, robust implementation for both Query (Get, Query, Scan) and Update operations, ensuring consistent behavior across all data access patterns.
     - **Flexible Configuration:** Enhanced support for multiple environments via AWS Profiles, explicit credentials, and environment variable overrides (`MIZZLE_REGION`, `MIZZLE_ENDPOINT`, etc.).
-    - **Documentation Site:** A comprehensive documentation website built with Astro and Starlight, featuring conceptual guides, API reference, and a CLI guide.
+    - **Documentation Site:** A comprehensive documentation website built with Astro and Starlight, featuring deep-dive architectural guides, internal implementation details (Proxy logic, Expression Builder), and detailed API references.
 
 ## Constraints & Requirements
 
