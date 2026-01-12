@@ -12,8 +12,8 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Public API Reference Documentation' (Protocol in workflow.md) [checkpoint: 6c52de1]
 
 ## Phase 3: Internals and Architectural Guides
-- [ ] Task: Create Architectural Overview in `docs/src/content/docs/guides/architecture.md`.
-- [ ] Task: Document Expression Builder internals in `docs/src/content/docs/internals/expression-builder.md`.
+- [x] Task: Create Architectural Overview in `docs/src/content/docs/guides/architecture.md`. [64555d5]
+- [~] Task: Document Expression Builder internals in `docs/src/content/docs/internals/expression-builder.md`.
 - [ ] Task: Document Relational Proxy logic in `docs/src/content/docs/internals/relational-proxy.md`.
 - [ ] Task: Conductor - User Manual Verification 'Phase 3: Internals and Architectural Guides' (Protocol in workflow.md)
 
