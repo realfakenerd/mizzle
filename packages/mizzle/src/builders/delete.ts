@@ -3,6 +3,7 @@ import { ENTITY_SYMBOLS } from "@mizzle/shared";
 import { Entity, type InferSelectModel } from "../core/table";
 import { BaseBuilder } from "./base";
 import { type IMizzleClient } from "../core/client";
+import { type Expression } from "../expressions/operators";
 
 export class DeleteBuilder<
     TEntity extends Entity,
@@ -45,7 +46,7 @@ export class DeleteBuilder<
         return super.createExpressionContext(prefix);
     }
 
-    override async execute(): Promise<TResult> {
+    protected override async execute(): Promise<TResult> {
         const resolution = this.resolveKeys(undefined, this._keys);
 
         const command = new DeleteCommand({

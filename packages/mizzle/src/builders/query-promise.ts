@@ -30,12 +30,12 @@ export abstract class QueryPromise<T> implements Promise<T> {
             | null
             | undefined,
         onrejected?:
-            | ((reason: unknown) => TResult | PromiseLike<TResult>)
+            | ((reason: unknown) => TResult2 | PromiseLike<TResult2>)
             | null
             | undefined,
     ): Promise<TResult1 | TResult2> {
         return this.execute().then(onfulfilled, onrejected);
     }
 
-    abstract execute(): Promise<T>;
+    protected abstract execute(): Promise<T>;
 }

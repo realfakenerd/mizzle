@@ -86,7 +86,7 @@ export class UpdateBuilder<
         return super.createExpressionContext(prefix);
     }
 
-    override async execute(): Promise<TResult> {
+    protected override async execute(): Promise<TResult> {
         const keys = this.resolveUpdateKeys();
 
         const { expressionAttributeNames, expressionAttributeValues, addName, addValue } = this.createExpressionContext("up_");

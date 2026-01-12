@@ -31,7 +31,7 @@ class BatchGetBase<
         super(entity, client);
     }
 
-    override async execute(): Promise<BatchGetResult<TResult>> {
+    protected override async execute(): Promise<BatchGetResult<TResult>> {
         const succeeded: TResult[] = [];
         const failed: Record<string, unknown>[] = [];
 

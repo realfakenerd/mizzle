@@ -36,7 +36,7 @@ class BatchWriteBase<
         super(entity, client);
     }
 
-    override async execute(): Promise<BatchWriteResult<InferInsertModel<TEntity>>> {
+    protected override async execute(): Promise<BatchWriteResult<InferInsertModel<TEntity>>> {
         let succeededCount = 0;
         let failed: any[] = [];
 

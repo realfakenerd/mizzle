@@ -99,7 +99,7 @@ export class RelationnalQueryBuilder<T extends Entity> {
                         // Override where to ONLY use the PK to get related items in the same collection
                         qb.where(eq({ name: pkPhysicalName } as Column, pkValue));
 
-                        const rawItems = await qb.execute();
+                        const rawItems = await qb;
                         
                         // Map physical attributes back to logical names for the parser
                         // We need a helper since we are not inheriting from BaseBuilder here
@@ -118,7 +118,7 @@ export class RelationnalQueryBuilder<T extends Entity> {
                         if (condition) {
                                 qb.where(condition);
                         }
-                        results = await qb.execute();
+                        results = await qb;
                 }
 
                 // Recursive relation fetching

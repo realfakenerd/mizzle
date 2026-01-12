@@ -3,7 +3,7 @@ import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "@mizzle/shared";
 import { Entity, type InferInsertModel } from "../core/table";
 import { BaseBuilder } from "./base";
 import { Column } from "../core/column";
-import { KeyStrategy } from "../core/strategies";
+import type { KeyStrategy } from "../core/strategies";
 import { type IMizzleClient } from "../core/client";
 import { calculateItemSize } from "../core/validation";
 import { ItemSizeExceededError } from "../core/errors";
@@ -78,7 +78,7 @@ export class InsertBase<
         return finalItem;
     }
 
-    override async execute(): Promise<TResult> {
+    protected override async execute(): Promise<TResult> {
         const finalItem = this.buildItem();
 
         // Size validation
