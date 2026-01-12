@@ -122,9 +122,9 @@ describe("Unified Update Integration", () => {
 
         // Verification
         const final = await db.select().from(user).where(eq(user.id, newUser.id));
-        expect(final[0].name).toBe("Conditional Alice");
-        expect(final[0].age).toBe(32);
-        expect(final[0].tags).toContain("added");
-        expect(final[0].tags).not.toContain("initial");
+        expect(final[0]!.name).toBe("Conditional Alice");
+        expect(final[0]!.age).toBe(32);
+        expect(final[0]!.tags).toContain("added");
+        expect(final[0]!.tags).not.toContain("initial");
     });
 });

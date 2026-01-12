@@ -13,6 +13,7 @@ export * from "./builders/relational-builder";
 export * from "./core/table";
 export * from "./core/strategies";
 export * from "./core/relations";
+export * from "./core/retry";
 export * from "./core/errors";
 export * from "./columns";
 export * from "./db";

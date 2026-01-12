@@ -78,7 +78,7 @@ export class InsertBase<
         return finalItem;
     }
 
-    protected override async execute(): Promise<TResult> {
+    override async execute(): Promise<TResult> {
         const finalItem = this.buildItem();
 
         // Size validation

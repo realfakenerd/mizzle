@@ -20,7 +20,7 @@ describe("Config Loader", () => {
     });
 
     test("should throw if config file is missing", async () => {
-        expect(loadConfig("non-existent.ts")).rejects.toThrow();
+        await expect(loadConfig("non-existent.ts")).rejects.toThrow();
     });
 
     test("should load valid config", async () => {
@@ -49,13 +49,13 @@ describe("Config Loader", () => {
     `;
         writeFileSync(join(TEMP_DIR, configName), configContent);
 
-        expect(loadConfig(configName)).rejects.toThrow("Invalid config");
+        await expect(loadConfig(configName)).rejects.toThrow("Invalid config");
     });
 
     test("should throw if config is invalid (not an object)", async () => {
         const configName = "mizzle.config.notobject.ts";
         writeFileSync(join(TEMP_DIR, configName), 'export default "string";');
-        expect(loadConfig(configName)).rejects.toThrow("Invalid config");
+        await expect(loadConfig(configName)).rejects.toThrow("Invalid config");
     });
 
     test("should throw if config is invalid (missing schema)", async () => {
@@ -64,7 +64,7 @@ describe("Config Loader", () => {
             join(TEMP_DIR, configName),
             'export default { out: "./" };',
         );
-        expect(loadConfig(configName)).rejects.toThrow(
+        await expect(loadConfig(configName)).rejects.toThrow(
             "Invalid config: missing 'schema'",
         );
     });
@@ -72,6 +72,6 @@ describe("Config Loader", () => {
     test("should throw if config has syntax error", async () => {
         const configName = "mizzle.config.syntax.ts";
         writeFileSync(join(TEMP_DIR, configName), "export default { schema: ");
-        expect(loadConfig(configName)).rejects.toThrow("Failed to load config");
+        await expect(loadConfig(configName)).rejects.toThrow("Failed to load config");
     });
 });

@@ -167,7 +167,7 @@ export abstract class ColumnBuider<
 > implements ColumnBuilderBase<T, TTypeConfig>
 {
     declare _: ColumnBuilderTypeConfig<T, TTypeConfig>;
-    protected config: ColumnBuilderRuntimeConfig<T["data"], TRuntimeConfig>;
+    public config: ColumnBuilderRuntimeConfig<T["data"], TRuntimeConfig>;
 
     constructor(
         name: T["name"],

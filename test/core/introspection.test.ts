@@ -44,8 +44,9 @@ describe("Introspection", () => {
         expect(snapshot.tables["users"]!.GlobalSecondaryIndexes).toHaveLength(
             1,
         );
+        expect(snapshot.tables["users"]).toBeDefined();
         expect(
-            snapshot.tables["users"]!.GlobalSecondaryIndexes![0].IndexName,
+            snapshot.tables["users"]!.GlobalSecondaryIndexes![0]!.IndexName,
         ).toBe("byEmail");
     });
 });

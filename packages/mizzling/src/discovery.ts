@@ -1,5 +1,6 @@
 import { type MizzleConfig } from "./config";
 import { PhysicalTable, Entity } from "mizzle/table";
+import { TABLE_SYMBOLS, ENTITY_SYMBOLS } from "@mizzle/shared";
 import fg from "fast-glob";
 import { stat } from "fs/promises";
 import { resolve } from "path";
@@ -19,10 +20,12 @@ export async function discoverSchema(config: MizzleConfig): Promise<{ tables: Ph
         const imported = await import(absolutePath);
         for (const key in imported) {
             const exportVal = imported[key];
-            if (exportVal instanceof PhysicalTable) {
-                tables.push(exportVal);
-            } else if (exportVal instanceof Entity) {
-                entities.push(exportVal);
+            if (!exportVal || typeof exportVal !== "object") continue;
+
+            if (exportVal instanceof PhysicalTable || exportVal[TABLE_SYMBOLS.TABLE_NAME] !== undefined) {
+                tables.push(exportVal as PhysicalTable);
+            } else if (exportVal instanceof Entity || exportVal[ENTITY_SYMBOLS.ENTITY_NAME] !== undefined) {
+                entities.push(exportVal as Entity);
             }
         }
     } catch (e) {

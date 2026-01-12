@@ -16,7 +16,7 @@ export type StringSetColumnInitial<TName extends string> =
         name: TName;
         dataType: "string";
         columnType: "SS";
-        data: string;
+        data: Set<string>;
     }>;
 
 export class StringSetColumnBuilder<

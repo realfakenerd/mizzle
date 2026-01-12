@@ -91,12 +91,13 @@ describe("Fluent Writes Integration", () => {
             .returning("ALL_NEW")
             .execute();
 
-        expect(updated.name).toBe("Alice Smith");
-        expect(updated.status).toBe("active");
-        expect(updated.order).toBe(2);
-        expect(updated.loginCount).toBe(5);
-        expect(updated.tags).toEqual(["initial", "pro"]);
-        expect(updated.bio).toBeUndefined();
+        const res = updated as any;
+        expect(res.name).toBe("Alice Smith");
+        expect(res.status).toBe("active");
+        expect(res.order).toBe(2);
+        expect(res.loginCount).toBe(5);
+        expect(res.tags).toEqual(["initial", "pro"]);
+        expect(res.bio).toBeUndefined();
     });
 
     it("should handle ifNotExists helper", async () => {
@@ -117,7 +118,7 @@ describe("Fluent Writes Integration", () => {
             .execute();
 
         const final = await db.select().from(user).where(eq(user.id, newUser.id));
-        expect(final[0].name).toBe("Bob"); // Stayed "Bob" because it existed
-        expect(final[0].status).toBe("initialized"); // Set because it was missing
+        expect(final[0]!.name).toBe("Bob"); // Stayed "Bob" because it existed
+        expect(final[0]!.status).toBe("initialized"); // Set because it was missing
     });
 });

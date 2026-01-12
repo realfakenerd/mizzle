@@ -111,9 +111,9 @@ describe("Snapshot Generation", () => {
         const userTable = snapshot.tables["users"]!;
 
         expect(userTable.GlobalSecondaryIndexes).toHaveLength(1);
-        expect(userTable.GlobalSecondaryIndexes![0].IndexName).toBe("byEmail");
+        expect(userTable.GlobalSecondaryIndexes![0]!.IndexName).toBe("byEmail");
         expect(userTable.LocalSecondaryIndexes).toHaveLength(1);
-        expect(userTable.LocalSecondaryIndexes![0].IndexName).toBe("byDate");
+        expect(userTable.LocalSecondaryIndexes![0]!.IndexName).toBe("byDate");
 
         // Verify Attributes
         const attrs = userTable.AttributeDefinitions;

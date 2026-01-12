@@ -25,7 +25,7 @@ export class ConditionCheckBuilder<TEntity extends Entity> extends BaseBuilder<T
         return this;
     }
 
-    protected override async execute(): Promise<void> {
+    public override async execute(): Promise<void> {
         throw new Error("ConditionCheckBuilder cannot be executed directly. Use it within a transaction.");
     }
 

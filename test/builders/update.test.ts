@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { dynamoTable, dynamoEntity } from "mizzle/table";
-import { string, number } from "mizzle/columns";
+import { string, number, stringSet } from "mizzle/columns";
 import { prefixKey, staticKey } from "mizzle";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { mizzle } from "mizzle/db";
@@ -28,6 +28,7 @@ describe("Update Builder", () => {
             id: string(),
             name: string(),
             age: number(),
+            tags: stringSet(),
         },
         (cols) => ({
             pk: prefixKey("USER#", cols.id),

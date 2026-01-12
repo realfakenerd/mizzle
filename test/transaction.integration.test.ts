@@ -81,7 +81,7 @@ describe("Transaction Integration", () => {
         ]);
 
         const userRes = await db.select().from(user).where(eq(user.id, "user2"));
-        expect(userRes[0].balance).toBe(100);
+        expect(userRes[0]!.balance).toBe(100);
     });
 
     it("should throw TransactionFailedError on conditional check failure", async () => {
@@ -101,13 +101,13 @@ describe("Transaction Integration", () => {
             expect(e).toBeInstanceOf(TransactionFailedError);
             const txErr = e as TransactionFailedError;
             expect(txErr.reasons).toHaveLength(1);
-            expect(txErr.reasons[0].index).toBe(0);
-            expect(txErr.reasons[0].code).toBe("ConditionalCheckFailed");
+            expect(txErr.reasons[0]!.index).toBe(0);
+            expect(txErr.reasons[0]!.code).toBe("ConditionalCheckFailed");
         }
 
         // Verify no changes were made
         const userRes = await db.select().from(user).where(eq(user.id, "user3"));
-        expect(userRes[0].balance).toBe(50);
+        expect(userRes[0]!.balance).toBe(50);
         
         const auditRes = await db.select().from(audit).where(eq(audit.id, "audit3"));
         expect(auditRes).toHaveLength(0);

@@ -97,7 +97,7 @@ describe("Unified Select Integration", () => {
         // 1. GetItem (PK + SK)
         const getRes = await db.select().from(user).where(eq(user.id, u1.id)).execute();
         expect(getRes).toHaveLength(1);
-        expect(getRes[0].name).toBe("Alice");
+        expect(getRes[0]!.name).toBe("Alice");
 
         // 2. Query by GSI (PK + SK)
         // Current SelectBase might not support GSI fully yet or might need explicit .index()
@@ -122,8 +122,8 @@ describe("Unified Select Integration", () => {
             .where(lt(user.age, 28)) // This should be a Scan with Filter or Query with Filter
             .execute();
         
-        expect(filtered.some(u => u.name === "Alice")).toBe(true);
-        expect(filtered.every(u => u.age < 28)).toBe(true);
+        expect(filtered.some((u: any) => u.name === "Alice")).toBe(true);
+        expect(filtered.every((u: any) => u.age < 28)).toBe(true);
 
         // 4. Limit and Sort (Should fail RED phase as they don't exist on SelectBase)
         // @ts-ignore - these methods don't exist yet on SelectBase

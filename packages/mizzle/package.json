@@ -2,45 +2,45 @@
   "name": "mizzle",
   "version": "1.0.0",
   "type": "module",
-  "main": "./dist/index.cjs",
+  "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "import": "./dist/index.js"
     },
     "./columns": {
       "types": "./dist/columns.d.ts",
-      "import": "./dist/columns.js",
-      "require": "./dist/columns.cjs"
+      "import": "./dist/columns.js"
     },
     "./table": {
       "types": "./dist/table.d.ts",
-      "import": "./dist/table.js",
-      "require": "./dist/table.cjs"
+      "import": "./dist/table.js"
     },
     "./snapshot": {
       "types": "./dist/snapshot.d.ts",
-      "import": "./dist/snapshot.js",
-      "require": "./dist/snapshot.cjs"
+      "import": "./dist/snapshot.js"
     },
     "./diff": {
       "types": "./dist/diff.d.ts",
-      "import": "./dist/diff.js",
-      "require": "./dist/diff.cjs"
+      "import": "./dist/diff.js"
     },
     "./introspection": {
       "types": "./dist/introspection.d.ts",
-      "import": "./dist/introspection.js",
-      "require": "./dist/introspection.cjs"
+      "import": "./dist/introspection.js"
     },
     "./db": {
       "types": "./dist/db.d.ts",
-      "import": "./dist/db.js",
-      "require": "./dist/db.cjs"
+      "import": "./dist/db.js"
     }
+  },
+  "author": {
+    "name": "Lucas",
+    "url": "https://github.com/realfakenerd"
+  },
+  "repository": {
+    "url": "https://github.com/realfakenerd/mizzle"
   },
   "scripts": {
     "check": "tsc --noEmit",

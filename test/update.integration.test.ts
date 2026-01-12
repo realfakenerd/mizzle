@@ -82,8 +82,9 @@ describe("Update Integration", () => {
             .returning("ALL_NEW")
             .execute();
         
-        expect(setRes.name).toBe("Alice Smith");
-        expect(setRes.age).toBe(25);
+        const res1 = setRes as any;
+        expect(res1.name).toBe("Alice Smith");
+        expect(res1.age).toBe(25);
 
         // 3. ADD
         const addRes = await db.update(user)
@@ -92,7 +93,8 @@ describe("Update Integration", () => {
             .returning("UPDATED_NEW")
             .execute();
         
-        expect(addRes.age).toBe(30);
+        const res2 = addRes as any;
+        expect(res2.age).toBe(30);
 
         // 4. REMOVE
         const removeRes = await db.update(user)
@@ -101,16 +103,17 @@ describe("Update Integration", () => {
             .returning("ALL_NEW")
             .execute();
         
-        expect(removeRes.roles).toBeUndefined();
-        expect(removeRes.name).toBe("Alice Smith");
+        const res3 = removeRes as any;
+        expect(res3.roles).toBeUndefined();
+        expect(res3.name).toBe("Alice Smith");
 
         // 5. Verification - Select
         const final = await db.select().from(user).where(eq(user.id, newUser.id));
-        expect(final[0]).toMatchObject({
+        expect(final[0]!).toMatchObject({
             id: newUser.id,
             name: "Alice Smith",
             age: 30
         });
-        expect(final[0].roles).toBeUndefined();
+        expect(final[0]!.roles).toBeUndefined();
     });
 });

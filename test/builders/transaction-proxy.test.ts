@@ -5,7 +5,7 @@ import { UpdateBuilder } from "../../packages/mizzle/src/builders/update";
 import { DeleteBuilder } from "../../packages/mizzle/src/builders/delete";
 import { dynamoTable, dynamoEntity } from "mizzle/table";
 import { string } from "mizzle/columns";
-import { IMizzleClient } from "../../packages/mizzle/src/core/client";
+import type { IMizzleClient } from "../../packages/mizzle/src/core/client";
 
 describe("TransactionProxy", () => {
     const table = dynamoTable("TestTable", { pk: string("pk") });

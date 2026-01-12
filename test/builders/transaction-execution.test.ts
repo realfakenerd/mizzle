@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { TransactionExecutor, ConditionCheckBuilder } from "../../packages/mizzle/src/builders/transaction";
 import { dynamoTable, dynamoEntity } from "mizzle/table";
 import { string, number } from "mizzle/columns";
-import { IMizzleClient } from "../../packages/mizzle/src/core/client";
+import type { IMizzleClient } from "../../packages/mizzle/src/core/client";
 import { mizzle } from "mizzle/db";
 import { eq, and } from "../../packages/mizzle/src/expressions/operators";
 import { add, prefixKey } from "mizzle";

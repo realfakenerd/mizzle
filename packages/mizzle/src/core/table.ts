@@ -13,10 +13,10 @@ import type { KeyStrategy } from "./strategies";
 
 type IndexStrategyConfig<TIndex extends IndexBuilder> =
     TIndex["type"] extends "lsi"
-        ? { sk: KeyStrategy }
+        ? { sk: KeyStrategy | Column }
         : {
-              pk: KeyStrategy;
-              sk?: KeyStrategy;
+              pk: KeyStrategy | Column;
+              sk?: KeyStrategy | Column;
           };
 
 type IndexesStrategy<
@@ -32,7 +32,7 @@ export type StrategyCallback<
 > = (columns: TColumns) => {
     [K in keyof TPhysicalConfig as K extends "pk" | "sk"
         ? K
-        : never]: KeyStrategy;
+        : never]: KeyStrategy | Column;
 } & IndexesStrategy<TPhysicalConfig["indexes"]>;
 
 export interface EntityConfig<TColumn extends Column = Column> {
@@ -220,7 +220,26 @@ export function dynamoEntity<
 
     const definedStrategies = strategies ? strategies(builtColumns) : {};
 
-    const rawEntity = new Entity(name, table, {}, definedStrategies);
+    const normalizedStrategies: Record<string, any> = {};
+    for (const [key, val] of Object.entries(definedStrategies)) {
+        if (val instanceof Column) {
+            normalizedStrategies[key] = { type: "prefix", segments: ["", val] };
+        } else if (val && typeof val === "object" && !("type" in val && "segments" in val)) {
+            // It's an index strategy object { pk, sk }
+            const indexStrategy: any = { ...val };
+            if (indexStrategy.pk instanceof Column) {
+                indexStrategy.pk = { type: "prefix", segments: ["", indexStrategy.pk] };
+            }
+            if (indexStrategy.sk instanceof Column) {
+                indexStrategy.sk = { type: "prefix", segments: ["", indexStrategy.sk] };
+            }
+            normalizedStrategies[key] = indexStrategy;
+        } else {
+            normalizedStrategies[key] = val;
+        }
+    }
+
+    const rawEntity = new Entity(name, table, {}, normalizedStrategies);
 
     rawEntity[ENTITY_SYMBOLS.COLUMNS] = builtColumns;
 

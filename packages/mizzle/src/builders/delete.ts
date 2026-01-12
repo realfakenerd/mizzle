@@ -46,7 +46,7 @@ export class DeleteBuilder<
         return super.createExpressionContext(prefix);
     }
 
-    protected override async execute(): Promise<TResult> {
+    public override async execute(): Promise<TResult> {
         const resolution = this.resolveKeys(undefined, this._keys);
 
         const command = new DeleteCommand({

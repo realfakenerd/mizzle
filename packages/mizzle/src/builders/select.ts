@@ -115,7 +115,7 @@ export class SelectBase<
         }
     }
 
-    protected override async execute(): Promise<TResult[]> {
+    override async execute(): Promise<TResult[]> {
         const { items } = await this.fetchPage();
         return items;
     }

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { TransactionExecutor } from "../../packages/mizzle/src/builders/transaction";
 import { TransactionFailedError } from "../../packages/mizzle/src/core/errors";
-import { IMizzleClient } from "../../packages/mizzle/src/core/client";
+import type { IMizzleClient } from "../../packages/mizzle/src/core/client";
 
 describe("Transaction Error Parsing", () => {
     const mockClient = { send: vi.fn() } as unknown as IMizzleClient;

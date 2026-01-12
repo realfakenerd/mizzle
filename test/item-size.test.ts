@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { calculateItemSize } from "mizzle/core/validation";
+import { calculateItemSize } from "../packages/mizzle/src/core/validation";
 
 describe("calculateItemSize", () => {
     it("should calculate size of a simple item", () => {

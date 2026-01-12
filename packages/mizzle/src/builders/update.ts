@@ -94,7 +94,7 @@ export class UpdateBuilder<
         return super.createExpressionContext(prefix);
     }
 
-    protected override async execute(): Promise<TResult> {
+    public override async execute(): Promise<TResult> {
         const columns = this.entity[ENTITY_SYMBOLS.COLUMNS] as Record<string, any>;
         for (const [key, col] of Object.entries(columns)) {
             if (col.onUpdateFn && !this._state.set[key] && !this._state.remove.includes(key)) {
