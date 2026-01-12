@@ -19,6 +19,6 @@
 
 ## Phase 4: Finalization and Verification
 - [x] Task: Update `astro.config.mjs` or sidebar configuration to include new pages. [e59f7f1]
-- [ ] Task: Run local documentation server and verify all new links and rendering.
-- [ ] Task: Fix any broken links or formatting issues.
+- [x] Task: Run local documentation server and verify all new links and rendering. [verified build]
+- [x] Task: Fix any broken links or formatting issues. [verified build]
 - [ ] Task: Conductor - User Manual Verification 'Phase 4: Finalization and Verification' (Protocol in workflow.md)
