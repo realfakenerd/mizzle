@@ -1,5 +1,11 @@
 # mizzling
 
+## 1.0.1
+
+### Patch Changes
+
+- fix: resolve schema discovery issues in monorepos and stabilize test suite.
+
 ## 1.0.0
 
 ### Major Changes
