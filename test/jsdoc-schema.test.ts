@@ -19,6 +19,36 @@ describe('JSDoc Presence for Schema Definition', () => {
         });
     });
 
+    describe('Initialization', () => {
+        const filePath = path.resolve(__dirname, '../packages/mizzle/src/db.ts');
+        const content = readFileSync(filePath, 'utf-8');
+        const methods = ['mizzle'];
+
+        methods.forEach(method => {
+            it(`should have JSDoc for export: ${method}`, () => {
+                const escapedMethod = method.replace(/[.*+?^${}()|[\\]/g, '\\$&');
+                const regex = new RegExp(`\\/\\*\\*[\\s\\S]*?\\*\\/\\s*(?:export\\s+)?(?:function\\s+)?${escapedMethod}\\b`);
+                const hasMatch = regex.test(content);
+                expect(hasMatch, `Export ${method} is missing JSDoc in ${filePath}`).toBe(true);
+            });
+        });
+    });
+
+    describe('CLI Config', () => {
+        const filePath = path.resolve(__dirname, '../packages/mizzling/src/config.ts');
+        const content = readFileSync(filePath, 'utf-8');
+        const methods = ['defineConfig'];
+
+        methods.forEach(method => {
+            it(`should have JSDoc for export: ${method}`, () => {
+                const escapedMethod = method.replace(/[.*+?^${}()|[\\]/g, '\\$&');
+                const regex = new RegExp(`\\/\\*\\*[\\s\\S]*?\\*\\/\\s*(?:export\\s+)?(?:function\\s+)?${escapedMethod}\\b`);
+                const hasMatch = regex.test(content);
+                expect(hasMatch, `Export ${method} is missing JSDoc in ${filePath}`).toBe(true);
+            });
+        });
+    });
+
     describe('Relations', () => {
         const filePath = path.resolve(__dirname, '../packages/mizzle/src/core/relations.ts');
         const content = readFileSync(filePath, 'utf-8');
