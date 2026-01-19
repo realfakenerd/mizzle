@@ -116,7 +116,18 @@ export type MultiRelationsCallback<TSchema extends Record<string, Entity>> = (
 };
 
 /**
- * Define relations for an entity.
+ * Defines relationships for a single entity.
+ * 
+ * @example
+ * ```ts
+ * export const usersRelations = defineRelations(users, ({ many }) => ({
+ *   posts: many(posts),
+ * }));
+ * ```
+ * 
+ * @param entity The source entity.
+ * @param relations A callback function to define relations using provided helpers.
+ * @returns A relations definition for the entity.
  */
 export function defineRelations<TEntity extends Entity>(
     entity: TEntity,
@@ -124,7 +135,27 @@ export function defineRelations<TEntity extends Entity>(
 ): RelationsDefinition<TEntity>;
 
 /**
- * Define relations for multiple entities in a schema.
+ * Defines relationships for multiple entities in a centralized schema-aware way.
+ * This approach helps resolve circular dependencies between entities.
+ * 
+ * @example
+ * ```ts
+ * export const relations = defineRelations({ users, posts }, (r) => ({
+ *   users: {
+ *     posts: r.many.posts(),
+ *   },
+ *   posts: {
+ *     author: r.one.users({
+ *       fields: [r.posts.authorId],
+ *       references: [r.users.id],
+ *     }),
+ *   },
+ * }));
+ * ```
+ * 
+ * @param schema An object mapping names to entity definitions.
+ * @param relations A callback function to define relations for all entities in the schema.
+ * @returns A multi-entity relations definition.
  */
 export function defineRelations<TSchema extends Record<string, Entity>>(
     schema: TSchema,

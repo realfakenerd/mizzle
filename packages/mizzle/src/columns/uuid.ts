@@ -60,8 +60,8 @@ export function uuid<TName extends string>(
  * ```
  * 
  * @param name The name of the attribute in DynamoDB. If omitted, it will use the property name in the definition object.
- * @returns A UuidColumnBuilder instance.
+ * @returns A UUIDColumnBuilder instance.
  */
 export function uuid(name?: string) {
-    return new UuidColumnBuilder(name ?? "");
+    return new UUIDColumnBuilder(name ?? "");
 }
