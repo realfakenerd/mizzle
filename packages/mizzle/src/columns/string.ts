@@ -59,6 +59,21 @@ export function string(): StringColumnInitial<"">;
 export function string<TName extends string>(
     name: TName,
 ): StringColumnInitial<TName>;
+/**
+ * Defines a String column ("S") in DynamoDB.
+ * 
+ * @example
+ * ```ts
+ * const users = defineTable("users", {
+ *   name: string("name"),
+ *   email: string("email").notNull(),
+ *   status: string("status").default("active"),
+ * });
+ * ```
+ * 
+ * @param name The name of the attribute in DynamoDB. If omitted, it will use the property name in the definition object.
+ * @returns A StringColumnBuilder instance.
+ */
 export function string(name?: string) {
     return new StringColumnBuilder(name ?? "");
 }

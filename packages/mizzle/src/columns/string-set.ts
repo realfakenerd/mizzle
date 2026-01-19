@@ -54,6 +54,21 @@ export function stringSet(): StringSetColumnInitial<"">;
 export function stringSet<TName extends string>(
     name: TName,
 ): StringSetColumnInitial<TName>;
+/**
+ * Defines a String Set column ("SS") in DynamoDB.
+ * 
+ * Represents a set of unique strings. Mizzle handles conversion between JavaScript `Set<string>` (or arrays) and DynamoDB Sets.
+ * 
+ * @example
+ * ```ts
+ * const users = defineTable("users", {
+ *   roles: stringSet("roles"),
+ * });
+ * ```
+ * 
+ * @param name The name of the attribute in DynamoDB. If omitted, it will use the property name in the definition object.
+ * @returns A StringSetColumnBuilder instance.
+ */
 export function stringSet(name?: string) {
     return new StringSetColumnBuilder(name ?? "");
 }

@@ -52,6 +52,20 @@ export function number(): NumberColumnInitial<"">;
 export function number<TName extends string>(
     name: TName,
 ): NumberColumnInitial<TName>;
+/**
+ * Defines a Number column ("N") in DynamoDB.
+ * 
+ * @example
+ * ```ts
+ * const products = defineTable("products", {
+ *   price: number("price"),
+ *   quantity: number("quantity").default(0),
+ * });
+ * ```
+ * 
+ * @param name The name of the attribute in DynamoDB. If omitted, it will use the property name in the definition object.
+ * @returns A NumberColumnBuilder instance.
+ */
 export function number(name?: string) {
     return new NumberColumnBuilder(name ?? "");
 }

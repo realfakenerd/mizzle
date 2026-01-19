@@ -189,6 +189,24 @@ export type UpdateTableConfig<
 export type AnyTable<TPartial extends Partial<PhysicalTableConfig> = object> =
     PhysicalTable<UpdateTableConfig<PhysicalTableConfig, TPartial>>;
 
+/**
+ * Defines a logical entity that maps to items within a DynamoDB table.
+ * 
+ * @example
+ * ```ts
+ * const users = dynamoEntity(table, "users", {
+ *   id: string("id"),
+ *   name: string("name"),
+ *   email: string("email"),
+ * });
+ * ```
+ * 
+ * @param table The physical table definition this entity belongs to.
+ * @param name The unique name of the entity (used for typing and potentially in single-table design discriminators).
+ * @param columns A map of column definitions or a callback to define columns.
+ * @param strategies Optional configuration for key generation strategies (PK/SK construction).
+ * @returns The entity definition with strict typing.
+ */
 export function dynamoEntity<
     TName extends string,
     TTable extends PhysicalTable,
@@ -252,6 +270,21 @@ export function dynamoEntity<
     }>;
 }
 
+/**
+ * Defines a physical DynamoDB table schema.
+ * 
+ * @example
+ * ```ts
+ * const table = dynamoTable("my-app-table", {
+ *   pk: string("pk"),
+ *   sk: string("sk"),
+ * });
+ * ```
+ * 
+ * @param name The actual name of the table in DynamoDB (or a reference name).
+ * @param config The table configuration, including primary key (pk) and sort key (sk) definitions.
+ * @returns A PhysicalTable instance representing the table schema.
+ */
 export function dynamoTable<
     TTableName extends string,
     TConfig extends PhysicalTableConfig,

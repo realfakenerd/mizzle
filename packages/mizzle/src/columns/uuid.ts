@@ -46,6 +46,22 @@ export function uuid(): UUIDColumnInitial<"">;
 export function uuid<TName extends string>(
     name: TName,
 ): UUIDColumnInitial<TName>;
+/**
+ * Defines a UUID column.
+ * 
+ * In DynamoDB, this is stored as a string ("S"). It includes a `.defaultRandom()` helper
+ * to automatically generate UUID v7 values on insert.
+ * 
+ * @example
+ * ```ts
+ * const users = defineTable("users", {
+ *   id: uuid("id").partitionKey().defaultRandom(),
+ * });
+ * ```
+ * 
+ * @param name The name of the attribute in DynamoDB. If omitted, it will use the property name in the definition object.
+ * @returns A UuidColumnBuilder instance.
+ */
 export function uuid(name?: string) {
-    return new UUIDColumnBuilder(name ?? "");
+    return new UuidColumnBuilder(name ?? "");
 }

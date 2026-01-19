@@ -42,6 +42,22 @@ export function list(): ListColumnInitial<"">;
 export function list<TName extends string>(
     name: TName,
 ): ListColumnInitial<TName>;
+/**
+ * Defines a List column ("L") in DynamoDB.
+ * 
+ * A list is an ordered collection of values. It can store mixed types, 
+ * but you can enforce a specific type using `.$type<T[]>()`.
+ * 
+ * @example
+ * ```ts
+ * const posts = defineTable("posts", {
+ *   tags: list("tags").$type<string[]>(),
+ * });
+ * ```
+ * 
+ * @param name The name of the attribute in DynamoDB. If omitted, it will use the property name in the definition object.
+ * @returns A ListColumnBuilder instance.
+ */
 export function list(name?: string) {
     return new ListColumnBuilder(name ?? "");
 }

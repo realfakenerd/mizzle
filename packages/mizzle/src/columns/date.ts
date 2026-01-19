@@ -78,6 +78,23 @@ export class DateColumn<
 
 export function date(): DateColumnInitial<"">;
 export function date<TName extends string>(name: TName): DateColumnInitial<TName>;
+/**
+ * Defines a Date column.
+ * 
+ * In DynamoDB, this is stored as an ISO 8601 string ("S"), but Mizzle automatically 
+ * handles conversion to/from JavaScript Date objects in your application code.
+ * 
+ * @example
+ * ```ts
+ * const posts = defineTable("posts", {
+ *   createdAt: date("created_at").defaultNow(),
+ *   updatedAt: date("updated_at").onUpdateNow(),
+ * });
+ * ```
+ * 
+ * @param name The name of the attribute in DynamoDB. If omitted, it will use the property name in the definition object.
+ * @returns A DateColumnBuilder instance.
+ */
 export function date(name?: string) {
     return new DateColumnBuilder(name ?? "");
 }

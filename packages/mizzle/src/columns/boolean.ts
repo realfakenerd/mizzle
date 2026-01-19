@@ -40,6 +40,19 @@ export function boolean(): BooleanColumnInitial<"">;
 export function boolean<TName extends string>(
     name: TName,
 ): BooleanColumnInitial<TName>;
+/**
+ * Defines a Boolean column ("BOOL") in DynamoDB.
+ * 
+ * @example
+ * ```ts
+ * const users = defineTable("users", {
+ *   isActive: boolean("is_active").default(true),
+ * });
+ * ```
+ * 
+ * @param name The name of the attribute in DynamoDB. If omitted, it will use the property name in the definition object.
+ * @returns A BooleanColumnBuilder instance.
+ */
 export function boolean(name?: string) {
     return new BooleanColumnBuilder(name ?? "");
 }

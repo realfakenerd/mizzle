@@ -57,6 +57,29 @@ export function json(): JsonColumnInitial<"">;
 export function json<TName extends string>(
     name: TName,
 ): JsonColumnInitial<TName>;
+/**
+ * Defines a JSON column.
+ * 
+ * In DynamoDB, this is stored as a string ("S") containing serialized JSON.
+ * Mizzle automatically handles JSON.stringify/parse for you.
+ * 
+ * You can type the JSON object using the `.$type<T>()` method.
+ * 
+ * @example
+ * ```ts
+ * interface Address {
+ *   street: string;
+ *   city: string;
+ * }
+ * 
+ * const users = defineTable("users", {
+ *   address: json("address").$type<Address>(),
+ * });
+ * ```
+ * 
+ * @param name The name of the attribute in DynamoDB. If omitted, it will use the property name in the definition object.
+ * @returns A JsonColumnBuilder instance.
+ */
 export function json(name?: string) {
     return new JsonColumnBuilder(name ?? "");
 }

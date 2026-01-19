@@ -41,6 +41,23 @@ export class MapColumn<
 
 export function map(): MapColumnInitial<"">;
 export function map<TName extends string>(name: TName): MapColumnInitial<TName>;
+/**
+ * Defines a Map column ("M") in DynamoDB.
+ * 
+ * A map is a set of key-value pairs (like a JSON object). 
+ * Unlike `json()`, this is stored as a native DynamoDB Map, allowing you to filter/query nested properties 
+ * more easily in some contexts, though `json()` is often preferred for simple object storage.
+ * 
+ * @example
+ * ```ts
+ * const users = defineTable("users", {
+ *   metadata: map("metadata").$type<{ verified: boolean, loginCount: number }>(),
+ * });
+ * ```
+ * 
+ * @param name The name of the attribute in DynamoDB. If omitted, it will use the property name in the definition object.
+ * @returns A MapColumnBuilder instance.
+ */
 export function map(name?: string) {
     return new MapColumnBuilder(name ?? "");
 }

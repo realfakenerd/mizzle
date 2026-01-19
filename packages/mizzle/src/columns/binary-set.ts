@@ -44,6 +44,21 @@ export function binarySet(): BinarySetColumnInitial<"">;
 export function binarySet<TName extends string>(
     name: TName,
 ): BinarySetColumnInitial<TName>;
+/**
+ * Defines a Binary Set column ("BS") in DynamoDB.
+ * 
+ * Represents a set of unique binary blobs (Uint8Array/Buffer).
+ * 
+ * @example
+ * ```ts
+ * const data = defineTable("data", {
+ *   hashes: binarySet("hashes"),
+ * });
+ * ```
+ * 
+ * @param name The name of the attribute in DynamoDB. If omitted, it will use the property name in the definition object.
+ * @returns A BinarySetColumnBuilder instance.
+ */
 export function binarySet(name?: string) {
     return new BinarySetColumnBuilder(name ?? "");
 }

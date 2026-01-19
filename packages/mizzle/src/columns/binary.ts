@@ -43,6 +43,22 @@ export function binary(): BinaryBuilderInitial<"">;
 export function binary<TName extends string>(
     name: TName,
 ): BinaryBuilderInitial<TName>;
+/**
+ * Defines a Binary column ("B") in DynamoDB.
+ * 
+ * Used for storing arbitrary binary data, such as images, compressed files, or raw bytes.
+ * Mizzle handles `Uint8Array` or `Buffer` (in Node) for this type.
+ * 
+ * @example
+ * ```ts
+ * const files = defineTable("files", {
+ *   content: binary("content"),
+ * });
+ * ```
+ * 
+ * @param name The name of the attribute in DynamoDB. If omitted, it will use the property name in the definition object.
+ * @returns A BinaryColumnBuilder instance.
+ */
 export function binary(name?: string) {
     return new BinaryColumnBuilder(name ?? "");
 }
