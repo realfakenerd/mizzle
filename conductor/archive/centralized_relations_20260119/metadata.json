@@ -1,0 +1,7 @@
+{
+  "id": "centralized_relations_20260119",
+  "title": "Implement Centralized Relational Definition API",
+  "description": "Implement a centralized defineRelations API that accepts a dictionary of entities and allows defining relationships for all of them in a single closure, resolving circular dependencies and improving developer experience.",
+  "status": "in-progress",
+  "created_at": "2026-01-19"
+}
