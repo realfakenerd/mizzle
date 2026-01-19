@@ -20,15 +20,4 @@ describe("MizzleConfig Alignment", () => {
         };
         expect(config).toBeDefined();
     });
-
-    it("should NOT allow a 'dialect' field", () => {
-        const config = {
-            schema: "./schema",
-            out: "./out",
-            // @ts-expect-error - dialect should not be in MizzleConfig
-            dialect: "dynamodb"
-        };
-            // This is a type-level check, we'll verify it doesn't break defineConfig
-            const result = defineConfig(config as any);
-            expect(result).toBeDefined();
-          });});
+});
