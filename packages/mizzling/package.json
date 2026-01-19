@@ -4,7 +4,10 @@
   "private": false,
   "type": "module",
   "bin": {
-    "mizzling": "./dist/index.js"
+    "mizzling": "./dist/cli.js"
+  },
+  "exports": {
+    ".": "./dist/index.js"
   },
   "author": {
     "name": "Lucas",
