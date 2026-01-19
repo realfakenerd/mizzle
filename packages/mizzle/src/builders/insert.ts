@@ -16,6 +16,17 @@ export class InsertBuilder<TEntity extends Entity> {
         private client: IMizzleClient,
     ) {}
 
+    /**
+     * Sets the values to be inserted into the database.
+     * 
+     * @example
+     * ```ts
+     * await db.insert(users).values({ id: "1", name: "Alice" }).execute();
+     * ```
+     * 
+     * @param values The object containing the attributes to insert.
+     * @returns An InsertBase instance for further chaining.
+     */
     values(values: InferInsertModel<TEntity>): InsertBase<TEntity> {
         return new InsertBase(this.entity, this.client, values);
     }
@@ -42,6 +53,11 @@ export class InsertBase<
         return this.valuesData;
     }
 
+    /**
+     * Instructs Mizzle to return the inserted item after execution.
+     * 
+     * @returns The current builder instance with an updated result type.
+     */
     returning(): InsertBase<TEntity, InferInsertModel<TEntity>> {
         this.shouldReturnValues = true;
         return this as unknown as InsertBase<TEntity, InferInsertModel<TEntity>>;
@@ -78,6 +94,12 @@ export class InsertBase<
         return finalItem;
     }
 
+    /**
+     * Executes the insert operation.
+     * 
+     * @returns A promise that resolves to the inserted item if `.returning()` was called, otherwise undefined.
+     * @throws {ItemSizeExceededError} if the item exceeds 400KB.
+     */
     override async execute(): Promise<TResult> {
         const finalItem = this.buildItem();
 

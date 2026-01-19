@@ -32,16 +32,44 @@ export class UpdateBuilder<
         super(entity, client);
     }
 
+    /**
+     * Manually specifies the primary key for the update operation.
+     * 
+     * @param keyObject The raw DynamoDB key object (e.g., { pk: "USER#1", sk: "METADATA" }).
+     * @returns The current builder instance for chaining.
+     */
     key(keyObject: Record<string, unknown>): this {
         this._explicitKey = keyObject;
         return this;
     }
 
+    /**
+     * Sets specific attributes to new values. 
+     * Translates to a `SET` action in the DynamoDB UpdateExpression.
+     * 
+     * @example
+     * ```ts
+     * await db.update(users)
+     *   .set({ name: "Bob", age: 25 })
+     *   .where(eq(users.id, "1"))
+     *   .execute();
+     * ```
+     * 
+     * @param values Object containing the fields and values to set.
+     * @returns The current builder instance for chaining.
+     */
     set(values: Partial<{ [K in keyof InferInsertModel<TEntity>]: InferInsertModel<TEntity>[K] | UpdateAction }>): this {
         partitionUpdateValues(values as Record<string, any>, this._state, this.entity[ENTITY_SYMBOLS.COLUMNS] as Record<string, any>);
         return this;
     }
 
+    /**
+     * Adds a value to a numeric attribute or elements to a set.
+     * Translates to an `ADD` action in the DynamoDB UpdateExpression.
+     * 
+     * @param values Object containing fields and values to add.
+     * @returns The current builder instance for chaining.
+     */
     add(values: Partial<InferInsertModel<TEntity>>): this {
         const columns = this.entity[ENTITY_SYMBOLS.COLUMNS] as Record<string, any>;
         for (const [key, val] of Object.entries(values)) {
@@ -53,11 +81,25 @@ export class UpdateBuilder<
         return this;
     }
 
+    /**
+     * Removes one or more attributes from the item.
+     * Translates to a `REMOVE` action in the DynamoDB UpdateExpression.
+     * 
+     * @param fields The names of the fields to remove.
+     * @returns The current builder instance for chaining.
+     */
     remove(...fields: (keyof InferInsertModel<TEntity> | (string & {}))[]): this {
         this._state.remove.push(...(fields as string[]));
         return this;
     }
 
+    /**
+     * Deletes elements from a set.
+     * Translates to a `DELETE` action in the DynamoDB UpdateExpression.
+     * 
+     * @param values Object containing fields and the values to delete from the set.
+     * @returns The current builder instance for chaining.
+     */
     delete(values: Partial<InferInsertModel<TEntity>>): this {
         const columns = this.entity[ENTITY_SYMBOLS.COLUMNS] as Record<string, any>;
         for (const [key, val] of Object.entries(values)) {
@@ -69,11 +111,23 @@ export class UpdateBuilder<
         return this;
     }
 
+    /**
+     * Adds a condition to the update operation.
+     * 
+     * @param expression The condition expression.
+     * @returns The current builder instance for chaining.
+     */
     where(expression: Expression): this {
         this._whereClause = expression;
         return this;
     }
 
+    /**
+     * Configures what values should be returned after the update.
+     * 
+     * @param value One of: "NONE", "ALL_OLD", "UPDATED_OLD", "ALL_NEW", "UPDATED_NEW".
+     * @returns The current builder instance for chaining.
+     */
     returning(value: "NONE" | "ALL_OLD" | "UPDATED_OLD" | "ALL_NEW" | "UPDATED_NEW"): this {
         this._returnValues = value;
         return this;
@@ -94,6 +148,12 @@ export class UpdateBuilder<
         return super.createExpressionContext(prefix);
     }
 
+    /**
+     * Executes the update operation.
+     * 
+     * @returns A promise that resolves to the requested attributes (based on `.returning()`).
+     * @throws {ItemSizeExceededError} if the update exceeds 400KB.
+     */
     public override async execute(): Promise<TResult> {
         const columns = this.entity[ENTITY_SYMBOLS.COLUMNS] as Record<string, any>;
         for (const [key, col] of Object.entries(columns)) {

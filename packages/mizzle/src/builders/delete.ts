@@ -23,6 +23,11 @@ export class DeleteBuilder<
         this._keys = keys;
     }
 
+    /**
+     * Instructs Mizzle to return the deleted item after execution.
+     * 
+     * @returns The current builder instance.
+     */
     returning(): this {
         this._returnValues = "ALL_OLD";
         return this;
@@ -46,6 +51,11 @@ export class DeleteBuilder<
         return super.createExpressionContext(prefix);
     }
 
+    /**
+     * Executes the delete operation.
+     * 
+     * @returns A promise that resolves to the deleted item if `.returning()` was called, otherwise undefined.
+     */
     public override async execute(): Promise<TResult> {
         const resolution = this.resolveKeys(undefined, this._keys);
 
