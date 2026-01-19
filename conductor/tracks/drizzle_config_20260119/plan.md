@@ -18,9 +18,9 @@
     - [x] Implement any necessary refinements to `defineConfig` helper
 - [x] Task: Conductor - User Manual Verification 'Configuration Alignment & Type Safety' (Protocol in workflow.md)
 
-## Phase 3: CLI Integration & Verification
-- [~] Task: Verify `loadConfig` compatibility with updated `MizzleConfig`
-    - [ ] Write integration tests to ensure `loadConfig` correctly imports a `mizzle.config.ts` using `defineConfig`
-    - [ ] Run `bun run check` to ensure project-wide type safety
-    - [ ] Run `bun run test` to ensure no regressions in CLI commands
-- [ ] Task: Conductor - User Manual Verification 'CLI Integration Verification' (Protocol in workflow.md)
+## Phase 3: CLI Integration & Verification [checkpoint: 374a57c]
+- [x] Task: Verify `loadConfig` compatibility with updated `MizzleConfig`
+    - [x] Write integration tests in `test/cli/define-config-integration.test.ts` to ensure `loadConfig` correctly imports a `mizzle.config.ts` using `defineConfig`
+    - [x] Run `bun run check` to ensure project-wide type safety
+    - [x] Run `bun run test` to ensure no regressions in CLI commands
+- [x] Task: Conductor - User Manual Verification 'CLI Integration Verification' (Protocol in workflow.md)
