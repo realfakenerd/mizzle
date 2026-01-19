@@ -48,4 +48,25 @@ describe("defineRelations", () => {
         expect(postsRelations.config.author!.config.fields).toContain(posts.userId);
         expect(postsRelations.config.author!.config.references).toContain(users.id);
     });
+
+    it("should define relations for multiple entities using centralized API", () => {
+        const relations = defineRelations({ users, posts }, (r) => ({
+            users: {
+                posts: r.many.posts(),
+            },
+            posts: {
+                author: r.one.users({
+                    fields: [r.posts.userId],
+                    references: [r.users.id],
+                }),
+            },
+        }));
+
+        expect((relations as any).definitions.users.posts).toBeDefined();
+        expect((relations as any).definitions.users.posts.type).toBe("many");
+        expect((relations as any).definitions.posts.author).toBeDefined();
+        expect((relations as any).definitions.posts.author.type).toBe("one");
+        expect((relations as any).definitions.posts.author.config.fields).toContain(posts.userId);
+        expect((relations as any).definitions.posts.author.config.references).toContain(users.id);
+    });
 });

@@ -109,35 +109,37 @@ describe("Relational Query Integration", () => {
             posts,
             projects,
             members,
-            usersRelations: defineRelations(users, ({ many }) => ({
-                posts: many(posts),
-                memberships: many(members, {
-                    fields: [users.id],
-                    references: [members.userId],
-                }),
-            })),
-            postsRelations: defineRelations(posts, ({ one }) => ({
-                author: one(users, {
-                    fields: [posts.userId],
-                    references: [users.id],
-                }),
-            })),
-            projectsRelations: defineRelations(projects, ({ many }) => ({
-                members: many(members, {
-                    fields: [projects.id],
-                    references: [members.projectId],
-                }),
-            })),
-            membersRelations: defineRelations(members, ({ one }) => ({
-                project: one(projects, {
-                    fields: [members.projectId],
-                    references: [projects.id],
-                }),
-                user: one(users, {
-                    fields: [members.userId],
-                    references: [users.id],
-                }),
-            })),
+            allRelations: defineRelations({ users, posts, projects, members }, (r) => ({
+                users: {
+                    posts: r.many.posts(),
+                    memberships: r.many.members({
+                        fields: [r.users.id],
+                        references: [r.members.userId],
+                    }),
+                },
+                posts: {
+                    author: r.one.users({
+                        fields: [r.posts.userId],
+                        references: [r.users.id],
+                    }),
+                },
+                projects: {
+                    members: r.many.members({
+                        fields: [r.projects.id],
+                        references: [r.members.projectId],
+                    }),
+                },
+                members: {
+                    project: r.one.projects({
+                        fields: [r.members.projectId],
+                        references: [r.projects.id],
+                    }),
+                    user: r.one.users({
+                        fields: [r.members.userId],
+                        references: [r.users.id],
+                    }),
+                },
+            }))
         }
     });
 
