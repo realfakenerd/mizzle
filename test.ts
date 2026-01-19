@@ -4,6 +4,7 @@ import {
     defineRelations,
     dynamoEntity,
     dynamoTable,
+    eq,
     gsi,
     list,
     mizzle,
@@ -12,7 +13,7 @@ import {
     staticKey,
     string,
     uuid,
-} from "@aurios/mizzle";
+} from "./packages/mizzle/src/index";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 
 const table = dynamoTable("Teste", {
@@ -143,19 +144,13 @@ export const userRelations = defineRelations(users, ({ many }) => ({
     }),
 }));
 
+const relations = defineRelations({ users, storeBranch }, (r) => ({
+    users: {},
+}));
+
 const db = mizzle({
     client: new DynamoDBClient({}),
-    relations: {
-        users,
-        product,
-        productPrice,
-        storeBrand,
-        storeBranch,
-        shoppingList,
-        producRelations,
-        brandRelations,
-        userRelations,
-    },
+    relations,
 });
 
-db.query.users.findMany();
+db.select().from(users).where(eq(users.id, ""));
