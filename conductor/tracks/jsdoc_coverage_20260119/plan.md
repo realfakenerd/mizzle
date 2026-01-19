@@ -12,14 +12,14 @@
     - [x] Add JSDocs to `delete`, `where`, and `execute` methods in `packages/mizzle/src/builders/delete.ts`
 - [x] Task: Conductor - User Manual Verification 'Core Query Builders' (Protocol in workflow.md)
 
-## Phase 2: Schema Definition API
+## Phase 2: Schema Definition API [checkpoint: 254eef6]
 - [x] Task: Add JSDocs to `defineTable` and `dynamoEntity` [79a00ec]
     - [x] Add comprehensive JSDocs with examples to `packages/mizzle/src/core/table.ts`
 - [x] Task: Add JSDocs to Column Builders [79a00ec]
     - [x] Add JSDocs to `string`, `number`, `boolean`, `date`, `uuid`, `json`, etc., in `packages/mizzle/src/columns/`
 - [x] Task: Add JSDocs to `defineRelations` [640eb7c]
     - [x] Add JSDocs with 1:N and 1:1 examples to `packages/mizzle/src/core/relations.ts`
-- [ ] Task: Conductor - User Manual Verification 'Schema Definition API' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Schema Definition API' (Protocol in workflow.md)
 
 ## Phase 3: Initialization & Utilities
 - [ ] Task: Add JSDocs to `mizzle()` constructor
