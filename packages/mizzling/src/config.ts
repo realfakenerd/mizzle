@@ -54,6 +54,14 @@ export interface MizzleConfig {
    * Maximum number of retry attempts for DynamoDB requests.
    */
   maxAttempts?: number;
+  /**
+   * Print all SQL statements (or DynamoDB commands) and their execution time.
+   */
+  verbose?: boolean;
+  /**
+   * Require user confirmation before pushing any changes to the database.
+   */
+  strict?: boolean;
 }
 
 /**
@@ -151,6 +159,8 @@ export async function loadConfig(configName = "mizzle.config.ts"): Promise<Mizzl
     if (process.env.MIZZLE_ENDPOINT) finalConfig.endpoint = process.env.MIZZLE_ENDPOINT;
     if (process.env.MIZZLE_SCHEMA) finalConfig.schema = process.env.MIZZLE_SCHEMA;
     if (process.env.MIZZLE_OUT) finalConfig.out = process.env.MIZZLE_OUT;
+    if (process.env.MIZZLE_VERBOSE) finalConfig.verbose = process.env.MIZZLE_VERBOSE === "true";
+    if (process.env.MIZZLE_STRICT) finalConfig.strict = process.env.MIZZLE_STRICT === "true";
 
     return finalConfig;
   } catch (error) {
