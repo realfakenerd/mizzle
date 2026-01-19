@@ -1,7 +1,6 @@
 import {
     Column,
     type ColumnBaseConfig,
-    type ColumnRuntimeConfig,
 } from "../core/column";
 import {
     ColumnBuider,
@@ -27,10 +26,12 @@ export class DateColumnBuilder<
     }
 
     defaultNow(): HasRuntimeDefault<HasDefault<this>> {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return this.$defaultFn(() => new Date() as any);
     }
 
     onUpdateNow(): HasDefault<this> {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return this.$onUpdateFn(() => new Date() as any);
     }
 
@@ -39,6 +40,7 @@ export class DateColumnBuilder<
     ): DateColumn<MakeColumnConfig<T, TTableName>> {
         return new DateColumn<MakeColumnConfig<T, TTableName>>(
             table,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             this.config as any,
         );
     }

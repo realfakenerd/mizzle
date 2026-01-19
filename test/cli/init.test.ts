@@ -4,7 +4,7 @@ import { spawnSync } from "child_process";
 test("cli should show help message", () => {
     const result = spawnSync(
         "bun",
-        ["packages/mizzling/src/index.ts", "--help"],
+        ["packages/mizzling/src/cli.ts", "--help"],
         {
             encoding: "utf-8",
         },

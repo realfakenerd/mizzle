@@ -1,7 +1,6 @@
 import {
     Column,
     type ColumnBaseConfig,
-    type ColumnRuntimeConfig,
 } from "../core/column";
 import {
     ColumnBuider,
@@ -45,6 +44,7 @@ class StringColumnBuilder<
     ): StringColumn<MakeColumnConfig<T, TTableName>> {
         return new StringColumn<MakeColumnConfig<T, TTableName>>(
             table,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             this.config as any,
         );
     }

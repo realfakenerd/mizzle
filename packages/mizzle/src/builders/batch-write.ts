@@ -1,5 +1,5 @@
 import { BatchWriteCommand } from "@aws-sdk/lib-dynamodb";
-import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "@mizzle/shared";
+import { ENTITY_SYMBOLS } from "@mizzle/shared";
 import { Entity, type InferInsertModel } from "../core/table";
 import { BaseBuilder } from "./base";
 import type { IMizzleClient } from "../core/client";
@@ -10,9 +10,9 @@ export type BatchWriteOperation<TEntity extends Entity> =
     | { type: "put", item: InferInsertModel<TEntity> }
     | { type: "delete", keys: Partial<InferInsertModel<TEntity>> };
 
-export interface BatchWriteResult<T> {
+export interface BatchWriteResult<_T> {
     succeededCount: number;
-    failed: any[]; // Operations that failed after all retries
+    failed: unknown[]; // Operations that failed after all retries
 }
 
 export class BatchWriteBuilder {
@@ -38,7 +38,7 @@ export class BatchWriteBase<
 
     public override async execute(): Promise<BatchWriteResult<InferInsertModel<TEntity>>> {
         let succeededCount = 0;
-        let failed: any[] = [];
+        let failed: unknown[] = [];
 
         const requests = this.ops.map(op => {
             if (op.type === "put") {
@@ -64,7 +64,7 @@ export class BatchWriteBase<
             }
         });
 
-        let currentRequests = [...requests];
+        let currentRequests: unknown[] = [...requests];
         let attempts = 0;
         const maxBatchAttempts = 5;
 
@@ -73,11 +73,12 @@ export class BatchWriteBase<
             
             const command = new BatchWriteCommand({
                 RequestItems: {
-                    [this.tableName]: currentRequests
+                    [this.tableName]: currentRequests as any[]
                 }
             });
 
-            const response = await this.client.send(command);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const response = await this.client.send(command) as { UnprocessedItems?: Record<string, any[]> };
             
             const unprocessed = response.UnprocessedItems?.[this.tableName] || [];
             succeededCount += (currentRequests.length - unprocessed.length);

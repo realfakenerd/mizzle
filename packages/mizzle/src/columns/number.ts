@@ -3,7 +3,6 @@ import {
     ColumnBuider,
     type MakeColumnConfig,
     type ColumnBuilderBaseConfig,
-    type ColumnBuilderRuntimeConfig,
 } from "../core/column-builder";
 import type { AnyTable } from "../core/table";
 
@@ -38,6 +37,7 @@ export class NumberColumnBuilder<
     ): NumberColumn<MakeColumnConfig<T, TTableName>> {
         return new NumberColumn<MakeColumnConfig<T, TTableName>>(
             table,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             this.config as any,
         );
     }

@@ -2,7 +2,7 @@ import { type MizzleConfig, getClient } from "../config";
 import { discoverSchema } from "../discovery";
 import { compareSchema } from "@aurios/mizzle/diff";
 import { getRemoteSnapshot } from "@aurios/mizzle/introspection";
-import { DynamoDBClient, CreateTableCommand, DeleteTableCommand } from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient, CreateTableCommand } from "@aws-sdk/client-dynamodb";
 import { confirm, isCancel, cancel, intro, outro, spinner } from "@clack/prompts";
 
 interface PushOptions {

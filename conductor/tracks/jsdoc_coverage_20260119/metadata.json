@@ -1,8 +1,0 @@
-{
-  "track_id": "jsdoc_coverage_20260119",
-  "type": "feature",
-  "status": "new",
-  "created_at": "2026-01-19T16:50:00Z",
-  "updated_at": "2026-01-19T16:50:00Z",
-  "description": "Add JSDocs to the API so that users can use the code without having to consult the documentation online everytime"
-}

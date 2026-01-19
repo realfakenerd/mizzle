@@ -53,7 +53,7 @@ export default defineConfig({
         const result = spawnSync(
             "bun",
             [
-                "packages/mizzling/src/index.ts",
+                "packages/mizzling/src/cli.ts",
                 "generate",
                 "--name",
                 "env_override",

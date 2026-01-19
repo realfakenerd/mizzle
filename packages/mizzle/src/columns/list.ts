@@ -1,7 +1,6 @@
 import {
     Column,
     type ColumnBaseConfig,
-    type ColumnRuntimeConfig,
 } from "../core/column";
 import {
     ColumnBuider,
@@ -28,6 +27,7 @@ export class ListColumnBuilder<
     ): ListColumn<MakeColumnConfig<T, TTableName>> {
         return new ListColumn<MakeColumnConfig<T, TTableName>>(
             table,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             this.config as any,
         );
     }

@@ -1,5 +1,5 @@
 import { BatchGetCommand } from "@aws-sdk/lib-dynamodb";
-import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "@mizzle/shared";
+import { ENTITY_SYMBOLS } from "@mizzle/shared";
 import { Entity, type InferSelectModel } from "../core/table";
 import { BaseBuilder } from "./base";
 import type { IMizzleClient } from "../core/client";
@@ -33,7 +33,7 @@ export class BatchGetBase<
 
     public override async execute(): Promise<BatchGetResult<TResult>> {
         const succeeded: TResult[] = [];
-        const failed: Record<string, unknown>[] = [];
+        const failed: Partial<TResult>[] = [];
 
         // Group keys by resolved DynamoDB keys
         let currentKeys = this.keysData.map(k => this.resolveKeys(undefined, k as Record<string, unknown>).keys);
@@ -52,7 +52,7 @@ export class BatchGetBase<
                 }
             });
 
-            const response = await this.client.send(command);
+            const response = await this.client.send(command) as { Responses?: Record<string, unknown[]>, UnprocessedKeys?: Record<string, { Keys?: Record<string, unknown>[] }> };
             
             if (response.Responses?.[this.tableName]) {
                 succeeded.push(...(response.Responses[this.tableName] as TResult[]));
@@ -61,16 +61,16 @@ export class BatchGetBase<
             const unprocessed = response.UnprocessedKeys?.[this.tableName]?.Keys;
             
             if (unprocessed && unprocessed.length > 0) {
-                currentKeys = unprocessed as Record<string, unknown>[];
+                currentKeys = unprocessed;
             } else {
                 currentKeys = [];
             }
         }
 
         if (currentKeys.length > 0) {
-            failed.push(...currentKeys);
+            failed.push(...(currentKeys as Partial<TResult>[]));
         }
 
-        return { succeeded, failed: failed as any[] };
+        return { succeeded, failed };
     }
 }

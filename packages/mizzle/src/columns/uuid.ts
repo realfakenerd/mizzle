@@ -3,7 +3,6 @@ import { v7 as uuidV7 } from "uuid";
 import {
     ColumnBuider,
     type ColumnBuilderBaseConfig,
-    type ColumnBuilderRuntimeConfig,
     type MakeColumnConfig,
 } from "../core/column-builder";
 import type { AnyTable } from "../core/table";
@@ -32,6 +31,7 @@ export class UUIDColumnBuilder<
     ): UUIDColumn<MakeColumnConfig<T, TTableName>> {
         return new UUIDColumn<MakeColumnConfig<T, TTableName>>(
             table,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             this.config as any,
         );
     }

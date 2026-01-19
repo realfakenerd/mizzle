@@ -4,6 +4,11 @@ import { type KeyStrategy } from "./strategies";
 import { Entity } from "./table";
 import { Column } from "./column";
 
+interface MinimalPhysicalTable {
+    [TABLE_SYMBOLS.PARTITION_KEY]: Column;
+    [TABLE_SYMBOLS.SORT_KEY]?: Column;
+}
+
 /**
  * Parser for DynamoDB item collections (Single-Table Design).
  */
@@ -72,11 +77,10 @@ export class ItemCollectionParser {
             string,
             KeyStrategy
         >;
-        const physicalTable = entity[ENTITY_SYMBOLS.PHYSICAL_TABLE] as any;
+        const physicalTable = entity[ENTITY_SYMBOLS.PHYSICAL_TABLE] as unknown as MinimalPhysicalTable;
 
-        const pkName = (physicalTable[TABLE_SYMBOLS.PARTITION_KEY] as Column).name;
-        const skName = (physicalTable[TABLE_SYMBOLS.SORT_KEY] as Column | undefined)
-            ?.name;
+        const pkName = physicalTable[TABLE_SYMBOLS.PARTITION_KEY].name;
+        const skName = physicalTable[TABLE_SYMBOLS.SORT_KEY]?.name;
 
         const pkMatch = this.matchStrategy(item[pkName], strategies.pk);
         const skMatch = skName

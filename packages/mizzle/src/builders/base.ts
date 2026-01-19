@@ -18,7 +18,7 @@ export abstract class BaseBuilder<
     }
 
     public get tableName(): string {
-        return resolveTableName(this.entity as any);
+        return resolveTableName(this.entity as unknown as Entity);
     }
 
     protected get physicalTable() {

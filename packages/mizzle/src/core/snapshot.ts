@@ -153,7 +153,7 @@ function physicalTableToSnapshot(table: PhysicalTable, entities: Entity[]): Tabl
 
     const attributeDefinitions = Array.from(attributeDefinitionsMap.entries()).map(([name, type]) => ({
         AttributeName: name,
-        AttributeType: type as any
+        AttributeType: type as "S" | "N" | "B"
     })).sort((a, b) => a.AttributeName.localeCompare(b.AttributeName));
 
     gsis.sort((a, b) => (a.IndexName || "").localeCompare(b.IndexName || ""));

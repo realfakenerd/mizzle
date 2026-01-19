@@ -74,7 +74,7 @@ export default defineConfig({
         // 1. Generate
         const { code: generateExit, stdout: genStdout, stderr: genStderr } = await runCommand(
             [
-                "packages/mizzling/src/index.ts",
+                "packages/mizzling/src/cli.ts",
                 "generate",
                 "--name",
                 "initial",
@@ -95,7 +95,7 @@ export default defineConfig({
 
         // 2. Push
         const { code: pushExit, stdout: pushStdout, stderr: pushStderr } = await runCommand(
-            ["packages/mizzling/src/index.ts", "push", "--yes"],
+            ["packages/mizzling/src/cli.ts", "push", "--yes"],
             { MIZZLE_CONFIG: CONFIG_FILE }
         );
 
@@ -108,7 +108,7 @@ export default defineConfig({
 
         // 3. List
         const { stdout: listOutput } = await runCommand(
-            ["packages/mizzling/src/index.ts", "list"],
+            ["packages/mizzling/src/cli.ts", "list"],
             { MIZZLE_CONFIG: CONFIG_FILE }
         );
 

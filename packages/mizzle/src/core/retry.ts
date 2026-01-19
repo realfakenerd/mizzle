@@ -44,14 +44,15 @@ export class RetryHandler {
         throw lastError;
     }
 
-    private isRetryable(error: any): boolean {
-        if (!error) return false;
+    private isRetryable(error: unknown): boolean {
+        if (!error || typeof error !== 'object') return false;
         
-        if (RETRYABLE_ERRORS.has(error.name)) {
+        const err = error as { name?: string; $metadata?: { httpStatusCode?: number } };
+        if (err.name && RETRYABLE_ERRORS.has(err.name)) {
             return true;
         }
 
-        if (error.$metadata?.httpStatusCode && RETRYABLE_STATUS_CODES.has(error.$metadata.httpStatusCode)) {
+        if (err.$metadata?.httpStatusCode && RETRYABLE_STATUS_CODES.has(err.$metadata.httpStatusCode)) {
             return true;
         }
 

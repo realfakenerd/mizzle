@@ -1,7 +1,6 @@
 import {
     Column,
     type ColumnBaseConfig,
-    type ColumnRuntimeConfig,
 } from "../core/column";
 import {
     ColumnBuider,
@@ -30,6 +29,7 @@ export class BinarySetColumnBuilder<
     ): BinarySetColumn<MakeColumnConfig<T, TTableName>> {
         return new BinarySetColumn<MakeColumnConfig<T, TTableName>>(
             table,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             this.config as any,
         );
     }

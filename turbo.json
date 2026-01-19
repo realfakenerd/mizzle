@@ -28,6 +28,8 @@
                 "MIZZLE_ENDPOINT",
                 "MIZZLE_SCHEMA",
                 "MIZZLE_OUT",
+                "MIZZLE_VERBOSE",
+                "MIZZLE_STRICT",
                 "AWS_ACCESS_KEY_ID",
                 "AWS_SECRET_ACCESS_KEY",
                 "AWS_REGION"

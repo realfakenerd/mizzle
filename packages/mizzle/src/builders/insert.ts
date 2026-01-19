@@ -32,6 +32,10 @@ export class InsertBuilder<TEntity extends Entity> {
     }
 }
 
+interface MinimalPhysicalTable {
+    [TABLE_SYMBOLS.INDEXES]?: Record<string, { config: { pk: string; sk?: string } }>;
+}
+
 export class InsertBase<
     TEntity extends Entity,
     TResult = undefined,
@@ -72,13 +76,13 @@ export class InsertBase<
 
         // Also resolve GSI keys if they are defined in strategies but not in resolution.keys
         const strategies = this.entity[ENTITY_SYMBOLS.ENTITY_STRATEGY] as unknown as Record<string, { pk: KeyStrategy, sk?: KeyStrategy }>;
-        const physicalTable = this.entity[ENTITY_SYMBOLS.PHYSICAL_TABLE];
-        const indexes = (physicalTable as any)?.[TABLE_SYMBOLS.INDEXES] || {};
+        const physicalTable = this.entity[ENTITY_SYMBOLS.PHYSICAL_TABLE] as unknown as MinimalPhysicalTable;
+        const indexes = physicalTable?.[TABLE_SYMBOLS.INDEXES] || {};
 
         for (const [indexName, strategy] of Object.entries(strategies)) {
             if (indexName === "pk" || indexName === "sk") continue;
 
-            const indexBuilder = indexes[indexName] as { config: { pk: string; sk?: string } } | undefined;
+            const indexBuilder = indexes[indexName];
             if (indexBuilder) {
                 if (strategy.pk && indexBuilder.config.pk) {
                     const pkValue = this.resolveStrategyValue(strategy.pk, itemToSave);
@@ -160,7 +164,9 @@ export class InsertBase<
             }
 
             const finalValue = item[key];
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             item[key] = typeof (col as any).mapToDynamoValue === "function" 
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 ? (col as any).mapToDynamoValue(finalValue) 
                 : finalValue;
 

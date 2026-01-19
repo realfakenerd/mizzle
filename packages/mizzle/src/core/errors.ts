@@ -18,7 +18,7 @@ export interface CancellationReason {
     index: number;
     code: string;
     message?: string;
-    item?: Record<string, any>;
+    item?: Record<string, unknown>;
 }
 
 /**
