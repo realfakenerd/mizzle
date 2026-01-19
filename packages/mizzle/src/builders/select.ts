@@ -23,6 +23,17 @@ export class SelectBuilder<TSelection extends SelectedFields | undefined> {
         private fields?: TSelection,
     ) {}
 
+    /**
+     * Specifies the entity to select from.
+     * 
+     * @example
+     * ```ts
+     * const results = await db.select().from(users).execute();
+     * ```
+     * 
+     * @param entity The Mizzle entity (table) to query.
+     * @returns A SelectBase instance to further chain the query.
+     */
     from<TEntity extends Entity>(entity: TEntity) {
         return new SelectBase(entity, this.client, this.fields);
     }
@@ -50,36 +61,103 @@ export class SelectBase<
         super(entity, client);
     }
 
+    /**
+     * Adds a filter criteria to the query.
+     * 
+     * For DynamoDB, this will be used as a `KeyConditionExpression` if the 
+     * primary keys are provided, otherwise it will be used as a `FilterExpression`.
+     * 
+     * @example
+     * ```ts
+     * import { eq, and, gt } from "@aurios/mizzle";
+     * 
+     * const results = await db.select()
+     *   .from(users)
+     *   .where(and(eq(users.id, 1), gt(users.age, 18)))
+     *   .execute();
+     * ```
+     * 
+     * @param expression The expression to filter by.
+     * @returns The current builder instance for chaining.
+     */
     where(expression: Expression): this {
         this._whereClause = expression;
         return this;
     }
 
+    /**
+     * Limits the total number of items returned by the query.
+     * 
+     * @example
+     * ```ts
+     * const results = await db.select().from(users).limit(10).execute();
+     * ```
+     * 
+     * @param val The maximum number of items to return.
+     * @returns The current builder instance for chaining.
+     */
     limit(val: number): this {
         this._limitVal = val;
         return this;
     }
 
+    /**
+     * Sets the page size for the underlying DynamoDB requests. 
+     * Use this with `.iterator()` to control how many items are fetched in each network request.
+     * 
+     * @param val The number of items per page.
+     * @returns The current builder instance for chaining.
+     */
     pageSize(val: number): this {
         this._pageSizeVal = val;
         return this;
     }
 
+    /**
+     * Enables or disables consistent reads for this query.
+     * 
+     * @param enabled Whether consistent read is enabled. Defaults to true.
+     * @returns The current builder instance for chaining.
+     */
     consistentRead(enabled: boolean = true): this {
         this._consistentReadVal = enabled;
         return this;
     }
 
+    /**
+     * Specifies the sort order for the query (only applicable for `Query` operations).
+     * 
+     * @param forward If true (default), results are sorted in ascending order. If false, descending.
+     * @returns The current builder instance for chaining.
+     */
     sort(forward: boolean): this {
         this._sortForward = forward;
         return this;
     }
 
+    /**
+     * Forces the use of a specific Global Secondary Index (GSI) or Local Secondary Index (LSI).
+     * 
+     * @param name The name of the index to use.
+     * @returns The current builder instance for chaining.
+     */
     index(name: string): this {
         this._forcedIndexName = name;
         return this;
     }
 
+    /**
+     * Returns an async iterator that automatically handles pagination.
+     * 
+     * @example
+     * ```ts
+     * for await (const user of db.select().from(users).iterator()) {
+     *   console.log(user.name);
+     * }
+     * ```
+     * 
+     * @returns An AsyncIterableIterator for the query results.
+     */
     iterator(): AsyncIterableIterator<TResult> {
         const self = this;
         return (async function* () {
@@ -115,6 +193,12 @@ export class SelectBase<
         }
     }
 
+    /**
+     * Executes the query and returns all matching items.
+     * 
+     * @returns A promise that resolves to an array of items.
+     * @throws Error if the query fails.
+     */
     override async execute(): Promise<TResult[]> {
         const { items } = await this.fetchPage();
         return items;
