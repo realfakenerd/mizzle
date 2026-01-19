@@ -17,6 +17,7 @@
 - **Testing:** [Vitest](https://vitest.dev/) - A Vite-native unit test framework, utilized for its speed and compatibility with TypeScript/Bun.
 - **ID Generation:** [uuid](https://www.npmjs.com/package/uuid) - Used for generating unique identifiers, including v7 UUIDs.
 - **CLI Framework:** [commander](https://www.npmjs.com/package/commander) - For parsing CLI arguments and commands.
+- **Build Tooling:** [tsup](https://tsup.egoist.dev/) - A zero-config TypeScript bundler used for building CLI and library entry points.
 - **Interactive CLI UI:** [@clack/prompts](https://www.npmjs.com/package/clack) - For modern, interactive prompts and progress indicators.
 - **Benchmarking:** [tinybench](https://github.com/tinylibs/tinybench) - For high-performance micro-benchmarking and statistical analysis.
 - **Static Analysis:** [TypeScript Compiler (tsc)](https://www.typescriptlang.org/) - Used with the `--noEmit` flag for continuous type-safety verification.
