@@ -69,6 +69,14 @@ export class DynamoDB<TSchema extends Record<string, unknown> = Record<string, u
 
     /**
      * Insert a new record into the database.
+     * 
+     * @example
+     * ```ts
+     * await db.insert(users).values({ id: "1", name: "Alice" }).execute();
+     * ```
+     * 
+     * @param table The entity definition to insert into.
+     * @returns An InsertBuilder instance.
      */
     insert<T extends Entity>(table: T): InsertBuilder<T> {
         return new InsertBuilder(table, this.docClient);
@@ -76,6 +84,14 @@ export class DynamoDB<TSchema extends Record<string, unknown> = Record<string, u
 
     /**
      * Select records from the database.
+     * 
+     * @example
+     * ```ts
+     * const results = await db.select().from(users).where(eq(users.id, "1")).execute();
+     * ```
+     * 
+     * @param fields Optional specific fields to select. If omitted, all fields are returned.
+     * @returns A SelectBuilder instance.
      */
     select<TSelection extends SelectedFields>(
         fields?: TSelection,
@@ -84,7 +100,16 @@ export class DynamoDB<TSchema extends Record<string, unknown> = Record<string, u
     }
 
     /**
-     * Batch get items from the database.
+     * Batch get multiple items from the database in a single request.
+     * 
+     * @example
+     * ```ts
+     * const items = await db.batchGet(users, [{ id: "1" }, { id: "2" }]).execute();
+     * ```
+     * 
+     * @param entity The entity definition.
+     * @param keys An array of primary key objects to fetch.
+     * @returns A BatchGetBuilder instance.
      */
     batchGet<T extends Entity>(
         entity: T,
@@ -94,7 +119,19 @@ export class DynamoDB<TSchema extends Record<string, unknown> = Record<string, u
     }
 
     /**
-     * Batch write items to the database.
+     * Batch write (insert or delete) multiple items in a single request.
+     * 
+     * @example
+     * ```ts
+     * await db.batchWrite(users, [
+     *   { type: "put", item: { id: "1", name: "Alice" } },
+     *   { type: "delete", key: { id: "2" } }
+     * ]).execute();
+     * ```
+     * 
+     * @param entity The entity definition.
+     * @param operations An array of batch operations.
+     * @returns A BatchWriteBuilder instance.
      */
     batchWrite<T extends Entity>(
         entity: T,
@@ -113,6 +150,14 @@ export class DynamoDB<TSchema extends Record<string, unknown> = Record<string, u
 
     /**
      * Update existing records in the database.
+     * 
+     * @example
+     * ```ts
+     * await db.update(users).set({ name: "Bob" }).where(eq(users.id, "1")).execute();
+     * ```
+     * 
+     * @param table The entity definition to update.
+     * @returns An UpdateBuilder instance.
      */
     update<T extends Entity>(table: T): UpdateBuilder<T> {
         return new UpdateBuilder(table, this.docClient);
@@ -120,6 +165,15 @@ export class DynamoDB<TSchema extends Record<string, unknown> = Record<string, u
 
     /**
      * Delete records from the database.
+     * 
+     * @example
+     * ```ts
+     * await db.delete(users, { id: "1" }).execute();
+     * ```
+     * 
+     * @param table The entity definition to delete from.
+     * @param keys The primary key(s) of the item to delete.
+     * @returns A DeleteBuilder instance.
      */
     delete<T extends Entity>(
         table: T,
@@ -129,10 +183,20 @@ export class DynamoDB<TSchema extends Record<string, unknown> = Record<string, u
     }
 
     /**
-     * Execute multiple operations atomically in a transaction.
+     * Execute multiple operations atomically in a single DynamoDB transaction.
      * 
-     * @param token ClientRequestToken for idempotency.
-     * @param callback Callback that returns an array of operations.
+     * @example
+     * ```ts
+     * await db.transaction("unique-token", (tx) => [
+     *   tx.insert(users).values({ id: "1", name: "Alice" }),
+     *   tx.update(stats).set({ count: sql`${stats.count} + 1` }).where(eq(stats.id, "global"))
+     * ]);
+     * ```
+     * 
+     * @param token A unique client request token for idempotency.
+     * @param callback A function that receives a transaction proxy and returns an array of operations.
+     * @returns A promise that resolves when the transaction completes.
+     * @throws Error if the transaction is cancelled or fails.
      */
     async transaction(
         token: string,
@@ -158,28 +222,36 @@ export class DynamoDB<TSchema extends Record<string, unknown> = Record<string, u
  */
 export interface MizzleConfig<TSchema extends Record<string, unknown> = Record<string, unknown>> {
     /**
-     * AWS DynamoDB Client.
+     * AWS DynamoDB Client instance from `@aws-sdk/client-dynamodb`.
      */
     client: DynamoDBClient;
     /**
-     * Relational schema definition.
+     * Relational schema definition for using `db.query`.
      */
     relations?: TSchema;
     /**
-     * Retry configuration for transient errors.
+     * Optional retry configuration for transient DynamoDB errors.
      */
     retry?: Partial<RetryConfig>;
 }
 
 /**
- * Initialize Mizzle with a DynamoDB client or a configuration object.
+ * Initializes a Mizzle database instance.
  * 
  * @example
  * ```ts
- * const db = mizzle(client);
- * // or
- * const db = mizzle({ client, relations });
+ * // Basic initialization
+ * const db = mizzle(new DynamoDBClient({}));
+ * 
+ * // Initialization with relational schema
+ * const db = mizzle({ 
+ *   client: new DynamoDBClient({}),
+ *   relations: { users, posts } 
+ * });
  * ```
+ * 
+ * @param config A DynamoDBClient instance or a MizzleConfig object.
+ * @returns A DynamoDB instance for performing database operations.
  */
 export function mizzle<TSchema extends Record<string, unknown> = Record<string, unknown>>(
     config: DynamoDBClient | MizzleConfig<TSchema>

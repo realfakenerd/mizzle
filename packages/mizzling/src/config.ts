@@ -65,7 +65,20 @@ export interface MizzleConfig {
 }
 
 /**
- * Helper function to define the configuration with type safety.
+ * Helper function to define the Mizzle CLI configuration with type safety and autocompletion.
+ * 
+ * Typically used in a `mizzle.config.ts` file at the root of your project.
+ * 
+ * @example
+ * ```ts
+ * import { defineConfig } from "@aurios/mizzling";
+ * 
+ * export default defineConfig({
+ *   schema: "./src/schema.ts",
+ *   out: "./mizzle",
+ *   region: "us-east-1",
+ * });
+ * ```
  * 
  * @param config The Mizzle configuration object.
  * @returns The same configuration object, validated by TypeScript.
