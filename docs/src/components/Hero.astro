@@ -1,0 +1,189 @@
+---
+import Button from "./Button.astro";
+const { hero } = Astro.locals.starlightRoute.entry.data;
+
+const actions = hero?.actions;
+const tagline = hero?.tagline;
+const title = hero?.title;
+const img = hero?.image;
+---
+
+<div class="hero">
+  <div class="grid-bg"></div>
+  <div id="_top" class="hero-content" style="--stack-gap: 2rem;">
+    <div class="stack">
+      <div class="stack" style="--stack-gap: 1rem;">
+        <h1 set:html={title} />
+        <p set:html={tagline} />
+      </div>
+      <div class="sl-flex actions">
+        {
+          actions?.map(({ link, icon, text, variant }) => (
+            <Button {link} {variant} icon={icon} set:html={text} />
+          ))
+        }
+      </div>
+    </div>
+
+    <img src={(img as any)?.file.src} alt={img?.alt} />
+  </div>
+</div>
+
+<style>
+  .hero {
+    position: relative;
+    margin: clamp(-1rem, -2vh, -1.5rem) calc(-1 * var(--sl-content-pad-x)) 0;
+  }
+
+  .grid-bg {
+    --grid-size: clamp(20px, 2vw, 23px);
+    --grid-color: var(--sl-color-accent-high);
+    --grid-opacity: 0.05;
+    --glow-size: clamp(120px, 15vw, 150px);
+    --glow-opacity: 0.02;
+
+    z-index: -1;
+    position: absolute;
+    inset: 0;
+
+    background-image: linear-gradient(
+        to right,
+        var(--grid-color) 1px,
+        transparent 1px
+      ),
+      linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+    background-position: right calc(-1 * var(--grid-size));
+    background-size: var(--grid-size) var(--grid-size);
+    animation:
+      grid-animation 6s linear infinite,
+      glow-pulse 6s ease-in-out infinite;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        circle at 50% 50%,
+        var(--sl-color-accent-high),
+        transparent var(--glow-size)
+      );
+      opacity: var(--glow-opacity);
+      animation: glow-pulse 0.3s ease-in-out infinite;
+    }
+
+    mask-image: radial-gradient(circle at 100% 0%, white, transparent 65%);
+    opacity: var(--grid-opacity);
+  }
+
+  .stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--stack-gap, 1.5rem);
+  }
+
+  .hero-content {
+    display: flex;
+    flex-direction: column-reverse;
+    max-width: min(36rem, 100%);
+    padding: 3rem var(--sl-content-pad-x);
+    text-align: center;
+  }
+
+  h1 {
+    font-size: clamp(var(--sl-text-2xl), 5vw, var(--sl-text-6xl));
+    line-height: var(--sl-line-height-headings);
+    font-weight: 600;
+    color: var(--sl-color-white);
+  }
+
+  .actions {
+    flex-wrap: wrap;
+    gap: 1rem 2rem;
+    justify-content: center;
+  }
+
+  :global([data-has-hero] .main-pane) {
+    --sl-content-margin-inline: 0;
+    width: 100%;
+  }
+
+  img {
+    max-width: 100%;
+    margin-inline: auto;
+    height: clamp(12rem, 24vw, 21.875rem);
+    filter: drop-shadow(0 0 5rem var(--sl-color-accent-low));
+  }
+
+  @media (width >= 32rem) {
+    :global([data-has-hero] .main-pane) {
+      --cell-size: clamp(2.5rem, 3vw, 3.5rem);
+      background:
+        radial-gradient(closest-side, var(--sl-color-accent-low), transparent)
+          no-repeat calc(100% + var(--cell-size) * 6)
+          calc(var(--cell-size) * -7) / calc(var(--cell-size) * 12)
+          calc(var(--cell-size) * 19);
+    }
+
+    .hero-content {
+      flex-direction: row;
+      justify-content: space-between;
+      padding-block: clamp(4rem, 8vh, 6rem);
+    }
+
+    img {
+      margin-inline: 0;
+    }
+  }
+
+  :global([data-has-hero] .sl-container) {
+    max-width: 100%;
+  }
+
+  .hero-content,
+  :global([data-has-hero] .sl-markdown-content) {
+    max-width: 72rem;
+    margin-inline: auto;
+  }
+
+  @media (width >= 78rem) {
+    .hero {
+      display: grid;
+
+      > :global(*) {
+        grid-area: 1 / 1 / -1 / -1;
+      }
+    }
+
+    .hero-content {
+      text-align: start;
+      align-self: center;
+
+      > * {
+        max-width: calc(100% - clamp(20rem, 30vw, 29rem));
+      }
+    }
+
+    .actions {
+      justify-content: start;
+    }
+  }
+
+  @keyframes grid-animation {
+    from {
+      background-position: right calc(-1 * var(--grid-size)) top 0;
+    }
+    to {
+      background-position: right calc(-2 * var(--grid-size)) top
+        calc(-1 * var(--grid-size));
+    }
+  }
+
+  @keyframes glow-pulse {
+    from {
+      opacity: var(--glow-opacity);
+    }
+    to {
+      opacity: calc(var(--glow-opacity) * 2);
+    }
+  }
+</style>
