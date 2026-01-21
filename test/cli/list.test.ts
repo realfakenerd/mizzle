@@ -1,25 +1,26 @@
 import { expect, test, describe, beforeEach, vi } from "vitest";
 import { listCommand } from "../../packages/mizzling/src/commands/list";
+import type { IMizzleClient } from "../../packages/mizzle/src/core/client";
 
 // Mock Console
 const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 
 // Manual Mock Client
-const createMockClient = (tables: any[]) => {
+const createMockClient = (tables: Record<string, unknown>[]) => {
     return {
-        send: async (command: any) => {
+        send: async (command: { constructor: { name: string }; input?: { TableName: string } }) => {
             const cmdName = command.constructor.name;
             if (cmdName === "ListTablesCommand") {
-                return { TableNames: tables.map((t) => t.TableName) };
+                return { TableNames: tables.map((t) => t.TableName as string) };
             }
             if (cmdName === "DescribeTableCommand") {
-                const tableName = command.input.TableName;
+                const tableName = command.input?.TableName;
                 const table = tables.find((t) => t.TableName === tableName);
                 return { Table: table };
             }
             return {};
         },
-    } as any;
+    };
 };
 
 describe("List Command", () => {
@@ -37,11 +38,11 @@ describe("List Command", () => {
                 KeySchema: [{ AttributeName: "id", KeyType: "HASH" }],
             },
         ];
-        const client = createMockClient(mockTables);
+        const client = createMockClient(mockTables) as unknown;
 
         await listCommand({
-            config: { schema: "dummy", out: "dummy" } as any,
-            client,
+            config: { schema: "dummy", out: "dummy" } as unknown,
+            client: client as unknown as IMizzleClient,
         });
 
         expect(console.log).toHaveBeenCalledWith(
@@ -51,10 +52,10 @@ describe("List Command", () => {
     });
 
     test("should handle empty list", async () => {
-        const client = createMockClient([]);
+        const client = createMockClient([]) as unknown;
         await listCommand({
-            config: { schema: "dummy", out: "dummy" } as any,
-            client,
+            config: { schema: "dummy", out: "dummy" } as unknown,
+            client: client as unknown as IMizzleClient,
         });
         expect(console.log).toHaveBeenCalledWith(
             expect.stringContaining("No tables found"),

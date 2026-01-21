@@ -79,7 +79,7 @@ export class RelationnalQueryBuilder<T extends Entity> {
                 if (options.where) {
                         const columns = (this.table._?.columns || (this.table as unknown as Record<string, Column>)) as Record<string, Column>;
                         if (typeof options.where === 'function') {
-                                condition = (options.where as WhereCallback<T>)(columns as any, operators);
+                                condition = (options.where as WhereCallback<T>)(columns as unknown as Record<string, Column>, operators);
                         } else {
                                 condition = options.where as Condition;
                         }
@@ -95,7 +95,7 @@ export class RelationnalQueryBuilder<T extends Entity> {
                         // If we are here, we should have a physical table
                         if (!physicalTable) throw new Error("Physical table not found for entity");
                         
-                        const pkPhysicalName = ((physicalTable as any)[TABLE_SYMBOLS.PARTITION_KEY] as Column).name;
+                        const pkPhysicalName = ((physicalTable as unknown as Record<symbol, Column>)[TABLE_SYMBOLS.PARTITION_KEY]).name;
                         
                         const pkValue = resolution.keys[pkPhysicalName];
 
@@ -109,7 +109,7 @@ export class RelationnalQueryBuilder<T extends Entity> {
                         const logicalItems = rawItems.map(item => mapToLogical(this.table, item));
 
                         const parser = new ItemCollectionParser(this.schema);
-                        results = parser.parse(logicalItems as any, this.entityName, (options.with || options.include) as Record<string, boolean | object>);
+                        results = parser.parse(logicalItems as Record<string, unknown>[], this.entityName, (options.with || options.include) as Record<string, boolean | object>);
 
                         if (options.limit) {
                                 results = results.slice(0, options.limit);

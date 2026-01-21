@@ -6,9 +6,10 @@ import { InsertBase, UpdateBuilder, eq, buildExpression } from "@aurios/mizzle";
 describe("date column", () => {
     it("should define a date column", () => {
         const col = date("created_at");
-        expect((col as any).config.name).toBe("created_at");
-        expect((col as any).config.dataType).toBe("date");
-        expect((col as any).config.columnType).toBe("S");
+        const c = col as unknown as { config: { name: string; dataType: string; columnType: string } };
+        expect(c.config.name).toBe("created_at");
+        expect(c.config.dataType).toBe("date");
+        expect(c.config.columnType).toBe("S");
     });
 
     const table = dynamoTable("test", {
@@ -58,14 +59,14 @@ describe("date column", () => {
 
     describe("InsertBase integration", () => {
         it("should serialize date in buildItem()", () => {
-            const mockClient = {} as any;
+            const mockClient = {} as unknown;
             const d = new Date("2023-10-27T10:00:00.000Z");
             
-            const insert = new InsertBase(entity, mockClient, {
+            const insert = new InsertBase(entity, mockClient as unknown as IMizzleClient, {
                 pk: d
             });
 
-            const item = (insert as any).buildItem();
+            const item = (insert as unknown as { buildItem: () => Record<string, unknown> }).buildItem();
             expect(item.pk).toBe("2023-10-27T10:00:00.000Z");
         });
 
@@ -75,8 +76,8 @@ describe("date column", () => {
                 pk: date("pk"),
                 createdAt: date("createdAt").defaultNow()
             });
-            const insert = new InsertBase(e, {} as any, { pk: new Date() });
-            const item = (insert as any).buildItem();
+            const insert = new InsertBase(e, {} as unknown as IMizzleClient, { pk: new Date() });
+            const item = (insert as unknown as { buildItem: () => Record<string, unknown> }).buildItem();
             expect(item.createdAt).toBeDefined();
             expect(typeof item.createdAt).toBe("string");
             expect(new Date(item.createdAt as string).getTime()).toBeLessThanOrEqual(Date.now());
@@ -85,13 +86,13 @@ describe("date column", () => {
 
     describe("UpdateBuilder integration", () => {
         it("should serialize date in set()", () => {
-            const mockClient = {} as any;
-            const update = new UpdateBuilder(entity, mockClient);
+            const mockClient = {} as unknown;
+            const update = new UpdateBuilder(entity, mockClient as unknown as IMizzleClient);
             const d = new Date("2023-10-27T10:00:00.000Z");
             
             update.set({ pk: d });
             
-            expect((update as any)._state.set.pk?.value).toBe("2023-10-27T10:00:00.000Z");
+            expect((update as unknown as { _state: { set: Record<string, { value: unknown }> } })._state.set.pk?.value).toBe("2023-10-27T10:00:00.000Z");
         });
 
         it("should apply onUpdateNow()", async () => {
@@ -100,14 +101,15 @@ describe("date column", () => {
                 pk: date("pk"),
                 updatedAt: date("updatedAt").onUpdateNow()
             });
-            const mockClient = { send: vi.fn().mockResolvedValue({ Attributes: {} }) } as any;
-            const update = new UpdateBuilder(e, mockClient);
+            const mockClient = { send: vi.fn().mockResolvedValue({ Attributes: {} }) } as unknown;
+            const update = new UpdateBuilder(e, mockClient as unknown as IMizzleClient);
             update.set({ pk: new Date() });
             
-            await (update as any).execute();
+            await (update as unknown as { execute: () => Promise<void> }).execute();
             
-            expect((update as any)._state.set.updatedAt).toBeDefined();
-            expect(typeof (update as any)._state.set.updatedAt.value).toBe("string");
+            const state = (update as unknown as { _state: { set: Record<string, { value: unknown }> } })._state;
+            expect(state.set.updatedAt).toBeDefined();
+            expect(typeof state.set.updatedAt.value).toBe("string");
         });
     });
 

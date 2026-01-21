@@ -116,7 +116,7 @@ describe("Unified Update Integration", () => {
                 .set({ name: "Should Not Happen" })
                 .where(and(eq(user.id, newUser.id), eq(user.age, 40)))
                 .execute();
-        } catch (e) {
+        } catch {
             // Expected to fail if ConditionExpression is implemented
         }
 

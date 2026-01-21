@@ -6,7 +6,7 @@ import { DeleteBuilder } from "./delete";
 import { Expression } from "../expressions/operators";
 import { BaseBuilder } from "./base";
 import type { IMizzleClient } from "../core/client";
-import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "@mizzle/shared";
+import { ENTITY_SYMBOLS } from "@mizzle/shared";
 import { buildExpression } from "../expressions/builder";
 import { buildUpdateExpressionString } from "../expressions/update-builder";
 import { TransactionFailedError } from "../core/errors";
@@ -71,7 +71,7 @@ export class TransactionProxy {
 export class TransactionExecutor {
     constructor(private client: IMizzleClient) {}
 
-    async execute(token: string, operations: any[]): Promise<void> {
+    async execute(token: string, operations: BaseBuilder<Entity, unknown>[]): Promise<void> {
         const transactItems = operations.map(op => this.mapToTransactItem(op));
 
         const command = new TransactWriteCommand({
@@ -81,14 +81,15 @@ export class TransactionExecutor {
 
         try {
             await this.client.send(command);
-        } catch (error: any) {
-            if (error.name === "TransactionCanceledException" || error.__type?.includes("TransactionCanceledException")) {
-                const reasons = (error.CancellationReasons || []).map((reason: any, index: number) => ({
+        } catch (error: unknown) {
+            const err = error as Error & { __type?: string; CancellationReasons?: Record<string, unknown>[] };
+            if (err.name === "TransactionCanceledException" || err.__type?.includes("TransactionCanceledException")) {
+                const reasons = (err.CancellationReasons || []).map((reason: Record<string, unknown>, index: number) => ({
                     index,
                     code: reason.Code,
                     message: reason.Message,
                     item: reason.Item
-                })).filter((reason: any) => reason.code !== "None");
+                })).filter((reason) => reason.code !== "None");
                 
                 throw new TransactionFailedError("Transaction canceled by server.", reasons);
             }
@@ -96,24 +97,24 @@ export class TransactionExecutor {
         }
     }
 
-    private mapToTransactItem(builder: any): any {
-        const kind = builder.constructor[ENTITY_SYMBOLS.ENTITY_KIND];
+    private mapToTransactItem(builder: BaseBuilder<Entity, unknown>): Record<string, unknown> {
+        const kind = (builder.constructor as unknown as { [ENTITY_SYMBOLS.ENTITY_KIND]: string })[ENTITY_SYMBOLS.ENTITY_KIND];
 
         switch (kind) {
             case "InsertBase":
-                return { Put: this.mapPut(builder) };
+                return { Put: this.mapPut(builder as InsertBase<Entity, unknown>) };
             case "UpdateBuilder":
-                return { Update: this.mapUpdate(builder) };
+                return { Update: this.mapUpdate(builder as UpdateBuilder<Entity, unknown>) };
             case "DeleteBuilder":
-                return { Delete: this.mapDelete(builder) };
+                return { Delete: this.mapDelete(builder as DeleteBuilder<Entity, unknown>) };
             case "ConditionCheckBuilder":
-                return { ConditionCheck: this.mapConditionCheck(builder) };
+                return { ConditionCheck: this.mapConditionCheck(builder as ConditionCheckBuilder<Entity>) };
             default:
                 throw new Error(`Unsupported transaction operation: ${kind}`);
         }
     }
 
-    private mapPut(builder: InsertBase<any, any>): any {
+    private mapPut(builder: InsertBase<Entity, unknown>): Record<string, unknown> {
         const finalItem = builder.buildItem();
 
         return {
@@ -122,7 +123,7 @@ export class TransactionExecutor {
         };
     }
 
-    private mapUpdate(builder: UpdateBuilder<any, any>): any {
+    private mapUpdate(builder: UpdateBuilder<Entity, unknown>): Record<string, unknown> {
         const { expressionAttributeNames, expressionAttributeValues, addName, addValue } = builder.createExpressionContext("up_");
         const updateExpression = buildUpdateExpressionString(builder.state, addName, addValue);
         
@@ -141,7 +142,7 @@ export class TransactionExecutor {
         };
     }
 
-    private mapDelete(builder: DeleteBuilder<any, any>): any {
+    private mapDelete(builder: DeleteBuilder<Entity, unknown>): Record<string, unknown> {
         const resolution = builder.resolveKeys(undefined, builder.keys);
         return {
             TableName: builder.tableName,
@@ -149,7 +150,7 @@ export class TransactionExecutor {
         };
     }
 
-    private mapConditionCheck(builder: ConditionCheckBuilder<any>): any {
+    private mapConditionCheck(builder: ConditionCheckBuilder<Entity>): Record<string, unknown> {
         const { expressionAttributeNames, expressionAttributeValues, addName, addValue } = builder.createExpressionContext("cc_");
         
         const resolution = builder.resolveKeys(builder.whereClause);

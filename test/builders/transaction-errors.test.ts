@@ -9,9 +9,9 @@ describe("Transaction Error Parsing", () => {
     it("should parse TransactionCanceledException into TransactionFailedError", async () => {
         const executor = new TransactionExecutor(mockClient);
         
-        const error = new Error("Transaction Canceled");
-        (error as any).name = "TransactionCanceledException";
-        (error as any).CancellationReasons = [
+        const error = new Error("Transaction Canceled") as Error & { name: string; CancellationReasons: { Code: string; Message?: string }[] };
+        error.name = "TransactionCanceledException";
+        error.CancellationReasons = [
             { Code: "None" },
             { Code: "ConditionalCheckFailed", Message: "Condition failed" }
         ];

@@ -5,6 +5,7 @@ import { prefixKey, staticKey } from "@aurios/mizzle";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { mizzle } from "@aurios/mizzle/db";
 import { eq } from "../../packages/mizzle/src/expressions/operators";
+import type { IMizzleClient } from "../../packages/mizzle/src/core/client";
 
 const client = new DynamoDBClient({
     endpoint: "http://localhost:8000",
@@ -47,10 +48,10 @@ describe("Update Builder", () => {
         // Mock DynamoDBDocumentClient
         const mockDocClient = {
             send: vi.fn().mockResolvedValue({ Attributes: { name: "John", id: "123" } }),
-        } as any;
+        } as unknown as IMizzleClient;
 
         const db = mizzle(client);
-        (db as any).docClient = mockDocClient;
+        (db as unknown as { docClient: IMizzleClient }).docClient = mockDocClient;
 
         await db.update(user)
             .set({ name: "John", age: 30 })
@@ -58,7 +59,7 @@ describe("Update Builder", () => {
             .execute();
 
         expect(mockDocClient.send).toHaveBeenCalled();
-        const call = mockDocClient.send.mock.calls[0][0];
+        const call = (mockDocClient.send as unknown as { mock: { calls: { input: Record<string, unknown> }[][] } }).mock.calls[0][0];
         expect(call.input.TableName).toBe("TestTable");
         expect(call.input.Key).toEqual({
             pk: "USER#123",
@@ -82,10 +83,10 @@ describe("Update Builder", () => {
     it("should correctly construct ADD expression for numbers and sets", async () => {
         const mockDocClient = {
             send: vi.fn().mockResolvedValue({ Attributes: { age: 31 } }),
-        } as any;
+        } as unknown as IMizzleClient;
 
         const db = mizzle(client);
-        (db as any).docClient = mockDocClient;
+        (db as unknown as { docClient: IMizzleClient }).docClient = mockDocClient;
 
         await db.update(user)
             .add({ age: 1 })
@@ -93,7 +94,7 @@ describe("Update Builder", () => {
             .execute();
 
         expect(mockDocClient.send).toHaveBeenCalled();
-        const call = mockDocClient.send.mock.calls[0][0];
+        const call = (mockDocClient.send as unknown as { mock: { calls: { input: Record<string, unknown> }[][] } }).mock.calls[0][0];
         expect(call.input.UpdateExpression).toContain("ADD #up_n0 :up_v0");
         expect(call.input.ExpressionAttributeNames).toEqual({ "#up_n0": "age", "#up_n1": "id" });
         expect(call.input.ExpressionAttributeValues).toEqual({ ":up_v0": 1, ":up_v1": "123" });
@@ -102,10 +103,10 @@ describe("Update Builder", () => {
     it("should correctly construct REMOVE expression", async () => {
         const mockDocClient = {
             send: vi.fn().mockResolvedValue({ Attributes: {} }),
-        } as any;
+        } as unknown as IMizzleClient;
 
         const db = mizzle(client);
-        (db as any).docClient = mockDocClient;
+        (db as unknown as { docClient: IMizzleClient }).docClient = mockDocClient;
 
         await db.update(user)
             .remove("age", "name")
@@ -113,7 +114,7 @@ describe("Update Builder", () => {
             .execute();
 
         expect(mockDocClient.send).toHaveBeenCalled();
-        const call = mockDocClient.send.mock.calls[0][0];
+        const call = (mockDocClient.send as unknown as { mock: { calls: { input: Record<string, unknown> }[][] } }).mock.calls[0][0];
         expect(call.input.UpdateExpression).toContain("REMOVE #up_n0, #up_n1");
         expect(call.input.ExpressionAttributeNames).toEqual({
             "#up_n0": "age",
@@ -125,10 +126,10 @@ describe("Update Builder", () => {
     it("should correctly construct DELETE expression", async () => {
         const mockDocClient = {
             send: vi.fn().mockResolvedValue({ Attributes: {} }),
-        } as any;
+        } as unknown as IMizzleClient;
 
         const db = mizzle(client);
-        (db as any).docClient = mockDocClient;
+        (db as unknown as { docClient: IMizzleClient }).docClient = mockDocClient;
 
         await db.update(user)
             .delete({ tags: new Set(["tag1"]) })
@@ -136,7 +137,7 @@ describe("Update Builder", () => {
             .execute();
 
         expect(mockDocClient.send).toHaveBeenCalled();
-        const call = mockDocClient.send.mock.calls[0][0];
+        const call = (mockDocClient.send as unknown as { mock: { calls: { input: Record<string, unknown> }[][] } }).mock.calls[0][0];
         expect(call.input.UpdateExpression).toContain("DELETE #up_n0 :up_v0");
         expect(call.input.ExpressionAttributeNames).toEqual({ "#up_n0": "tags", "#up_n1": "id" });
         expect(call.input.ExpressionAttributeValues).toEqual({ ":up_v0": new Set(["tag1"]), ":up_v1": "123" });
@@ -145,10 +146,10 @@ describe("Update Builder", () => {
     it("should correctly handle returning() and ReturnValues", async () => {
         const mockDocClient = {
             send: vi.fn().mockResolvedValue({ Attributes: { name: "John", age: 30 } }),
-        } as any;
+        } as unknown as IMizzleClient;
 
         const db = mizzle(client);
-        (db as any).docClient = mockDocClient;
+        (db as unknown as { docClient: IMizzleClient }).docClient = mockDocClient;
 
         const result = await db.update(user)
             .set({ name: "John" })
@@ -157,7 +158,7 @@ describe("Update Builder", () => {
             .execute();
 
         expect(mockDocClient.send).toHaveBeenCalled();
-        const call = mockDocClient.send.mock.calls[0][0];
+        const call = (mockDocClient.send as unknown as { mock: { calls: { input: Record<string, unknown> }[][] } }).mock.calls[0][0];
         expect(call.input.ReturnValues).toBe("ALL_NEW");
         expect(result).toEqual({ name: "John", age: 30 });
     });
@@ -165,10 +166,10 @@ describe("Update Builder", () => {
     it("should allow explicit key provision via key()", async () => {
         const mockDocClient = {
             send: vi.fn().mockResolvedValue({ Attributes: {} }),
-        } as any;
+        } as unknown as IMizzleClient;
 
         const db = mizzle(client);
-        (db as any).docClient = mockDocClient;
+        (db as unknown as { docClient: IMizzleClient }).docClient = mockDocClient;
 
         await db.update(user)
             .set({ name: "John" })
@@ -176,7 +177,7 @@ describe("Update Builder", () => {
             .execute();
 
         expect(mockDocClient.send).toHaveBeenCalled();
-        const call = mockDocClient.send.mock.calls[0][0];
+        const call = (mockDocClient.send as unknown as { mock: { calls: { input: Record<string, unknown> }[][] } }).mock.calls[0][0];
         expect(call.input.Key).toEqual({
             pk: "MANUAL#123",
             sk: "METADATA",

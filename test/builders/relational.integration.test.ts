@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { DynamoDBClient, CreateTableCommand, DeleteTableCommand, DescribeTableCommand } from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient, CreateTableCommand, DescribeTableCommand } from "@aws-sdk/client-dynamodb";
 import { dynamoTable, dynamoEntity } from "@aurios/mizzle/table";
 import { string, uuid } from "@aurios/mizzle/columns";
 import { prefixKey, staticKey } from "@aurios/mizzle";
@@ -27,7 +27,7 @@ async function waitForTable(tableName: string) {
             } else {
                 await new Promise(resolve => setTimeout(resolve, 100));
             }
-        } catch (e) {
+        } catch {
             await new Promise(resolve => setTimeout(resolve, 100));
         }
         attempts++;
@@ -192,7 +192,7 @@ describe("Relational Query Integration", () => {
         const results = await db.query.users.findMany({
             where: (cols, { eq }) => eq(cols.id, userId),
             with: { posts: true }
-        }) as any[];
+        }) as { name: string; posts: unknown[] }[];
 
         expect(results).toHaveLength(1);
         expect(results[0].name).toBe("Alice");
@@ -207,7 +207,7 @@ describe("Relational Query Integration", () => {
         const results = await db.query.users.findMany({
             where: (cols, { eq }) => eq(cols.id, userId),
             include: { posts: true }
-        }) as any[];
+        }) as { name: string; posts: unknown[] }[];
 
         expect(results).toHaveLength(1);
         expect(results[0].name).toBe("Bob");
@@ -223,7 +223,7 @@ describe("Relational Query Integration", () => {
         const results = await db.query.posts.findMany({
             where: (cols, { eq }) => eq(cols.id, postId),
             with: { author: true }
-        }) as any[];
+        }) as { content: string; author: { name: string } }[];
 
         expect(results).toHaveLength(1);
         expect(results[0].content).toBe("Charlie's Post");
@@ -244,7 +244,7 @@ describe("Relational Query Integration", () => {
         const results = await db.query.users.findMany({
             where: (cols, { eq }) => eq(cols.id, userId),
             with: { memberships: { with: { project: true } } }
-        }) as any[];
+        }) as { name: string; memberships: { project: unknown }[] }[];
 
         expect(results).toHaveLength(1);
         expect(results[0].name).toBe("David");
@@ -265,7 +265,7 @@ describe("Relational Query Integration", () => {
         const results = await db.query.projects.findMany({
             where: (cols, { eq }) => eq(cols.id, projId),
             with: { members: true }
-        }) as any[];
+        }) as { name: string; members: unknown[] }[];
 
         expect(results).toHaveLength(1);
         expect(results[0].name).toBe("Project Gamma");
@@ -280,7 +280,7 @@ describe("Relational Query Integration", () => {
         const result = await db.query.users.findFirst({
             where: (cols, { eq }) => eq(cols.id, userId),
             with: { posts: true }
-        }) as any;
+        }) as { name: string; posts: unknown[] };
 
         expect(result).toBeDefined();
         expect(result.name).toBe("Grace");

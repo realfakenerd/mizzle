@@ -18,13 +18,13 @@ describe("TransactionExecution Mapping", () => {
     const rawClient = new DynamoDBClient({ region: "us-east-1" });
     const mockClient = { send: vi.fn() } as unknown as IMizzleClient;
     const db = mizzle(rawClient);
-    (db as any).docClient = mockClient;
+    (db as unknown as { docClient: IMizzleClient }).docClient = mockClient;
 
     it("should map InsertBase to Put item", async () => {
         const executor = new TransactionExecutor(mockClient);
         const op = db.insert(user).values({ id: "1", name: "Luke", age: 30 });
         
-        const mapped = (executor as any).mapToTransactItem(op);
+        const mapped = (executor as unknown as { mapToTransactItem: (op: unknown) => Record<string, unknown> }).mapToTransactItem(op);
         
         expect(mapped).toMatchObject({
             Put: {
@@ -47,7 +47,7 @@ describe("TransactionExecution Mapping", () => {
             .set({ name: "Luke Skywalker", age: add(1) })
             .where(and(eq(user.id, "1"), eq(user.name, "Luke")));
         
-        const mapped = (executor as any).mapToTransactItem(op);
+        const mapped = (executor as unknown as { mapToTransactItem: (op: unknown) => Record<string, unknown> }).mapToTransactItem(op);
         
         expect(mapped.Update).toMatchObject({
             TableName: "TestTable",
@@ -61,7 +61,7 @@ describe("TransactionExecution Mapping", () => {
         const executor = new TransactionExecutor(mockClient);
         const op = db.delete(user, { id: "1", name: "Luke" });
         
-        const mapped = (executor as any).mapToTransactItem(op);
+        const mapped = (executor as unknown as { mapToTransactItem: (op: unknown) => Record<string, unknown> }).mapToTransactItem(op);
         
         expect(mapped).toMatchObject({
             Delete: {
@@ -76,7 +76,7 @@ describe("TransactionExecution Mapping", () => {
         const op = new ConditionCheckBuilder(user, mockClient)
             .where(and(eq(user.id, "1"), eq(user.name, "Luke")));
         
-        const mapped = (executor as any).mapToTransactItem(op);
+        const mapped = (executor as unknown as { mapToTransactItem: (op: unknown) => Record<string, unknown> }).mapToTransactItem(op);
         
         expect(mapped).toMatchObject({
             ConditionCheck: {

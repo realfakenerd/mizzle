@@ -2,6 +2,7 @@ import { expect, test, describe, vi } from "vitest";
 import { pushCommand } from "../../packages/mizzling/src/commands/push";
 import { PhysicalTable } from "@aurios/mizzle/table";
 import { TABLE_SYMBOLS } from "@mizzle/shared";
+import type { IMizzleClient } from "../../packages/mizzle/src/core/client";
 
 // Mock Clack
 vi.mock("@clack/prompts", () => ({
@@ -22,7 +23,7 @@ const mockTable = (name: string) => {
                 getDynamoType: () => "S",
                 name: "id",
             }),
-        } as any,
+        } as unknown,
     });
     table[TABLE_SYMBOLS.TABLE_NAME] = name;
     table[TABLE_SYMBOLS.PARTITION_KEY] = {
@@ -34,9 +35,9 @@ const mockTable = (name: string) => {
 
 // Manual Mock Client
 const createMockClient = () => {
-    const sends: any[] = [];
+    const sends: unknown[] = [];
     return {
-        send: async (command: any) => {
+        send: async (command: { constructor: { name: string }; input: Record<string, unknown> }) => {
             sends.push(command);
             const cmdName = command.constructor.name;
 
@@ -50,7 +51,7 @@ const createMockClient = () => {
         },
         // Helper to access captured calls
         _sends: sends,
-    } as any;
+    };
 };
 
 describe("Push Command", () => {
@@ -61,22 +62,22 @@ describe("Push Command", () => {
         const tables = [mockTable("users")];
         mockDiscover.mockResolvedValue({ tables, entities: [] });
 
-        const mockClient = createMockClient();
+        const mockClient = createMockClient() as unknown;
 
         await pushCommand({
-            config: { schema: "dummy", out: "dummy" } as any,
+            config: { schema: "dummy", out: "dummy" } as unknown,
             discoverSchema: mockDiscover,
-            client: mockClient,
+            client: mockClient as unknown as IMizzleClient,
         });
 
         // Verify CreateTable was called
         // We look for CreateTableCommand in mockClient._sends
-        const createCall = mockClient._sends.find(
-            (cmd: any) => cmd.constructor.name === "CreateTableCommand",
+        const createCall = ((mockClient as { _sends: { constructor: { name: string }; input: { TableName: string; KeySchema: unknown } }[] })._sends).find(
+            (cmd) => cmd.constructor.name === "CreateTableCommand",
         );
 
         expect(createCall).toBeDefined();
-        expect(createCall.input.TableName).toBe("users");
-        expect(createCall.input.KeySchema).toBeDefined();
+        expect(createCall!.input.TableName).toBe("users");
+        expect(createCall!.input.KeySchema).toBeDefined();
     });
 });

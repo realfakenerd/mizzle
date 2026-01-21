@@ -1,5 +1,5 @@
 import { type Column } from "../core/column";
-import { UpdateAction } from "./actions";
+import { UpdateAction, SetAction, AddAction, DeleteAction } from "./actions";
 
 export interface UpdateState {
     set: Record<string, { value: unknown; functionName?: string; usePathAsFirstArg?: boolean }>;
@@ -24,27 +24,29 @@ export function partitionUpdateValues(
 ): void {
     for (const [key, val] of Object.entries(values)) {
         const col = columns?.[key];
-        const mapValue = (v: unknown) => (col && typeof (col as any).mapToDynamoValue === "function")
-            ? (col as any).mapToDynamoValue(v) 
+        const mapValue = (v: unknown) => (col && typeof (col as unknown as { mapToDynamoValue: Function }).mapToDynamoValue === "function")
+            ? (col as unknown as { mapToDynamoValue: (v: unknown) => unknown }).mapToDynamoValue(v) 
             : v;
 
         if (val instanceof UpdateAction) {
             switch (val.action) {
-                case "SET":
+                case "SET": {
+                    const setVal = val as SetAction;
                     state.set[key] = {
-                        value: mapValue((val as any).value),
-                        functionName: (val as any).functionName,
-                        usePathAsFirstArg: (val as any).usePathAsFirstArg,
+                        value: mapValue(setVal.value),
+                        functionName: setVal.functionName,
+                        usePathAsFirstArg: setVal.usePathAsFirstArg,
                     };
                     break;
+                }
                 case "ADD":
-                    state.add[key] = mapValue((val as any).value);
+                    state.add[key] = mapValue((val as AddAction).value);
                     break;
                 case "REMOVE":
                     state.remove.push(key);
                     break;
                 case "DELETE":
-                    state.delete[key] = mapValue((val as any).value);
+                    state.delete[key] = mapValue((val as DeleteAction).value);
                     break;
             }
         } else if (val !== undefined) {

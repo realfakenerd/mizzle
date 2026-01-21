@@ -65,7 +65,7 @@ describe("Delete Command Integration", () => {
     it("should correctly delete an item by its primary key", async () => {
         // 1. Insert an item
         const id = "test-user-1";
-        const newUser = { id, name: "Alice" } as any;
+        const newUser = { id, name: "Alice" } as unknown as Record<string, unknown>;
         await db.insert(user).values(newUser).execute();
 
         // 3. Delete it
@@ -73,14 +73,14 @@ describe("Delete Command Integration", () => {
 
         // 4. Verify it's gone
         const allItems = await db.select().from(user).execute();
-        const found = (allItems as any[]).find(u => u.id === id);
+        const found = (allItems as Record<string, unknown>[]).find(u => u.id === id);
         expect(found).toBeUndefined();
     });
 
     it("should return deleted attributes when .returning() is used", async () => {
         // 1. Insert an item
         const id = "test-user-returning";
-        const newUser = { id, name: "Bob" } as any;
+        const newUser = { id, name: "Bob" } as unknown as Record<string, unknown>;
         await db.insert(user).values(newUser).execute();
 
         // 2. Delete it with returning()

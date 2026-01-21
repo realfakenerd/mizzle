@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { createUpdateState, partitionUpdateValues, buildUpdateExpressionString } from "../../packages/mizzle/src/expressions/update-builder";
-import { add, append, remove, ifNotExists, addToSet, deleteFromSet } from "../../packages/mizzle/src/expressions/actions";
+import { add, append, remove } from "../../packages/mizzle/src/expressions/actions";
 
 describe("Update Expression Builder", () => {
     it("should partition simple values into SET", () => {

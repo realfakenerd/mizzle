@@ -1,9 +1,10 @@
 import { expect, describe, it } from "vitest";
 import { getRemoteSnapshot } from "@aurios/mizzle/introspection";
+import type { IMizzleClient } from "../../packages/mizzle/src/core/client";
 
-const createMockClient = (tables: any[]) => {
+const createMockClient = (tables: { TableName: string }[]) => {
     return {
-        send: async (command: any) => {
+        send: async (command: { constructor: { name: string }, input: { TableName: string } }) => {
             const cmdName = command.constructor.name;
             if (cmdName === "ListTablesCommand") {
                 return { TableNames: tables.map((t) => t.TableName) };
@@ -15,7 +16,7 @@ const createMockClient = (tables: any[]) => {
             }
             return {};
         },
-    } as any;
+    } as unknown as IMizzleClient;
 };
 
 describe("Introspection", () => {

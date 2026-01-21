@@ -4,11 +4,11 @@ import { eq, lt, and, or, between, inList, beginsWith, attributeExists } from ".
 import type { Column } from "../../packages/mizzle/src/core/column";
 
 describe("Expression Builder", () => {
-    const colA = { name: "col_a" } as any as Column;
-    const colB = { name: "col_b" } as any as Column;
+    const colA = { name: "col_a" } as unknown as Column;
+    const colB = { name: "col_b" } as unknown as Column;
 
     const addName = (n: string) => `#${n}`;
-    const addValue = (v: any) => `:${v}`;
+    const addValue = (v: unknown) => `:${v}`;
 
     it("should build simple binary expressions", () => {
         expect(buildExpression(eq(colA, "val"), addName, addValue)).toBe("#col_a = :val");

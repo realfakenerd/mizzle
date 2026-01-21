@@ -1,6 +1,5 @@
 import { describe, it, expect } from "vitest";
 import { defineConfig } from "../packages/mizzling/src/index";
-import * as cli from "../packages/mizzling/src/index";
 
 describe("Mizzling Package Exports", () => {
     it("should export defineConfig", () => {

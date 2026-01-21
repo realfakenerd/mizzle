@@ -46,6 +46,6 @@ describe("json column", () => {
     const col = entity.pk;
     const invalidJson = "{ invalid }";
     
-    expect(col.mapFromDynamoValue(invalidJson as any)).toBe(invalidJson);
+    expect(col.mapFromDynamoValue(invalidJson as unknown)).toBe(invalidJson);
   });
 });

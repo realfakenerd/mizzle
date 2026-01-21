@@ -1,9 +1,10 @@
 import { expect, test, describe, beforeEach, vi } from "vitest";
 import { dropCommand } from "../../packages/mizzling/src/commands/drop";
 import * as prompts from "@clack/prompts";
+import type { IMizzleClient } from "../../packages/mizzle/src/core/client";
 
 // Mock Console
-const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+vi.spyOn(console, "log").mockImplementation(() => {});
 
 // Mock Prompts
 vi.mock("@clack/prompts", () => ({
@@ -21,9 +22,9 @@ vi.mock("@clack/prompts", () => ({
 }));
 
 // Manual Mock Client
-const createMockClient = (tables: any[]) => {
+const createMockClient = (tables: Record<string, string>[]) => {
     return {
-        send: async (command: any) => {
+        send: async (command: { constructor: { name: string } }) => {
             const cmdName = command.constructor.name;
             if (cmdName === "ListTablesCommand") {
                 return { TableNames: tables.map((t) => t.TableName) };
@@ -33,7 +34,7 @@ const createMockClient = (tables: any[]) => {
             }
             return {};
         },
-    } as any;
+    } as unknown;
 };
 
 describe("Drop Command", () => {
@@ -42,10 +43,10 @@ describe("Drop Command", () => {
     });
 
     test("should handle no tables found", async () => {
-        const client = createMockClient([]);
+        const client = createMockClient([]) as unknown;
         await dropCommand({
-            config: { schema: "dummy", out: "dummy" } as any,
-            client,
+            config: { schema: "dummy", out: "dummy" } as unknown,
+            client: client as unknown as IMizzleClient,
         });
         expect(console.log).toHaveBeenCalledWith(
             expect.stringContaining("No tables found"),
@@ -55,19 +56,19 @@ describe("Drop Command", () => {
 
     test("should delete selected tables after confirmation", async () => {
         const mockTables = [{ TableName: "users" }, { TableName: "posts" }];
-        const client = createMockClient(mockTables);
+        const client = createMockClient(mockTables) as { send: (cmd: unknown) => Promise<unknown> };
         const sendSpy = vi.spyOn(client, "send");
 
-        (prompts.multiselect as any).mockResolvedValueOnce(["users"] as any);
-        (prompts.confirm as any).mockResolvedValueOnce(true as any);
+        (prompts.multiselect as unknown as { mockResolvedValueOnce: (val: unknown) => void }).mockResolvedValueOnce(["users"]);
+        (prompts.confirm as unknown as { mockResolvedValueOnce: (val: unknown) => void }).mockResolvedValueOnce(true);
 
         await dropCommand({
-            config: { schema: "dummy", out: "dummy" } as any,
-            client,
+            config: { schema: "dummy", out: "dummy" } as unknown,
+            client: client as unknown as IMizzleClient,
         });
 
         // Verify ListTables was called
-        expect((sendSpy.mock.calls[0]![0] as any).constructor.name).toBe(
+        expect((sendSpy.mock.calls[0]![0] as { constructor: { name: string } }).constructor.name).toBe(
             "ListTablesCommand",
         );
 
@@ -79,10 +80,10 @@ describe("Drop Command", () => {
 
         // Verify DeleteTable was called for 'users'
         // Note: The order of calls depends on implementation, but we expect at least one DeleteTableCommand
-        const calls = sendSpy.mock.calls as any[];
+        const calls = sendSpy.mock.calls as { input: { TableName: string } }[][];
         const deleteCall = calls.find(
             (call) =>
-                (call[0] as any).constructor.name === "DeleteTableCommand",
+                (call[0] as unknown as { constructor: { name: string } }).constructor.name === "DeleteTableCommand",
         );
         expect(deleteCall).toBeDefined();
         expect(deleteCall![0].input.TableName).toBe("users");
@@ -92,22 +93,22 @@ describe("Drop Command", () => {
 
     test("should not delete if confirmation is rejected", async () => {
         const mockTables = [{ TableName: "users" }];
-        const client = createMockClient(mockTables);
+        const client = createMockClient(mockTables) as { send: (cmd: unknown) => Promise<unknown> };
         const sendSpy = vi.spyOn(client, "send");
 
-        (prompts.multiselect as any).mockResolvedValueOnce(["users"] as any);
-        (prompts.confirm as any).mockResolvedValueOnce(false as any); // User says No
+        (prompts.multiselect as unknown as { mockResolvedValueOnce: (val: unknown) => void }).mockResolvedValueOnce(["users"]);
+        (prompts.confirm as unknown as { mockResolvedValueOnce: (val: unknown) => void }).mockResolvedValueOnce(false); // User says No
 
         await dropCommand({
-            config: { schema: "dummy", out: "dummy" } as any,
-            client,
+            config: { schema: "dummy", out: "dummy" } as unknown,
+            client: client as unknown as IMizzleClient,
         });
 
         // Verify DeleteTable was NOT called
         const calls = sendSpy.mock.calls;
         const deleteCall = calls.find(
             (call) =>
-                (call[0] as any).constructor.name === "DeleteTableCommand",
+                (call[0] as unknown as { constructor: { name: string } }).constructor.name === "DeleteTableCommand",
         );
         expect(deleteCall).toBeUndefined();
 
@@ -118,16 +119,16 @@ describe("Drop Command", () => {
 
     test("should handle cancellation at selection", async () => {
         const mockTables = [{ TableName: "users" }];
-        const client = createMockClient(mockTables);
+        const client = createMockClient(mockTables) as unknown;
 
         // Simulate cancellation symbol
         const cancelSymbol = Symbol.for("clack:cancel");
-        (prompts.multiselect as any).mockResolvedValueOnce(cancelSymbol as any);
+        (prompts.multiselect as unknown as { mockResolvedValueOnce: (val: unknown) => void }).mockResolvedValueOnce(cancelSymbol);
         vi.mocked(prompts.isCancel).mockReturnValueOnce(true);
 
         await dropCommand({
-            config: { schema: "dummy", out: "dummy" } as any,
-            client,
+            config: { schema: "dummy", out: "dummy" } as unknown,
+            client: client as unknown as IMizzleClient,
         });
 
         expect(prompts.cancel).toHaveBeenCalled();

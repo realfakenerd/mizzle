@@ -59,7 +59,7 @@ export class UpdateBuilder<
      * @returns The current builder instance for chaining.
      */
     set(values: Partial<{ [K in keyof InferInsertModel<TEntity>]: InferInsertModel<TEntity>[K] | UpdateAction }>): this {
-        partitionUpdateValues(values as Record<string, any>, this._state, this.entity[ENTITY_SYMBOLS.COLUMNS] as Record<string, any>);
+        partitionUpdateValues(values as Record<string, unknown | UpdateAction>, this._state, this.entity[ENTITY_SYMBOLS.COLUMNS] as unknown as Record<string, Column>);
         return this;
     }
 
@@ -71,9 +71,9 @@ export class UpdateBuilder<
      * @returns The current builder instance for chaining.
      */
     add(values: Partial<InferInsertModel<TEntity>>): this {
-        const columns = this.entity[ENTITY_SYMBOLS.COLUMNS] as Record<string, any>;
+        const columns = this.entity[ENTITY_SYMBOLS.COLUMNS] as unknown as Record<string, Column>;
         for (const [key, val] of Object.entries(values)) {
-            const col = columns[key];
+            const col = columns[key] as unknown as { mapToDynamoValue?: (v: unknown) => unknown };
             this._state.add[key] = (col && typeof col.mapToDynamoValue === "function") 
                 ? col.mapToDynamoValue(val) 
                 : val;
@@ -101,9 +101,9 @@ export class UpdateBuilder<
      * @returns The current builder instance for chaining.
      */
     delete(values: Partial<InferInsertModel<TEntity>>): this {
-        const columns = this.entity[ENTITY_SYMBOLS.COLUMNS] as Record<string, any>;
+        const columns = this.entity[ENTITY_SYMBOLS.COLUMNS] as unknown as Record<string, Column>;
         for (const [key, val] of Object.entries(values)) {
-            const col = columns[key];
+            const col = columns[key] as unknown as { mapToDynamoValue?: (v: unknown) => unknown };
             this._state.delete[key] = (col && typeof col.mapToDynamoValue === "function") 
                 ? col.mapToDynamoValue(val) 
                 : val;
@@ -155,12 +155,13 @@ export class UpdateBuilder<
      * @throws {ItemSizeExceededError} if the update exceeds 400KB.
      */
     public override async execute(): Promise<TResult> {
-        const columns = this.entity[ENTITY_SYMBOLS.COLUMNS] as Record<string, any>;
+        const columns = this.entity[ENTITY_SYMBOLS.COLUMNS] as unknown as Record<string, Column>;
         for (const [key, col] of Object.entries(columns)) {
-            if (col.onUpdateFn && !this._state.set[key] && !this._state.remove.includes(key)) {
-                const val = col.onUpdateFn();
+            const column = col as unknown as { onUpdateFn?: () => unknown, mapToDynamoValue?: (v: unknown) => unknown };
+            if (column.onUpdateFn && !this._state.set[key] && !this._state.remove.includes(key)) {
+                const val = column.onUpdateFn();
                 this._state.set[key] = { 
-                    value: typeof col.mapToDynamoValue === "function" ? col.mapToDynamoValue(val) : val 
+                    value: typeof column.mapToDynamoValue === "function" ? column.mapToDynamoValue(val) : val 
                 };
             }
         }

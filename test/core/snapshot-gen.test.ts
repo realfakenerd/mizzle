@@ -7,6 +7,7 @@ import {
     type MizzleSnapshot,
 } from "@aurios/mizzle/snapshot";
 import { PhysicalTable } from "@aurios/mizzle/table";
+import type { ColumnBuider } from "../../packages/mizzle/src/core/column-builder";
 import { TABLE_SYMBOLS, ENTITY_SYMBOLS } from "@mizzle/shared";
 import { mkdirSync, rmSync, writeFileSync } from "fs";
 import { join } from "path";
@@ -21,7 +22,7 @@ const mockColumn = (name: string, type: string) => ({
 
 const mockTable = (name: string, pkName: string, pkType: string) => {
     const table = new PhysicalTable(name, {
-        pk: { build: () => mockColumn(pkName, pkType) } as any,
+        pk: { build: () => mockColumn(pkName, pkType) } as unknown as ColumnBuider,
     });
     table[TABLE_SYMBOLS.TABLE_NAME] = name;
     table[TABLE_SYMBOLS.PARTITION_KEY] = mockColumn(pkName, pkType);
@@ -38,7 +39,7 @@ const mockEntity = (table: PhysicalTable, columns: Record<string, string>) => {
     return {
         [ENTITY_SYMBOLS.PHYSICAL_TABLE]: table,
         [ENTITY_SYMBOLS.COLUMNS]: colBuilders,
-    } as any;
+    } as unknown as Record<string, unknown>;
 };
 
 const TEMP_DIR = join(tmpdir(), "mizzle-snapshot-test-" + Date.now());

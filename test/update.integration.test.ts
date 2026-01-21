@@ -82,7 +82,7 @@ describe("Update Integration", () => {
             .returning("ALL_NEW")
             .execute();
         
-        const res1 = setRes as any;
+        const res1 = setRes as Record<string, unknown>;
         expect(res1.name).toBe("Alice Smith");
         expect(res1.age).toBe(25);
 
@@ -93,7 +93,7 @@ describe("Update Integration", () => {
             .returning("UPDATED_NEW")
             .execute();
         
-        const res2 = addRes as any;
+        const res2 = addRes as Record<string, unknown>;
         expect(res2.age).toBe(30);
 
         // 4. REMOVE
@@ -103,7 +103,7 @@ describe("Update Integration", () => {
             .returning("ALL_NEW")
             .execute();
         
-        const res3 = removeRes as any;
+        const res3 = removeRes as Record<string, unknown>;
         expect(res3.roles).toBeUndefined();
         expect(res3.name).toBe("Alice Smith");
 

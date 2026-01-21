@@ -77,9 +77,9 @@ describe("End-to-End Integration", () => {
             isPublic: true,
             tags: ["typescript", "orm"],
             config: { version: "1.0.0" },
-        } as any; // Cast to any because 'id' is generated but usually required by type
+        } as unknown as Record<string, unknown>; // Cast to unknown because 'id' is generated but usually required by type
 
-        const inserted = await db.insert(project).values(newProject).returning().execute() as any;
+        const inserted = await db.insert(project).values(newProject).returning().execute() as Record<string, unknown>;
         
         expect(inserted.id).toBeDefined();
         expect(inserted.pk).toBe(`PROJ#${inserted.id}`);

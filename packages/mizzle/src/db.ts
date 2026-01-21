@@ -3,6 +3,7 @@ import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import { InsertBuilder } from "./builders/insert";
 import { RelationnalQueryBuilder } from "./builders/relational-builder";
 import { SelectBuilder, type SelectedFields } from "./builders/select";
+import type { BaseBuilder } from "./builders/base";
 import type { Entity, InferInsertModel, InferSelectModel } from "./core/table";
 import { UpdateBuilder } from "./builders/update";
 import { DeleteBuilder } from "./builders/delete";
@@ -200,7 +201,7 @@ export class DynamoDB<TSchema extends Record<string, unknown> = Record<string, u
      */
     async transaction(
         token: string,
-        callback: (tx: TransactionProxy) => any[] | Promise<any[]>
+        callback: (tx: TransactionProxy) => BaseBuilder<Entity, unknown>[] | Promise<BaseBuilder<Entity, unknown>[]>
     ): Promise<void> {
         const proxy = new TransactionProxy(this.docClient);
         const operations = await callback(proxy);

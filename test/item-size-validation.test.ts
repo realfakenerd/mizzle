@@ -27,10 +27,10 @@ describe("Item Size Validation Integration", () => {
             pk: { name: "pk" },
             data: { name: "data" }
         }
-   } as any;
+   } as unknown;
 
     beforeEach(() => {
-        vi.spyOn(DynamoDBDocumentClient, "from").mockReturnValue(mockDocClient as any);
+        vi.spyOn(DynamoDBDocumentClient, "from").mockReturnValue(mockDocClient as unknown as DynamoDBDocumentClient);
         mockSend.mockReset();
     });
 

@@ -115,8 +115,8 @@ export function resolveStrategies(
     providedValues?: Record<string, unknown>,
     forcedIndexName?: string
 ): StrategyResolution {
-    const strategies = entity[ENTITY_SYMBOLS.ENTITY_STRATEGY] as unknown as Record<string, any>;
-    const physicalTable = entity[ENTITY_SYMBOLS.PHYSICAL_TABLE] as any;
+    const strategies = entity[ENTITY_SYMBOLS.ENTITY_STRATEGY] as unknown as Record<string, KeyStrategy | { pk: KeyStrategy; sk?: KeyStrategy }>;
+    const physicalTable = entity[ENTITY_SYMBOLS.PHYSICAL_TABLE] as unknown as Record<string | symbol, unknown>;
 
     const pkCol = physicalTable[TABLE_SYMBOLS.PARTITION_KEY] as Column;
     const skCol = physicalTable[TABLE_SYMBOLS.SORT_KEY] as Column | undefined;
@@ -150,9 +150,10 @@ export function resolveStrategies(
     };
 
     if (forcedIndexName) {
-        const indexes = physicalTable[TABLE_SYMBOLS.INDEXES];
+        const indexes = physicalTable[TABLE_SYMBOLS.INDEXES] as Record<string, unknown> | undefined;
         const indexBuilder = indexes?.[forcedIndexName] as { config: { pk: string; sk?: string } } | undefined;
-        const indexStrategy = strategies[forcedIndexName];
+        const strategy = strategies[forcedIndexName];
+        const indexStrategy = (strategy && 'pk' in strategy) ? strategy as { pk: KeyStrategy; sk?: KeyStrategy } : undefined;
 
         if (indexBuilder && indexStrategy) {
             // Check if availableValues already contains the PHYSICAL key
@@ -196,16 +197,18 @@ export function resolveStrategies(
         if (result.hasPartitionKey) return result;
     }
 
-    if (strategies.pk) {
-        const pkValue = resolveKeyStrategy(strategies.pk, availableValues);
+    if ('pk' in strategies && strategies.pk) {
+        const pkStrategy = strategies.pk as KeyStrategy;
+        const pkValue = resolveKeyStrategy(pkStrategy, availableValues);
         if (pkValue) {
             result.keys[pkCol.name] = pkValue;
             result.hasPartitionKey = true;
         }
     }
 
-    if (strategies.sk) {
-        const skValue = resolveKeyStrategy(strategies.sk, availableValues);
+    if ('sk' in strategies && strategies.sk) {
+        const skStrategy = strategies.sk as KeyStrategy;
+        const skValue = resolveKeyStrategy(skStrategy, availableValues);
         if (skValue) {
             if (skCol) {
                 result.keys[skCol.name] = skValue;
@@ -217,13 +220,14 @@ export function resolveStrategies(
     }
 
     if (!result.hasPartitionKey) {
-        const indexes = physicalTable[TABLE_SYMBOLS.INDEXES];
+        const indexes = physicalTable[TABLE_SYMBOLS.INDEXES] as Record<string, unknown> | undefined;
         if (indexes) {
             for (const [indexName, indexBuilderBase] of Object.entries(indexes)) {
                 const indexBuilder = indexBuilderBase as { config: { pk: string; sk?: string } };
-                const indexStrategy = strategies[indexName];
-                if (!indexStrategy) continue;
+                const strategy = strategies[indexName];
+                const indexStrategy = (strategy && 'pk' in strategy) ? strategy as { pk: KeyStrategy; sk?: KeyStrategy } : undefined;
                 
+                if (!indexStrategy) continue;
                 if (availableValues[indexBuilder.config.pk] !== undefined) {
                     result.indexName = indexName;
                     result.keys = {};

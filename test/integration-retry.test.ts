@@ -16,7 +16,7 @@ const mockDocClient = {
 
 describe("Integration Retry", () => {
     beforeEach(() => {
-        vi.spyOn(DynamoDBDocumentClient, "from").mockReturnValue(mockDocClient as any);
+        vi.spyOn(DynamoDBDocumentClient, "from").mockReturnValue(mockDocClient as unknown as DynamoDBDocumentClient);
     });
 
     afterEach(() => {
@@ -30,7 +30,7 @@ describe("Integration Retry", () => {
            [TABLE_SYMBOLS.INDEXES]: {},
         },
         [ENTITY_SYMBOLS.ENTITY_STRATEGY]: { pk: { type: "static", segments: ["test"] } }
-   } as any;
+   } as unknown;
 
     it("should retry operations via mizzle client", async () => {
         const client = new DynamoDBClient({});

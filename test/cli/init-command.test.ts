@@ -32,8 +32,8 @@ describe("Init Command", () => {
 
     test("should create mizzle.config.ts with user input", async () => {
         // Mock prompts
-        (prompts.text as any).mockImplementation(
-            async (options: any) => {
+        (prompts.text as unknown as { mockImplementation: (fn: unknown) => void }).mockImplementation(
+            async (options: { message: string; initialValue?: string }) => {
                 const message = options.message;
                 if (message.includes("schema")) return "./src/schema.ts";
                 if (message.includes("output")) return "./migrations";
@@ -70,8 +70,8 @@ describe("Init Command", () => {
 
     test("should abort if user cancels", async () => {
         const CANCEL = Symbol.for("clack:cancel");
-        (prompts.text as any).mockResolvedValue(CANCEL as any);
-        (prompts.isCancel as any).mockReturnValue(true);
+        (prompts.text as unknown as { mockResolvedValue: (val: unknown) => void }).mockResolvedValue(CANCEL);
+        (prompts.isCancel as unknown as { mockReturnValue: (val: unknown) => void }).mockReturnValue(true);
 
         await initCommand();
 

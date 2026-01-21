@@ -2,6 +2,7 @@ import { expect, test, describe } from "vitest";
 import { compareSchema } from "@aurios/mizzle/diff";
 import { PhysicalTable } from "@aurios/mizzle/table";
 import { type MizzleSnapshot } from "@aurios/mizzle/snapshot";
+import type { ColumnBuider } from "../../packages/mizzle/src/core/column-builder";
 import { TABLE_SYMBOLS, ENTITY_SYMBOLS } from "@mizzle/shared";
 
 // Mock helpers
@@ -19,7 +20,7 @@ const mockTable = (
     skType?: string,
 ) => {
     const table = new PhysicalTable(name, {
-        pk: { build: () => mockColumn(pkName, pkType) } as any,
+        pk: { build: () => mockColumn(pkName, pkType) } as unknown as ColumnBuider,
     });
     table[TABLE_SYMBOLS.TABLE_NAME] = name;
     table[TABLE_SYMBOLS.PARTITION_KEY] = mockColumn(pkName, pkType);
@@ -39,7 +40,7 @@ const mockEntity = (table: PhysicalTable, columns: Record<string, string>) => {
     return {
         [ENTITY_SYMBOLS.PHYSICAL_TABLE]: table,
         [ENTITY_SYMBOLS.COLUMNS]: colBuilders,
-    } as any;
+    } as unknown as Record<string, unknown>;
 };
 
 describe("Schema Diffing", () => {
@@ -54,8 +55,8 @@ describe("Schema Diffing", () => {
 
         expect(changes).toHaveLength(1);
         expect(changes[0]!.type).toBe("create");
-        expect((changes[0] as any).table.TableName).toBe("users");
-        expect((changes[0] as any).table.AttributeDefinitions).toEqual([
+        expect((changes[0] as { table: { TableName: string, AttributeDefinitions: unknown[] } }).table.TableName).toBe("users");
+        expect((changes[0] as { table: { TableName: string, AttributeDefinitions: unknown[] } }).table.AttributeDefinitions).toEqual([
             { AttributeName: "id", AttributeType: "S" },
         ]);
     });
@@ -76,7 +77,7 @@ describe("Schema Diffing", () => {
         const changes = compareSchema(currentSchema, snapshot);
         expect(changes).toHaveLength(1);
         expect(changes[0]!.type).toBe("delete");
-        expect((changes[0] as any).tableName).toBe("users");
+        expect((changes[0] as { tableName: string }).tableName).toBe("users");
     });
 
     test("should return empty array if no changes", () => {
@@ -144,13 +145,13 @@ describe("Schema Diffing", () => {
         );
 
         expect(changes).toHaveLength(1);
-        const created = (changes[0] as any).table;
+        const created = (changes[0] as { table: { GlobalSecondaryIndexes: unknown[], AttributeDefinitions: { AttributeName: string, AttributeType: string }[] } }).table;
         expect(created.GlobalSecondaryIndexes).toHaveLength(1);
         expect(created.GlobalSecondaryIndexes[0].IndexName).toBe("byEmail");
 
         // Check if "email" was added to AttributeDefinitions with correct type
         const emailAttr = created.AttributeDefinitions.find(
-            (a: any) => a.AttributeName === "email",
+            (a: { AttributeName: string }) => a.AttributeName === "email",
         );
         expect(emailAttr).toBeDefined();
         expect(emailAttr.AttributeType).toBe("S");

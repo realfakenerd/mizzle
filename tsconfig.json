@@ -2,17 +2,16 @@
     "extends": "./packages/tsconfig/base.json",
     "include": ["packages/*/src", "test"],
     "compilerOptions": {
-        "baseUrl": ".",
         "paths": {
-            "@mizzle/shared": ["packages/shared/src/index.ts"],
-            "@aurios/mizzle": ["packages/mizzle/src/index.ts"],
-            "@aurios/mizzle/columns": ["packages/mizzle/src/columns/index.ts"],
-            "@aurios/mizzle/table": ["packages/mizzle/src/core/table.ts"],
-            "@aurios/mizzle/snapshot": ["packages/mizzle/src/core/snapshot.ts"],
-            "@aurios/mizzle/diff": ["packages/mizzle/src/core/diff.ts"],
-            "@aurios/mizzle/introspection": ["packages/mizzle/src/core/introspection.ts"],
-            "@aurios/mizzle/db": ["packages/mizzle/src/db.ts"],
-            "@aurios/mizzle/core/retry": ["packages/mizzle/src/core/retry.ts"]
+            "@mizzle/shared": ["./packages/shared/src/index.ts"],
+            "@aurios/mizzle": ["./packages/mizzle/src/index.ts"],
+            "@aurios/mizzle/columns": ["./packages/mizzle/src/columns/index.ts"],
+            "@aurios/mizzle/table": ["./packages/mizzle/src/core/table.ts"],
+            "@aurios/mizzle/snapshot": ["./packages/mizzle/src/core/snapshot.ts"],
+            "@aurios/mizzle/diff": ["./packages/mizzle/src/core/diff.ts"],
+            "@aurios/mizzle/introspection": ["./packages/mizzle/src/core/introspection.ts"],
+            "@aurios/mizzle/db": ["./packages/mizzle/src/db.ts"],
+            "@aurios/mizzle/core/retry": ["./packages/mizzle/src/core/retry.ts"]
         },
         "noUnusedLocals": false,
         "noUnusedParameters": false,

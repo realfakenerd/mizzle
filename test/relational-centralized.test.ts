@@ -34,8 +34,9 @@ describe("Centralized defineRelations", () => {
         }));
 
         expect(relations).toBeDefined();
-        expect((relations as any).definitions.users.posts.type).toBe("many");
-        expect((relations as any).definitions.posts.author.type).toBe("one");
+        const defs = (relations as unknown as { definitions: Record<string, unknown> }).definitions;
+        expect(defs.users.posts.type).toBe("many");
+        expect(defs.posts.author.type).toBe("one");
     });
 
     it("should correctly extract metadata from centralized relations", () => {

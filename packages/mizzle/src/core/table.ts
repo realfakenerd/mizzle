@@ -238,13 +238,13 @@ export function dynamoEntity<
 
     const definedStrategies = strategies ? strategies(builtColumns) : {};
 
-    const normalizedStrategies: Record<string, any> = {};
+    const normalizedStrategies: Record<string, unknown> = {};
     for (const [key, val] of Object.entries(definedStrategies)) {
         if (val instanceof Column) {
             normalizedStrategies[key] = { type: "prefix", segments: ["", val] };
         } else if (val && typeof val === "object" && !("type" in val && "segments" in val)) {
             // It's an index strategy object { pk, sk }
-            const indexStrategy: any = { ...val };
+            const indexStrategy: Record<string, unknown> = { ...val as object };
             if (indexStrategy.pk instanceof Column) {
                 indexStrategy.pk = { type: "prefix", segments: ["", indexStrategy.pk] };
             }

@@ -73,7 +73,7 @@ export class BatchWriteBase<
             
             const command = new BatchWriteCommand({
                 RequestItems: {
-                    [this.tableName]: currentRequests as any[]
+                    [this.tableName]: currentRequests as Record<string, unknown>[]
                 }
             });
 

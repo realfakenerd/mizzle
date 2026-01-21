@@ -35,8 +35,8 @@ export function buildExpression(
             return undefined;
         }
         const colName = addName(cond.column.name);
-        const mapValue = (v: unknown) => typeof (cond.column as any).mapToDynamoValue === "function" 
-            ? (cond.column as any).mapToDynamoValue(v) 
+        const mapValue = (v: unknown) => typeof (cond.column as unknown as { mapToDynamoValue: Function }).mapToDynamoValue === "function" 
+            ? (cond.column as unknown as { mapToDynamoValue: (v: unknown) => unknown }).mapToDynamoValue(v) 
             : v;
 
         if (cond.operator === "between") {
@@ -61,8 +61,8 @@ export function buildExpression(
             return undefined;
         }
         const colName = addName(cond.column.name);
-        const mapValue = (v: unknown) => typeof (cond.column as any).mapToDynamoValue === "function" 
-            ? (cond.column as any).mapToDynamoValue(v) 
+        const mapValue = (v: unknown) => typeof (cond.column as unknown as { mapToDynamoValue: Function }).mapToDynamoValue === "function" 
+            ? (cond.column as unknown as { mapToDynamoValue: (v: unknown) => unknown }).mapToDynamoValue(v) 
             : v;
 
         if (cond.operator === "attribute_exists") {

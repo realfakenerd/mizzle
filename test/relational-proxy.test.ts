@@ -38,11 +38,11 @@ describe("Relational Query Proxy", () => {
             }
         });
 
-        expect(() => (db.query as any).posts).toThrow(/Entity posts not found/);
+        expect(() => (db.query as unknown as Record<string, unknown>).posts).toThrow(/Entity posts not found/);
     });
 
     it("should throw if query is accessed but no relations defined", () => {
         const db = mizzle(client);
-        expect(() => (db.query as any).users).toThrow(/No relations defined/);
+        expect(() => (db.query as unknown as Record<string, unknown>).users).toThrow(/No relations defined/);
     });
 });

@@ -91,7 +91,7 @@ describe("Fluent Writes Integration", () => {
             .returning("ALL_NEW")
             .execute();
 
-        const res = updated as any;
+        const res = updated as Record<string, unknown>;
         expect(res.name).toBe("Alice Smith");
         expect(res.status).toBe("active");
         expect(res.order).toBe(2);

@@ -168,12 +168,12 @@ export function defineRelations<TSchema extends Record<string, Entity>>(
 export function defineRelations(
     first: Entity | Record<string, Entity>,
     callback: Function
-): any {
+): unknown {
     if (first instanceof Entity) {
         // Single entity mode
         const config = callback({
-            one: (to: Entity, config: any) => new Relation("one", { to, ...config }),
-            many: (to: Entity, config: any) => new Relation("many", { to, ...config }),
+            one: (to: Entity, config: Omit<RelationConfig, "to">) => new Relation("one", { to, ...config }),
+            many: (to: Entity, config: Omit<RelationConfig, "to">) => new Relation("many", { to, ...config }),
         });
 
         return {
@@ -186,14 +186,14 @@ export function defineRelations(
         const schema = first as Record<string, Entity>;
         
         // Build helpers
-        const helpers: any = {
+        const helpers: Record<string, unknown> = {
             one: {},
             many: {},
         };
 
         for (const [key, entity] of Object.entries(schema)) {
-            helpers.one[key] = (config: any) => new Relation("one", { to: entity, ...config });
-            helpers.many[key] = (config: any) => new Relation("many", { to: entity, ...config });
+            (helpers.one as Record<string, unknown>)[key] = (config: Omit<RelationConfig, "to">) => new Relation("one", { to: entity, ...config });
+            (helpers.many as Record<string, unknown>)[key] = (config: Omit<RelationConfig, "to">) => new Relation("many", { to: entity, ...config });
             helpers[key] = entity;
         }
 
@@ -242,8 +242,9 @@ export function extractMetadata(schema: Record<string, unknown>): InternalRelati
 
     // Second pass: identify relations
     for (const [, value] of Object.entries(schema)) {
-        if (value && (value as any)[RELATION_SYMBOLS.RELATION_CONFIG]) {
-            if ((value as any).entity) {
+        if (value && typeof value === 'object' && (value as Record<string | symbol, unknown>)[RELATION_SYMBOLS.RELATION_CONFIG]) {
+            const relationConfig = value as Record<string | symbol, unknown>;
+            if (relationConfig.entity) {
                 // Single entity definition
                 const definition = value as RelationsDefinition;
                 const entityEntry = Object.entries(metadata.entities).find(
@@ -254,7 +255,7 @@ export function extractMetadata(schema: Record<string, unknown>): InternalRelati
                     const [, meta] = entityEntry;
                     meta.relations = { ...meta.relations, ...definition.config };
                 }
-            } else if ((value as any).definitions) {
+            } else if (relationConfig.definitions) {
                 // Multi-entity definition
                 const multiDef = value as MultiRelationsDefinition;
                 for (const [entityName, relations] of Object.entries(multiDef.definitions)) {

@@ -38,7 +38,7 @@ describe("Transaction Integration", () => {
                     AttributeDefinitions: [{ AttributeName: "pk", AttributeType: "S" }, { AttributeName: "sk", AttributeType: "S" }],
                     ProvisionedThroughput: { ReadCapacityUnits: 5, WriteCapacityUnits: 5 },
                 }));
-            } catch (e) { /* ignore */ }
+            } catch { /* ignore */ }
         };
         await createTable(table1Name);
         await createTable(table2Name);
@@ -46,7 +46,7 @@ describe("Transaction Integration", () => {
 
     afterAll(async () => {
         const deleteTable = async (name: string) => {
-            try { await client.send(new DeleteTableCommand({ TableName: name })); } catch (e) { /* ignore */ }
+            try { await client.send(new DeleteTableCommand({ TableName: name })); } catch { /* ignore */ }
         };
         await deleteTable(table1Name);
         await deleteTable(table2Name);

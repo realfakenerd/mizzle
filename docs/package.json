@@ -9,7 +9,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "check": "astro check",
-    "lint": "eslint ."
+    "lint": "bunx oxlint ."
   },
   "dependencies": {
     "@astrojs/starlight": "^0.37.2",

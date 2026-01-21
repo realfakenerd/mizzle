@@ -3,7 +3,7 @@ import {
     QueryCommand,
     ScanCommand,
 } from "@aws-sdk/lib-dynamodb";
-import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "@mizzle/shared";
+import { ENTITY_SYMBOLS } from "@mizzle/shared";
 import { Column } from "../core/column";
 import type { SelectedFields as SelectedFieldsBase } from "../core/operations";
 import { 
@@ -159,28 +159,27 @@ export class SelectBase<
      * @returns An AsyncIterableIterator for the query results.
      */
     iterator(): AsyncIterableIterator<TResult> {
-        const self = this;
-        return (async function* () {
+        return (async function* (this: SelectBase<TEntity, TSelection, TResult>) {
+            let lastEvaluatedKey: Record<string, unknown> | undefined;
             let count = 0;
-            let lastEvaluatedKey: Record<string, any> | undefined = undefined;
 
             do {
-                const result = await self.fetchPage(lastEvaluatedKey);
+                const result = await this.fetchPage(lastEvaluatedKey);
                 
                 for (const item of result.items) {
                     yield item;
                     count++;
-                    if (self._limitVal !== undefined && count >= self._limitVal) {
+                    if (this._limitVal !== undefined && count >= this._limitVal) {
                         return;
                     }
                 }
 
                 lastEvaluatedKey = result.lastEvaluatedKey;
             } while (lastEvaluatedKey);
-        })();
+        }).bind(this)();
     }
 
-    private async fetchPage(exclusiveStartKey?: Record<string, any>): Promise<{ items: TResult[], lastEvaluatedKey?: Record<string, any> }> {
+    private async fetchPage(exclusiveStartKey?: Record<string, unknown>): Promise<{ items: TResult[], lastEvaluatedKey?: Record<string, unknown> }> {
         const resolution = this.resolveKeys(this._whereClause, undefined, this._forcedIndexName);
 
         if (resolution.hasPartitionKey && resolution.hasSortKey && !resolution.indexName && !exclusiveStartKey) {
@@ -217,8 +216,8 @@ export class SelectBase<
 
     private async executeQuery(
         resolution: StrategyResolution,
-        exclusiveStartKey?: Record<string, any>,
-    ): Promise<{ items: TResult[], lastEvaluatedKey?: Record<string, any> }> {
+        exclusiveStartKey?: Record<string, unknown>,
+    ): Promise<{ items: TResult[], lastEvaluatedKey?: Record<string, unknown> }> {
         const { expressionAttributeNames, expressionAttributeValues, addName, addValue } = this.createExpressionContext();
 
         const keyParts: string[] = [];
@@ -249,12 +248,12 @@ export class SelectBase<
 
         const response = await this.client.send(command);
         return {
-            items: (response.Items || []).map((item: any) => this.mapToLogical(item)) as TResult[],
+            items: (response.Items || []).map((item) => this.mapToLogical(item as Record<string, unknown>)) as TResult[],
             lastEvaluatedKey: response.LastEvaluatedKey,
         };
     }
 
-    private async executeScan(exclusiveStartKey?: Record<string, any>): Promise<{ items: TResult[], lastEvaluatedKey?: Record<string, any> }> {
+    private async executeScan(exclusiveStartKey?: Record<string, unknown>): Promise<{ items: TResult[], lastEvaluatedKey?: Record<string, unknown> }> {
         const { expressionAttributeNames, expressionAttributeValues, addName, addValue } = this.createExpressionContext();
 
         const filterExpression = this._whereClause 
@@ -273,7 +272,7 @@ export class SelectBase<
 
         const response = await this.client.send(command);
         return {
-            items: (response.Items || []).map((item: any) => this.mapToLogical(item)) as TResult[],
+            items: (response.Items || []).map((item) => this.mapToLogical(item as Record<string, unknown>)) as TResult[],
             lastEvaluatedKey: response.LastEvaluatedKey,
         };
     }

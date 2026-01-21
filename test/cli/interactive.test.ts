@@ -36,7 +36,7 @@ const mockTable = (name: string) => {
                 getDynamoType: () => "S",
                 name: "id",
             }),
-        } as any,
+        } as unknown,
     });
     table[TABLE_SYMBOLS.TABLE_NAME] = name;
     table[TABLE_SYMBOLS.PARTITION_KEY] = {
@@ -50,7 +50,7 @@ const mockTable = (name: string) => {
 const createMockClient = () => {
     return {
         send: async () => ({ TableNames: [], Table: undefined }),
-    } as any;
+    } as unknown;
 };
 
 const TEMP_DIR = join(tmpdir(), "mizzle-interactive-test-" + Date.now());
@@ -73,7 +73,7 @@ describe("Interactive Commands", () => {
         mockDiscover.mockResolvedValue({ tables, entities: [] });
 
         await generateCommand({
-            config: { schema: "dummy", out: TEMP_DIR } as any,
+            config: { schema: "dummy", out: TEMP_DIR } as unknown,
             discoverSchema: mockDiscover,
         });
 
@@ -86,7 +86,7 @@ describe("Interactive Commands", () => {
         const client = createMockClient();
 
         await pushCommand({
-            config: { schema: "dummy", out: TEMP_DIR } as any,
+            config: { schema: "dummy", out: TEMP_DIR } as unknown,
             discoverSchema: mockDiscover,
             client,
         });

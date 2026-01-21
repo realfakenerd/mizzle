@@ -1,13 +1,12 @@
 import { describe, it, expect, vi } from "vitest";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import { dynamoTable, dynamoEntity } from "@aurios/mizzle/table";
 import { mizzle } from "@aurios/mizzle/db";
 import { string, uuid } from "@aurios/mizzle/columns";
 
 // Mock DynamoDBDocumentClient.from to return a mock doc client
 vi.mock("@aws-sdk/lib-dynamodb", async (importOriginal) => {
-    const original = await importOriginal<any>();
+    const original = await importOriginal<Record<string, unknown>>();
     return {
         ...original,
         DynamoDBDocumentClient: {

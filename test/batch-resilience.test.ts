@@ -27,10 +27,10 @@ describe("Batch Resilience", () => {
             pk: { name: "pk" },
             name: { name: "name" }
         }
-   } as any;
+   } as unknown;
 
     beforeEach(() => {
-        vi.spyOn(DynamoDBDocumentClient, "from").mockReturnValue(mockDocClient as any);
+        vi.spyOn(DynamoDBDocumentClient, "from").mockReturnValue(mockDocClient as unknown as DynamoDBDocumentClient);
         mockSend.mockReset();
     });
 

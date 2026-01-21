@@ -30,7 +30,7 @@ describe("defineRelations", () => {
         expect(usersRelations.config.posts).toBeDefined();
         expect(usersRelations.config.posts!.type).toBe("many");
         expect(usersRelations.config.posts!.config.to).toBe(posts);
-        expect((usersRelations as any)[RELATION_SYMBOLS.RELATION_CONFIG]).toBe(true);
+        expect((usersRelations as unknown as Record<symbol, unknown>)[RELATION_SYMBOLS.RELATION_CONFIG]).toBe(true);
     });
 
     it("should define a one-to-one relationship", () => {
@@ -62,11 +62,12 @@ describe("defineRelations", () => {
             },
         }));
 
-        expect((relations as any).definitions.users.posts).toBeDefined();
-        expect((relations as any).definitions.users.posts.type).toBe("many");
-        expect((relations as any).definitions.posts.author).toBeDefined();
-        expect((relations as any).definitions.posts.author.type).toBe("one");
-        expect((relations as any).definitions.posts.author.config.fields).toContain(posts.userId);
-        expect((relations as any).definitions.posts.author.config.references).toContain(users.id);
+        const defs = (relations as unknown as { definitions: Record<string, unknown> }).definitions;
+        expect(defs.users.posts).toBeDefined();
+        expect(defs.users.posts.type).toBe("many");
+        expect(defs.posts.author).toBeDefined();
+        expect(defs.posts.author.type).toBe("one");
+        expect(defs.posts.author.config.fields).toContain(posts.userId);
+        expect(defs.posts.author.config.references).toContain(users.id);
     });
 });
