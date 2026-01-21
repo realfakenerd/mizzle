@@ -38,7 +38,7 @@ describe("Introspection", () => {
             },
         ];
         const client = createMockClient(mockTables);
-        const snapshot = await getRemoteSnapshot(client);
+        const snapshot = await getRemoteSnapshot(client as any);
 
         expect(snapshot.version).toBe("remote");
         expect(snapshot.tables["users"]!.TableName).toBe("users");

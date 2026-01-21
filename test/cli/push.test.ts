@@ -23,13 +23,13 @@ const mockTable = (name: string) => {
                 getDynamoType: () => "S",
                 name: "id",
             }),
-        } as unknown,
+        } as any,
     });
     table[TABLE_SYMBOLS.TABLE_NAME] = name;
     table[TABLE_SYMBOLS.PARTITION_KEY] = {
         name: "id",
         getDynamoType: () => "S",
-    };
+    } as any;
     return table;
 };
 
@@ -65,9 +65,9 @@ describe("Push Command", () => {
         const mockClient = createMockClient() as unknown;
 
         await pushCommand({
-            config: { schema: "dummy", out: "dummy" } as unknown,
+            config: { schema: "dummy", out: "dummy" } as any,
             discoverSchema: mockDiscover,
-            client: mockClient as unknown as IMizzleClient,
+            client: mockClient as any,
         });
 
         // Verify CreateTable was called

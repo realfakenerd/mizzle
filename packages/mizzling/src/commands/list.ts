@@ -30,12 +30,12 @@ export async function listCommand(options: ListOptions) {
         console.log(`Found ${tables.length} tables:`);
         for (const table of tables) {
             console.log(`- ${table.TableName}`);
-            const pk = table.KeySchema.find(k => k.KeyType === "HASH")?.AttributeName;
-            const sk = table.KeySchema.find(k => k.KeyType === "RANGE")?.AttributeName;
+            const pk = table.KeySchema.find((k: any) => k.KeyType === "HASH")?.AttributeName;
+            const sk = table.KeySchema.find((k: any) => k.KeyType === "RANGE")?.AttributeName;
             console.log(`  PK: ${pk}, SK: ${sk || "(none)"}`);
             
             if (table.GlobalSecondaryIndexes && table.GlobalSecondaryIndexes.length > 0) {
-                 console.log(`  GSIs: ${table.GlobalSecondaryIndexes.map(g => g.IndexName).join(", ")}`);
+                 console.log(`  GSIs: ${table.GlobalSecondaryIndexes.map((g: any) => g.IndexName).join(", ")}`);
             }
         }
 

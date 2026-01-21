@@ -10,31 +10,38 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "development": "./src/index.ts"
     },
     "./columns": {
       "types": "./dist/columns.d.ts",
-      "import": "./dist/columns.js"
+      "import": "./dist/columns.js",
+      "development": "./src/columns/index.ts"
     },
     "./table": {
       "types": "./dist/table.d.ts",
-      "import": "./dist/table.js"
+      "import": "./dist/table.js",
+      "development": "./src/core/table.ts"
     },
     "./snapshot": {
       "types": "./dist/snapshot.d.ts",
-      "import": "./dist/snapshot.js"
+      "import": "./dist/snapshot.js",
+      "development": "./src/core/snapshot.ts"
     },
     "./diff": {
       "types": "./dist/diff.d.ts",
-      "import": "./dist/diff.js"
+      "import": "./dist/diff.js",
+      "development": "./src/core/diff.ts"
     },
     "./introspection": {
       "types": "./dist/introspection.d.ts",
-      "import": "./dist/introspection.js"
+      "import": "./dist/introspection.js",
+      "development": "./src/core/introspection.ts"
     },
     "./db": {
       "types": "./dist/db.d.ts",
-      "import": "./dist/db.js"
+      "import": "./dist/db.js",
+      "development": "./src/db.ts"
     }
   },
   "author": {

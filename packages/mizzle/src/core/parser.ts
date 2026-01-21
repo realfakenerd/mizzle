@@ -5,7 +5,7 @@ import { Entity } from "./table";
 import { Column } from "./column";
 
 interface MinimalPhysicalTable {
-    [TABLE_SYMBOLS.PARTITION_KEY]: Column;
+    [TABLE_SYMBOLS.PARTITION_KEY]: Column | undefined;
     [TABLE_SYMBOLS.SORT_KEY]?: Column;
 }
 
@@ -78,8 +78,9 @@ export class ItemCollectionParser {
             KeyStrategy
         >;
         const physicalTable = entity[ENTITY_SYMBOLS.PHYSICAL_TABLE] as unknown as MinimalPhysicalTable;
+        if (!physicalTable || !physicalTable[TABLE_SYMBOLS.PARTITION_KEY]) return false;
 
-        const pkName = physicalTable[TABLE_SYMBOLS.PARTITION_KEY].name;
+        const pkName = physicalTable[TABLE_SYMBOLS.PARTITION_KEY]!.name;
         const skName = physicalTable[TABLE_SYMBOLS.SORT_KEY]?.name;
 
         const pkMatch = this.matchStrategy(item[pkName], strategies.pk);

@@ -31,13 +31,13 @@ const mockTable = (name: string) => {
                 getDynamoType: () => "S",
                 name: "id",
             }),
-        } as unknown,
+        } as any,
     });
     table[TABLE_SYMBOLS.TABLE_NAME] = name;
     table[TABLE_SYMBOLS.PARTITION_KEY] = {
         name: "id",
         getDynamoType: () => "S",
-    };
+    } as any;
     return table;
 };
 
@@ -114,7 +114,7 @@ describe("Generate Command", () => {
         mockDiscover.mockRejectedValue(new Error("Discovery failed"));
         const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
         const processExitSpy = vi.spyOn(process, "exit").mockImplementation(
-            (() => {}) as unknown as (code?: number) => never,
+            (() => {}) as any,
         );
 
         await generateCommand({

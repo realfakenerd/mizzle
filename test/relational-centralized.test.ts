@@ -34,7 +34,7 @@ describe("Centralized defineRelations", () => {
         }));
 
         expect(relations).toBeDefined();
-        const defs = (relations as unknown as { definitions: Record<string, unknown> }).definitions;
+        const defs = (relations as any).definitions;
         expect(defs.users.posts.type).toBe("many");
         expect(defs.posts.author.type).toBe("one");
     });

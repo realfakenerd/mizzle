@@ -95,7 +95,7 @@ export class RelationnalQueryBuilder<T extends Entity> {
                         // If we are here, we should have a physical table
                         if (!physicalTable) throw new Error("Physical table not found for entity");
                         
-                        const pkPhysicalName = ((physicalTable as unknown as Record<symbol, Column>)[TABLE_SYMBOLS.PARTITION_KEY]).name;
+                        const pkPhysicalName = ((physicalTable as any)[TABLE_SYMBOLS.PARTITION_KEY] as Column).name;
                         
                         const pkValue = resolution.keys[pkPhysicalName];
 
@@ -106,7 +106,7 @@ export class RelationnalQueryBuilder<T extends Entity> {
                         
                         // Map physical attributes back to logical names for the parser
                         // We need a helper since we are not inheriting from BaseBuilder here
-                        const logicalItems = rawItems.map(item => mapToLogical(this.table, item));
+                        const logicalItems = rawItems.map(item => mapToLogical(this.table as any, item));
 
                         const parser = new ItemCollectionParser(this.schema);
                         results = parser.parse(logicalItems as Record<string, unknown>[], this.entityName, (options.with || options.include) as Record<string, boolean | object>);
@@ -147,7 +147,7 @@ export class RelationnalQueryBuilder<T extends Entity> {
                                         const targetEntityName = Object.entries(this.schema!.entities).find(([_, m]) => m.entity === targetEntity)?.[0];
 
                                         // Map result to logical names for target strategy resolution
-                                        const logicalValues = mapToLogical(this.table, result);
+                                        const logicalValues = mapToLogical(this.table as any, result);
 
                                         let finalLogicalValues = logicalValues;
                                         if (relation.config.fields && relation.config.references) {

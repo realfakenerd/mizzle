@@ -1,6 +1,7 @@
 import { UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { ENTITY_SYMBOLS } from "@mizzle/shared";
 import { Entity, type InferInsertModel } from "../core/table";
+import { Column } from "../core/column";
 import { type Expression } from "../expressions/operators";
 import { BaseBuilder } from "./base";
 import { type IMizzleClient } from "../core/client";
@@ -200,7 +201,7 @@ export class UpdateBuilder<
             ReturnValues: this._returnValues,
         });
 
-        const response = await this.client.send(command);
+        const response = await this.client.send(command) as any;
         return response.Attributes as TResult;
     }
 

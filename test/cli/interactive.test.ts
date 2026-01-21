@@ -36,13 +36,13 @@ const mockTable = (name: string) => {
                 getDynamoType: () => "S",
                 name: "id",
             }),
-        } as unknown,
+        } as any,
     });
     table[TABLE_SYMBOLS.TABLE_NAME] = name;
     table[TABLE_SYMBOLS.PARTITION_KEY] = {
         name: "id",
         getDynamoType: () => "S",
-    };
+    } as any;
     return table;
 };
 
@@ -73,7 +73,7 @@ describe("Interactive Commands", () => {
         mockDiscover.mockResolvedValue({ tables, entities: [] });
 
         await generateCommand({
-            config: { schema: "dummy", out: TEMP_DIR } as unknown,
+            config: { schema: "dummy", out: TEMP_DIR } as any,
             discoverSchema: mockDiscover,
         });
 
@@ -86,9 +86,9 @@ describe("Interactive Commands", () => {
         const client = createMockClient();
 
         await pushCommand({
-            config: { schema: "dummy", out: TEMP_DIR } as unknown,
+            config: { schema: "dummy", out: TEMP_DIR } as any,
             discoverSchema: mockDiscover,
-            client,
+            client: client as any,
         });
 
         expect(mockClack.confirm).toHaveBeenCalled();

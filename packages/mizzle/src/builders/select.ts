@@ -210,7 +210,7 @@ export class SelectBase<
             ConsistentRead: this._consistentReadVal,
         });
 
-        const result = await this.client.send(command);
+        const result = await this.client.send(command) as any;
         return result.Item ? ([this.mapToLogical(result.Item)] as TResult[]) : [];
     }
 
@@ -246,9 +246,9 @@ export class SelectBase<
             ExclusiveStartKey: exclusiveStartKey,
         });
 
-        const response = await this.client.send(command);
+        const response = await this.client.send(command) as any;
         return {
-            items: (response.Items || []).map((item) => this.mapToLogical(item as Record<string, unknown>)) as TResult[],
+            items: (response.Items || []).map((item: Record<string, unknown>) => this.mapToLogical(item)) as TResult[],
             lastEvaluatedKey: response.LastEvaluatedKey,
         };
     }
@@ -270,9 +270,9 @@ export class SelectBase<
             ExclusiveStartKey: exclusiveStartKey,
         });
 
-        const response = await this.client.send(command);
+        const response = await this.client.send(command) as any;
         return {
-            items: (response.Items || []).map((item) => this.mapToLogical(item as Record<string, unknown>)) as TResult[],
+            items: (response.Items || []).map((item: Record<string, unknown>) => this.mapToLogical(item)) as TResult[],
             lastEvaluatedKey: response.LastEvaluatedKey,
         };
     }

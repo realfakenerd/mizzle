@@ -39,7 +39,7 @@ const mockEntity = (table: PhysicalTable, columns: Record<string, string>) => {
     return {
         [ENTITY_SYMBOLS.PHYSICAL_TABLE]: table,
         [ENTITY_SYMBOLS.COLUMNS]: colBuilders,
-    } as unknown as Record<string, unknown>;
+    } as any;
 };
 
 const TEMP_DIR = join(tmpdir(), "mizzle-snapshot-test-" + Date.now());

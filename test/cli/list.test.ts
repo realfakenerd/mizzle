@@ -41,8 +41,8 @@ describe("List Command", () => {
         const client = createMockClient(mockTables) as unknown;
 
         await listCommand({
-            config: { schema: "dummy", out: "dummy" } as unknown,
-            client: client as unknown as IMizzleClient,
+            config: { schema: "dummy", out: "dummy" } as any,
+            client: client as any,
         });
 
         expect(console.log).toHaveBeenCalledWith(
@@ -54,8 +54,8 @@ describe("List Command", () => {
     test("should handle empty list", async () => {
         const client = createMockClient([]) as unknown;
         await listCommand({
-            config: { schema: "dummy", out: "dummy" } as unknown,
-            client: client as unknown as IMizzleClient,
+            config: { schema: "dummy", out: "dummy" } as any,
+            client: client as any,
         });
         expect(console.log).toHaveBeenCalledWith(
             expect.stringContaining("No tables found"),

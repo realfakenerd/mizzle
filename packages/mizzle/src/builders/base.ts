@@ -18,7 +18,7 @@ export abstract class BaseBuilder<
     }
 
     public get tableName(): string {
-        return resolveTableName(this.entity as unknown as Entity);
+        return resolveTableName(this.entity as any);
     }
 
     protected get physicalTable() {
@@ -66,6 +66,6 @@ export abstract class BaseBuilder<
     }
 
     protected mapToLogical(item: Record<string, unknown>): Record<string, unknown> {
-        return mapToLogical(this.entity, item);
+        return mapToLogical(this.entity as any, item);
     }
 }

@@ -167,13 +167,14 @@ export function defineRelations<TSchema extends Record<string, Entity>>(
  */
 export function defineRelations(
     first: Entity | Record<string, Entity>,
-    callback: Function
-): unknown {
+    callback: RelationsCallback | MultiRelationsCallback<any>
+): RelationsDefinition | MultiRelationsDefinition {
     if (first instanceof Entity) {
         // Single entity mode
-        const config = callback({
-            one: (to: Entity, config: Omit<RelationConfig, "to">) => new Relation("one", { to, ...config }),
-            many: (to: Entity, config: Omit<RelationConfig, "to">) => new Relation("many", { to, ...config }),
+        const cb = callback as RelationsCallback;
+        const config = cb({
+            one: (to: Entity, config?: Omit<RelationConfig, "to">) => new Relation("one", { to, ...config }),
+            many: (to: Entity, config?: Omit<RelationConfig, "to">) => new Relation("many", { to, ...config }),
         });
 
         return {
@@ -184,6 +185,7 @@ export function defineRelations(
     } else {
         // Multi-entity mode
         const schema = first as Record<string, Entity>;
+        const cb = callback as MultiRelationsCallback<typeof schema>;
         
         // Build helpers
         const helpers: Record<string, unknown> = {
@@ -192,16 +194,16 @@ export function defineRelations(
         };
 
         for (const [key, entity] of Object.entries(schema)) {
-            (helpers.one as Record<string, unknown>)[key] = (config: Omit<RelationConfig, "to">) => new Relation("one", { to: entity, ...config });
-            (helpers.many as Record<string, unknown>)[key] = (config: Omit<RelationConfig, "to">) => new Relation("many", { to: entity, ...config });
+            (helpers.one as Record<string, unknown>)[key] = (config?: Omit<RelationConfig, "to">) => new Relation("one", { to: entity, ...config });
+            (helpers.many as Record<string, unknown>)[key] = (config?: Omit<RelationConfig, "to">) => new Relation("many", { to: entity, ...config });
             helpers[key] = entity;
         }
 
-        const definitions = callback(helpers);
+        const definitions = cb(helpers as unknown as RelationsHelpers<typeof schema>);
 
         return {
             schema,
-            definitions,
+            definitions: definitions as Record<string, Record<string, Relation>>,
             [RELATION_SYMBOLS.RELATION_CONFIG]: true
         };
     }

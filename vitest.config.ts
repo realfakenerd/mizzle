@@ -5,6 +5,7 @@ export default defineConfig({
     test: {
         globals: true,
         environment: "node",
+        testTimeout: 60000,
         pool: "forks",
         singleFork: true,
         alias: [

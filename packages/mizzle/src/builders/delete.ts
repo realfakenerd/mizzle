@@ -65,7 +65,7 @@ export class DeleteBuilder<
             ReturnValues: this._returnValues,
         });
 
-        const response = await this.client.send(command);
+        const response = await this.client.send(command) as any;
         return response.Attributes as TResult;
     }
 }

@@ -238,7 +238,7 @@ export function dynamoEntity<
 
     const definedStrategies = strategies ? strategies(builtColumns) : {};
 
-    const normalizedStrategies: Record<string, unknown> = {};
+    const normalizedStrategies: Record<string, any> = {};
     for (const [key, val] of Object.entries(definedStrategies)) {
         if (val instanceof Column) {
             normalizedStrategies[key] = { type: "prefix", segments: ["", val] };

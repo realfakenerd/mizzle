@@ -14,14 +14,14 @@ import { extractMetadata, type InternalRelationalSchema } from "./core/relations
 import { RetryHandler, type RetryConfig } from "./core/retry";
 import { MizzleClient, type IMizzleClient } from "./core/client";
 
-export type QuerySchema<TSchema extends Record<string, unknown>> = {
+export type QuerySchema<TSchema extends Record<string, any>> = {
     [K in keyof TSchema as TSchema[K] extends Entity ? K : never]: RelationnalQueryBuilder<TSchema[K] extends Entity ? TSchema[K] : never>;
 };
 
 /**
  * DynamoDB database instance.
  */
-export class DynamoDB<TSchema extends Record<string, unknown> = Record<string, unknown>> {
+export class DynamoDB<TSchema extends Record<string, any> = Record<string, any>> {
     private docClient: IMizzleClient;
     private schema?: InternalRelationalSchema;
     private retryConfig: RetryConfig;
@@ -221,7 +221,7 @@ export class DynamoDB<TSchema extends Record<string, unknown> = Record<string, u
 /**
  * Configuration for initializing Mizzle.
  */
-export interface MizzleConfig<TSchema extends Record<string, unknown> = Record<string, unknown>> {
+export interface MizzleConfig<TSchema extends Record<string, any> = Record<string, any>> {
     /**
      * AWS DynamoDB Client instance from `@aws-sdk/client-dynamodb`.
      */
@@ -254,7 +254,7 @@ export interface MizzleConfig<TSchema extends Record<string, unknown> = Record<s
  * @param config A DynamoDBClient instance or a MizzleConfig object.
  * @returns A DynamoDB instance for performing database operations.
  */
-export function mizzle<TSchema extends Record<string, unknown> = Record<string, unknown>>(
+export function mizzle<TSchema extends Record<string, any> = Record<string, any>>(
     config: DynamoDBClient | MizzleConfig<TSchema>
 ): DynamoDB<TSchema> {
     if (config instanceof DynamoDBClient) {

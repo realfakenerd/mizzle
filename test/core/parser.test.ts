@@ -47,13 +47,13 @@ describe("ItemCollectionParser", () => {
         ];
 
         const parser = new ItemCollectionParser(schema);
-        const results = parser.parse(rawItems, "users", { posts: true }) as Record<string, unknown>[];
+        const results = parser.parse(rawItems, "users", { posts: true }) as any;
 
         expect(results).toHaveLength(1);
         expect(results[0]!.id).toBe("1");
         expect(results[0]!.name).toBe("Alice");
         expect(results[0]!.posts).toHaveLength(2);
-        expect(results[0]!.posts.map((p: Record<string, unknown>) => p.content)).toContain("Hello");
-        expect(results[0]!.posts.map((p: Record<string, unknown>) => p.content)).toContain("World");
+        expect(results[0]!.posts.map((p: any) => p.content)).toContain("Hello");
+        expect(results[0]!.posts.map((p: any) => p.content)).toContain("World");
     });
 });

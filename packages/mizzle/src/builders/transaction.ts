@@ -86,9 +86,9 @@ export class TransactionExecutor {
             if (err.name === "TransactionCanceledException" || err.__type?.includes("TransactionCanceledException")) {
                 const reasons = (err.CancellationReasons || []).map((reason: Record<string, unknown>, index: number) => ({
                     index,
-                    code: reason.Code,
-                    message: reason.Message,
-                    item: reason.Item
+                    code: reason.Code as string,
+                    message: reason.Message as string,
+                    item: reason.Item as Record<string, unknown> | undefined
                 })).filter((reason) => reason.code !== "None");
                 
                 throw new TransactionFailedError("Transaction canceled by server.", reasons);

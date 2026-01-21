@@ -192,7 +192,7 @@ describe("Relational Query Integration", () => {
         const results = await db.query.users.findMany({
             where: (cols, { eq }) => eq(cols.id, userId),
             with: { posts: true }
-        }) as { name: string; posts: unknown[] }[];
+        }) as any;
 
         expect(results).toHaveLength(1);
         expect(results[0].name).toBe("Alice");
@@ -207,7 +207,7 @@ describe("Relational Query Integration", () => {
         const results = await db.query.users.findMany({
             where: (cols, { eq }) => eq(cols.id, userId),
             include: { posts: true }
-        }) as { name: string; posts: unknown[] }[];
+        }) as any;
 
         expect(results).toHaveLength(1);
         expect(results[0].name).toBe("Bob");
@@ -223,7 +223,7 @@ describe("Relational Query Integration", () => {
         const results = await db.query.posts.findMany({
             where: (cols, { eq }) => eq(cols.id, postId),
             with: { author: true }
-        }) as { content: string; author: { name: string } }[];
+        }) as any;
 
         expect(results).toHaveLength(1);
         expect(results[0].content).toBe("Charlie's Post");
@@ -244,7 +244,7 @@ describe("Relational Query Integration", () => {
         const results = await db.query.users.findMany({
             where: (cols, { eq }) => eq(cols.id, userId),
             with: { memberships: { with: { project: true } } }
-        }) as { name: string; memberships: { project: unknown }[] }[];
+        }) as any;
 
         expect(results).toHaveLength(1);
         expect(results[0].name).toBe("David");
@@ -265,7 +265,7 @@ describe("Relational Query Integration", () => {
         const results = await db.query.projects.findMany({
             where: (cols, { eq }) => eq(cols.id, projId),
             with: { members: true }
-        }) as { name: string; members: unknown[] }[];
+        }) as any;
 
         expect(results).toHaveLength(1);
         expect(results[0].name).toBe("Project Gamma");
@@ -280,7 +280,7 @@ describe("Relational Query Integration", () => {
         const result = await db.query.users.findFirst({
             where: (cols, { eq }) => eq(cols.id, userId),
             with: { posts: true }
-        }) as { name: string; posts: unknown[] };
+        }) as any;
 
         expect(result).toBeDefined();
         expect(result.name).toBe("Grace");

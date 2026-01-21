@@ -32,7 +32,7 @@ interface MinimalEntity {
 }
 
 export function mapToLogical(entity: MinimalEntity, item: Record<string, unknown>): Record<string, unknown> {
-    const columns = entity[ENTITY_SYMBOLS.COLUMNS];
+    const columns = entity[ENTITY_SYMBOLS.COLUMNS] || {};
     const logicalItem: Record<string, unknown> = {};
     for (const [logicalName, col] of Object.entries(columns)) {
         if (item[col.name] !== undefined) {

@@ -45,8 +45,8 @@ describe("Drop Command", () => {
     test("should handle no tables found", async () => {
         const client = createMockClient([]) as unknown;
         await dropCommand({
-            config: { schema: "dummy", out: "dummy" } as unknown,
-            client: client as unknown as IMizzleClient,
+            config: { schema: "dummy", out: "dummy" } as any,
+            client: client as any,
         });
         expect(console.log).toHaveBeenCalledWith(
             expect.stringContaining("No tables found"),
@@ -63,8 +63,8 @@ describe("Drop Command", () => {
         (prompts.confirm as unknown as { mockResolvedValueOnce: (val: unknown) => void }).mockResolvedValueOnce(true);
 
         await dropCommand({
-            config: { schema: "dummy", out: "dummy" } as unknown,
-            client: client as unknown as IMizzleClient,
+            config: { schema: "dummy", out: "dummy" } as any,
+            client: client as any,
         });
 
         // Verify ListTables was called
@@ -86,7 +86,7 @@ describe("Drop Command", () => {
                 (call[0] as unknown as { constructor: { name: string } }).constructor.name === "DeleteTableCommand",
         );
         expect(deleteCall).toBeDefined();
-        expect(deleteCall![0].input.TableName).toBe("users");
+        expect(deleteCall![0]!.input.TableName).toBe("users");
 
         expect(prompts.outro).toHaveBeenCalled();
     });
@@ -100,8 +100,8 @@ describe("Drop Command", () => {
         (prompts.confirm as unknown as { mockResolvedValueOnce: (val: unknown) => void }).mockResolvedValueOnce(false); // User says No
 
         await dropCommand({
-            config: { schema: "dummy", out: "dummy" } as unknown,
-            client: client as unknown as IMizzleClient,
+            config: { schema: "dummy", out: "dummy" } as any,
+            client: client as any,
         });
 
         // Verify DeleteTable was NOT called
@@ -127,8 +127,8 @@ describe("Drop Command", () => {
         vi.mocked(prompts.isCancel).mockReturnValueOnce(true);
 
         await dropCommand({
-            config: { schema: "dummy", out: "dummy" } as unknown,
-            client: client as unknown as IMizzleClient,
+            config: { schema: "dummy", out: "dummy" } as any,
+            client: client as any,
         });
 
         expect(prompts.cancel).toHaveBeenCalled();

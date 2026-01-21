@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { date } from "@aurios/mizzle/columns";
 import { dynamoTable, dynamoEntity } from "@aurios/mizzle/table";
 import { InsertBase, UpdateBuilder, eq, buildExpression } from "@aurios/mizzle";
+import type { IMizzleClient } from "../packages/mizzle/src/core/client";
 
 describe("date column", () => {
     it("should define a date column", () => {
@@ -62,11 +63,11 @@ describe("date column", () => {
             const mockClient = {} as unknown;
             const d = new Date("2023-10-27T10:00:00.000Z");
             
-            const insert = new InsertBase(entity, mockClient as unknown as IMizzleClient, {
+            const insert = new InsertBase(entity, mockClient as unknown as any, {
                 pk: d
             });
 
-            const item = (insert as unknown as { buildItem: () => Record<string, unknown> }).buildItem();
+            const item = (insert as unknown as any).buildItem();
             expect(item.pk).toBe("2023-10-27T10:00:00.000Z");
         });
 
@@ -76,7 +77,7 @@ describe("date column", () => {
                 pk: date("pk"),
                 createdAt: date("createdAt").defaultNow()
             });
-            const insert = new InsertBase(e, {} as unknown as IMizzleClient, { pk: new Date() });
+            const insert = new InsertBase(e, {} as unknown as any, { pk: new Date() });
             const item = (insert as unknown as { buildItem: () => Record<string, unknown> }).buildItem();
             expect(item.createdAt).toBeDefined();
             expect(typeof item.createdAt).toBe("string");
@@ -87,7 +88,7 @@ describe("date column", () => {
     describe("UpdateBuilder integration", () => {
         it("should serialize date in set()", () => {
             const mockClient = {} as unknown;
-            const update = new UpdateBuilder(entity, mockClient as unknown as IMizzleClient);
+            const update = new UpdateBuilder(entity, mockClient as unknown as any);
             const d = new Date("2023-10-27T10:00:00.000Z");
             
             update.set({ pk: d });
@@ -102,14 +103,14 @@ describe("date column", () => {
                 updatedAt: date("updatedAt").onUpdateNow()
             });
             const mockClient = { send: vi.fn().mockResolvedValue({ Attributes: {} }) } as unknown;
-            const update = new UpdateBuilder(e, mockClient as unknown as IMizzleClient);
+            const update = new UpdateBuilder(e, mockClient as unknown as any);
             update.set({ pk: new Date() });
             
-            await (update as unknown as { execute: () => Promise<void> }).execute();
+            await (update as unknown as any).execute();
             
-            const state = (update as unknown as { _state: { set: Record<string, { value: unknown }> } })._state;
+            const state = (update as unknown as any)._state;
             expect(state.set.updatedAt).toBeDefined();
-            expect(typeof state.set.updatedAt.value).toBe("string");
+            expect(typeof state.set.updatedAt!.value).toBe("string");
         });
     });
 

@@ -27,10 +27,10 @@ describe("Batch Resilience", () => {
             pk: { name: "pk" },
             name: { name: "name" }
         }
-   } as unknown;
+   } as any;
 
     beforeEach(() => {
-        vi.spyOn(DynamoDBDocumentClient, "from").mockReturnValue(mockDocClient as unknown as DynamoDBDocumentClient);
+        vi.spyOn(DynamoDBDocumentClient, "from").mockReturnValue(mockDocClient as any);
         mockSend.mockReset();
     });
 
@@ -130,10 +130,11 @@ describe("Batch Resilience", () => {
         const result = await db.batchWrite(mockTable, [
             { type: "put", item: { pk: "test1" } }
         ]).execute();
+        const res = result as any;
 
-        expect(result.succeededCount).toBe(0);
-        expect(result.failed).toHaveLength(1);
-        expect(result.failed[0].PutRequest.Item.pk).toBe("test1");
+        expect(res.succeededCount).toBe(0);
+        expect(res.failed).toHaveLength(1);
+        expect(res.failed[0].PutRequest.Item.pk).toBe("test1");
         expect(mockSend).toHaveBeenCalledTimes(5);
     });
 });

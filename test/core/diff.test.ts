@@ -40,7 +40,7 @@ const mockEntity = (table: PhysicalTable, columns: Record<string, string>) => {
     return {
         [ENTITY_SYMBOLS.PHYSICAL_TABLE]: table,
         [ENTITY_SYMBOLS.COLUMNS]: colBuilders,
-    } as unknown as Record<string, unknown>;
+    } as any;
 };
 
 describe("Schema Diffing", () => {
@@ -55,8 +55,8 @@ describe("Schema Diffing", () => {
 
         expect(changes).toHaveLength(1);
         expect(changes[0]!.type).toBe("create");
-        expect((changes[0] as { table: { TableName: string, AttributeDefinitions: unknown[] } }).table.TableName).toBe("users");
-        expect((changes[0] as { table: { TableName: string, AttributeDefinitions: unknown[] } }).table.AttributeDefinitions).toEqual([
+        expect((changes[0] as any).table.TableName).toBe("users");
+        expect((changes[0] as any).table.AttributeDefinitions).toEqual([
             { AttributeName: "id", AttributeType: "S" },
         ]);
     });
@@ -77,7 +77,7 @@ describe("Schema Diffing", () => {
         const changes = compareSchema(currentSchema, snapshot);
         expect(changes).toHaveLength(1);
         expect(changes[0]!.type).toBe("delete");
-        expect((changes[0] as { tableName: string }).tableName).toBe("users");
+        expect((changes[0] as any).tableName).toBe("users");
     });
 
     test("should return empty array if no changes", () => {
@@ -145,7 +145,7 @@ describe("Schema Diffing", () => {
         );
 
         expect(changes).toHaveLength(1);
-        const created = (changes[0] as { table: { GlobalSecondaryIndexes: unknown[], AttributeDefinitions: { AttributeName: string, AttributeType: string }[] } }).table;
+        const created = (changes[0] as any).table;
         expect(created.GlobalSecondaryIndexes).toHaveLength(1);
         expect(created.GlobalSecondaryIndexes[0].IndexName).toBe("byEmail");
 

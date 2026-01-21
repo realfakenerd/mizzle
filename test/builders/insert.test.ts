@@ -80,7 +80,7 @@ describe("Insert Command", () => {
             active: true,
         };
 
-        const result = await insertBuilder.values(data).returning().execute() as Record<string, unknown>;
+        const result = await insertBuilder.values(data).returning().execute() as any;
 
         expect(result).toMatchObject({
             pk: "USER#123e4567-e89b-12d3-a456-426614174000",
@@ -105,9 +105,9 @@ describe("Insert Command", () => {
                 lastLogin: "2025-12-23",
             },
             items: ["item1", "item2"],
-        } as unknown as Record<string, unknown>;
+        } as any;
 
-        const result = await insertBuilder.values(data).returning().execute() as Record<string, unknown>;
+        const result = await insertBuilder.values(data).returning().execute() as any;
 
         expect(result).toMatchObject({
             pk: "USER#223e4567-e89b-12d3-a456-426614174000",
@@ -146,9 +146,9 @@ describe("Insert Command", () => {
             name: "Auto",
             age: 20,
             active: true,
-        } as unknown as Record<string, unknown>; // Cast to unknown to skip required id check for test
+        } as any; // Cast to unknown to skip required id check for test
 
-        const result = await insertBuilder.values(data).returning().execute() as Record<string, unknown>;
+        const result = await insertBuilder.values(data).returning().execute() as any;
 
         expect(result.id).toBeDefined();
         expect(result.pk).toBe(`USER#${result.id}`);
@@ -177,9 +177,9 @@ describe("Insert Command", () => {
             age: 20,
             active: true,
             tags: [], // Empty set
-        } as unknown as Record<string, unknown>;
+        } as any;
 
-        const result = await insertBuilder.values(data).returning().execute() as Record<string, unknown>;
+        const result = await insertBuilder.values(data).returning().execute() as any;
 
         expect(result.tags).toBeUndefined();
 

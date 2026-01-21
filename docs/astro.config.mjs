@@ -6,6 +6,7 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
   integrations: [
     starlight({
+
       title: 'Mizzle',
       description: 'a drizzle-like DynamoDB ORM',
       editLink: {
