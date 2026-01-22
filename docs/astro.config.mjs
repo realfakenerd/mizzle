@@ -16,8 +16,8 @@ export default defineConfig({
     },
     integrations: [
         mermaid({
-            theme: 'forest',
-            autoTheme: true
+            autoTheme: true,
+            theme: 'dark'
         }),
         starlight({
             head: [
