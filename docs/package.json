@@ -13,8 +13,14 @@
   },
   "dependencies": {
     "@astrojs/starlight": "^0.37.2",
+    "@astrojs/starlight-tailwind": "^4.0.2",
+    "@fontsource-variable/comfortaa": "^5.2.8",
+    "@tailwindcss/vite": "^4.1.18",
     "astro": "^5.6.1",
-    "sharp": "^0.34.2"
+    "motion": "^12.28.2",
+    "sharp": "^0.34.2",
+    "tailwindcss": "^4.1.18",
+    "valibot": "^1.2.0"
   },
   "devDependencies": {
     "@4hse/astro-llms-txt": "^1.0.4",
