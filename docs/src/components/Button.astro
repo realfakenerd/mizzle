@@ -1,6 +1,7 @@
 ---
 import { Icon } from "@astrojs/starlight/components";
-import { z } from "astro/zod";
+import { custom, literal, object, optional, string, union, enum as _enum, parse } from "valibot";
+
 type IconName = Parameters<typeof Icon>[0]["name"];
 
 interface Props {
@@ -12,57 +13,38 @@ interface Props {
     | { type: "raw"; html: string };
 }
 
-const propsSchema = z.object({
-  variant: z.enum(["primary", "secondary", "minimal"]).default("primary"),
-  link: z.string(),
-  icon: z
-    .union([
-      z.object({
-        type: z.literal("icon"),
-        name: z.custom<IconName>(z.string().parse),
+const propsSchema = object({
+  variant: _enum({primary: "primary", secondary: "secondary", minimal: "minimal"}),
+  link: string(),
+  icon: optional(
+    union([
+      object({
+        type: literal("icon"),
+        name: custom<IconName>(i => typeof i === 'string'),
       }),
-      z.object({ type: z.literal("raw"), html: z.string() }),
+      object({ type: literal("raw"), html: string() }),
     ])
-    .optional(),
+  )
 });
 
-const { link, variant, icon } = propsSchema.parse(Astro.props);
+const { link, variant, icon } = parse(propsSchema, Astro.props);
 ---
 
-<a class:list={["sl-flex action", variant]} href={link}>
-  <slot />
-  {icon?.type === "icon" && <Icon name={icon.name} size="1.5em" />}
-  {icon?.type === "raw" && <Fragment set:html={icon.html} />}
+<a class:list={[
+    "flex action gap-2 items-center rounded-full py-2 px-5 text-sm ",
+    "md:px-4 md:text-base",
+    variant === 'minimal' ? 'px-0' : '',
+    variant === 'primary' ? 'bg-accent text-gray-100' : '',
+    variant === 'secondary' ? 'bg-black border-2' : ''
+]} href={link}
+>
+    <slot />
+    {icon?.type === "icon" && <Icon name={icon.name} size="1.5em" />}
+    {icon?.type === "raw" && <Fragment set:html={icon.html} />}
 </a>
 
 <style>
-  .action {
-    gap: 0.5em;
-    align-items: center;
-    border-radius: 999rem;
-    padding: 0.5rem 1.125rem;
-    color: var(--sl-color-white);
-    line-height: 1.1875;
+  a {
     text-decoration: none;
-    font-size: var(--sl-text-sm);
-  }
-  .action.primary,
-  .action.primary:hover {
-    background: var(--sl-color-text-accent);
-    color: var(--sl-color-black);
-  }
-  .action.secondary {
-    background: var(--sl-color-black);
-    border: 2px solid;
-  }
-  .action.minimal {
-    padding-inline: 0;
-  }
-
-  @media (min-width: 50rem) {
-    .action {
-      font-size: var(--sl-text-base);
-      padding: 1rem 1.25rem;
-    }
   }
 </style>

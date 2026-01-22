@@ -5,10 +5,31 @@ const { hero } = Astro.locals.starlightRoute.entry.data;
 const actions = hero?.actions;
 const tagline = hero?.tagline;
 const title = hero?.title;
-const img = hero?.image;
 ---
 
-<div class="hero">
+<script>
+import {animate} from 'motion';
+
+function easeOutBack(x: number): number {
+  const c1 = .52;
+  const c3 = c1 + 1;
+
+  return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
+
+}
+
+const elastic = {
+  ease: easeOutBack,
+  duration: 1.2
+}
+
+animate([
+  ['#pillTwo', { translateX: [145, 0]}, elastic],
+  ['#pillOne', { translateX: [145, 0]}, elastic],
+])
+</script>
+
+<div class="hero relative">
   <div class="grid-bg"></div>
   <div id="_top" class="hero-content" style="--stack-gap: 2rem;">
     <div class="stack">
@@ -25,19 +46,23 @@ const img = hero?.image;
       </div>
     </div>
 
-    <img src={(img as any)?.file.src} alt={img?.alt} />
+    <svg id="logo" class="drop-shadow-accent-low/30 drop-shadow-xl" width="435" height="261" viewBox="0 0 435 261" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path id="pillTwo" class="fill-accent" d="M216 128L245 79L290 0H255.5C221.5 9.11951e-06 214 13.5 208.5 22.5L122 173.5H158C198 173.5 197.5 159 216 128Z"/>
+        <path id="pillOne" class="fill-accent" d="M94 215L123 166L168 87H133.5C99.5 87 92 100.5 86.5 109.5L0 260.5H36C76 260.5 75.5 246 94 215Z" />
+        <path id="pillFour" class="fill-accent" d="M361 128L390 79L435 0H400.5C366.5 9.11951e-06 359 13.5 353.5 22.5L267 173.5H303C343 173.5 342.5 159 361 128Z" />
+        <path id="pillThree" class="fill-accent" d="M239 215L268 166L313 87H278.5C244.5 87 237 100.5 231.5 109.5L145 260.5H181C221 260.5 220.5 246 239 215Z" />
+    </svg>
   </div>
 </div>
 
 <style>
-  .hero {
-    position: relative;
+.hero {
     margin: clamp(-1rem, -2vh, -1.5rem) calc(-1 * var(--sl-content-pad-x)) 0;
-  }
+}
 
-  .grid-bg {
+.grid-bg {
     --grid-size: clamp(20px, 2vw, 23px);
-    --grid-color: var(--sl-color-accent-high);
+    --grid-color: var(--color-accent-high);
     --grid-opacity: 0.05;
     --glow-size: clamp(120px, 15vw, 150px);
     --glow-opacity: 0.02;
@@ -64,7 +89,7 @@ const img = hero?.image;
       inset: 0;
       background: radial-gradient(
         circle at 50% 50%,
-        var(--sl-color-accent-high),
+        var(--color-accent-high),
         transparent var(--glow-size)
       );
       opacity: var(--glow-opacity);
@@ -79,6 +104,10 @@ const img = hero?.image;
     display: flex;
     flex-direction: column;
     gap: var(--stack-gap, 1.5rem);
+
+    h1, p {
+        font-family: 'Comfortaa Variable';
+    }
   }
 
   .hero-content {
@@ -111,14 +140,13 @@ const img = hero?.image;
     max-width: 100%;
     margin-inline: auto;
     height: clamp(12rem, 24vw, 21.875rem);
-    filter: drop-shadow(0 0 5rem var(--sl-color-accent-low));
   }
 
   @media (width >= 32rem) {
     :global([data-has-hero] .main-pane) {
       --cell-size: clamp(2.5rem, 3vw, 3.5rem);
       background:
-        radial-gradient(closest-side, var(--sl-color-accent-low), transparent)
+        radial-gradient(closest-side, var(--color-accent-low), transparent)
           no-repeat calc(100% + var(--cell-size) * 6)
           calc(var(--cell-size) * -7) / calc(var(--cell-size) * 12)
           calc(var(--cell-size) * 19);
