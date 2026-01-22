@@ -69,11 +69,8 @@ graph TD
 5.  **Return**: The user receives a typed JavaScript object.
 
 ```mermaid
----
-config:
-  look: neo
----
 sequenceDiagram
+    autonumber
     participant U as User Code
     participant B as Select Builder
     participant E as Expression Builder
