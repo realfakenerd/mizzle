@@ -20,6 +20,16 @@ export default defineConfig({
             autoTheme: true
         }),
         starlight({
+            head: [
+                {
+                    tag: 'style',
+                    content: `
+                    @view-transition {
+                          navigation: auto;
+                    }
+                    `
+                }
+            ],
             plugins: [
                 starlightLinksValidator(),
                 starlightPageActions(),

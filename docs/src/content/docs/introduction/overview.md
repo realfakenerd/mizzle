@@ -3,7 +3,9 @@ title: Overview
 description: Overview of Mizzle, a light and type-safe ORM for DynamoDB.
 ---
 
-Mizzle is a light and type-safe ORM for DynamoDB built with TypeScript. It is designed to provide a "Drizzle-like" developer experience, making it intuitive and fast for developers to interact with DynamoDB without the usual boilerplate and complexity.
+Mizzle is a light and type-safe ORM for DynamoDB built with TypeScript. It is designed to provide a "Drizzle-like" developer experience, making it intuitive and fast for developers to interact with DynamoDB without the boring boilerplate and complexity.
+
+It was born as a necessity of using DynamoDB with the simplicity of drizzle, and it's designed to be used in almost the same way, since the start of the project we have been thinking about the developer experience and the simplicity of the code.
 
 ## Vision
 
@@ -17,17 +19,13 @@ The vision for Mizzle is to bring the ergonomics of SQL-based ORMs like Drizzle 
 
 ## Key Features
 
-### Fluent Query Builder
-A familiar `db.select()`, `db.update()`, and `db.delete()` API for intuitive data access and modification.
+- **Fluent Query Builder**: A familiar `db.select()`, `db.update()`, and `db.delete()` API for intuitive data access and modification.
 
-### Relational Query API
-A high-level `db.query` API for fetching related entities with nested results, optimized for Single-Table Design performance—fetching collections in a single round-trip.
+- **Relational Query API**: A high-level `db.query` API for fetching related entities with nested results, optimized for Single-Table Design performance—fetching collections in a single round-trip.
 
-### Smart Key Management
-Automatic UUID generation (v7) and flexible key prefixing strategies to handle complex partition and sort key requirements.
+- **Smart Key Management**: Automatic UUID generation (v7) and flexible key prefixing strategies to handle complex partition and sort key requirements.
 
-### Migration CLI (`mizzling`)
-A dedicated CLI package for managing DynamoDB schema, supporting snapshots, automated migration scripts, and interactive initialization.
+- **Migration CLI** (`mizzling`): A dedicated CLI package for managing DynamoDB schema, supporting snapshots, automated migration scripts, and interactive initialization.
 
 ## Target Audience
 
