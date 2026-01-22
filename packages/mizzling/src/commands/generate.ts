@@ -95,7 +95,7 @@ function generateMigrationScript(changes: SchemaChange[]): string {
 `);
             
             downSteps.unshift(`// Create Table: ${change.tableName}`);
-            downSteps.unshift(`// TODO: Restore table definition for rollback
+            downSteps.unshift(`await db.createTable("${change.tableName}", ${JSON.stringify(change.table, null, 2)});
 `);
         } else if (change.type === "update") {
             upSteps.push(`// Update Table: ${change.tableName}`);

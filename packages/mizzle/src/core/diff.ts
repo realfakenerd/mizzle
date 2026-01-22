@@ -3,7 +3,7 @@ import { generateSnapshot } from "./snapshot";
 
 export type SchemaChange = 
   | { type: "create"; table: TableSnapshot }
-  | { type: "delete"; tableName: string }
+  | { type: "delete"; tableName: string; table: TableSnapshot }
   | { type: "update"; tableName: string; changes: unknown[] };
 
 export function compareSchema(current: SchemaCurrent, snapshot: MizzleSnapshot): SchemaChange[] {
@@ -22,7 +22,7 @@ export function compareSchema(current: SchemaCurrent, snapshot: MizzleSnapshot):
         if (currentTable && !snapshotTable) {
             changes.push({ type: "create", table: currentTable });
         } else if (!currentTable && snapshotTable) {
-            changes.push({ type: "delete", tableName });
+            changes.push({ type: "delete", tableName, table: snapshotTable });
         } else if (currentTable && snapshotTable) {
             if (!areSnapshotsEqual(currentTable, snapshotTable)) {
                 changes.push({ type: "update", tableName, changes: ["Changed"] });

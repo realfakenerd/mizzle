@@ -78,6 +78,7 @@ describe("Schema Diffing", () => {
         expect(changes).toHaveLength(1);
         expect(changes[0]!.type).toBe("delete");
         expect((changes[0] as any).tableName).toBe("users");
+        expect((changes[0] as any).table).toEqual(snapshot.tables.users);
     });
 
     test("should return empty array if no changes", () => {
