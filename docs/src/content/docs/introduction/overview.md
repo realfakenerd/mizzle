@@ -1,5 +1,5 @@
 ---
-title: Introduction
+title: Overview
 description: Overview of Mizzle, a light and type-safe ORM for DynamoDB.
 ---
 

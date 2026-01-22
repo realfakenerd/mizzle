@@ -1,0 +1,161 @@
+---
+title: Getting Started
+description: Learn how to install and set up Mizzle in your TypeScript project.
+---
+
+import { PackageManagers } from "starlight-package-managers";
+
+This guide will walk you through the initial setup, from installation to running your first query.
+
+## Installation
+
+Install Mizzle along with the required AWS SDK dependencies using your preferred package manager:
+
+<PackageManagers
+  pkg="@aurios/mizzle @aws-sdk/client-dynamodb @aws-sdk/lib-dynamodb"
+  pkgManagers={["bun", "pnpm", "yarn", "deno", "npm"]}
+/>
+
+## Step 1: Define the Physical Table
+
+In DynamoDB, you first need a physical table. Mizzle separates the definition of the physical table structure (PK, SK, Indexes) from the logical entities that live within it and with this making your database well organized and easier to reason about.
+
+Create a `schema.ts` file:
+
+```typescript
+// schema.ts
+import { dynamoTable, string } from "@aurios/mizzle";
+
+// This matches your actual DynamoDB table configuration
+export const myTable = dynamoTable("JediOrder", {
+  pk: string("pk"), // The partition key attribute name
+  sk: string("sk"), // The sort key attribute name (optional)
+});
+```
+
+## Step 2: Define a Logical Entity
+
+An Entity represents your data model (e.g., an user, an item on an user). You map the Entity to a Physical Table and define how its keys are generated, so every entity looks kinda like an separated table.
+
+```typescript
+// schema.ts
+import { dynamoEntity, string, uuid, number, enum, date, prefixKey, staticKey } from "@aurios/mizzle";
+
+export const jedi = dynamoEntity(
+  myTable,
+  "Jedi",
+  {
+    id: uuid(), // Automatically generates a v7 UUID
+    name: string(),
+    homeworld: string()
+  },
+  (cols) => ({
+    // PK will look like "JEDI#<uuid>"
+    pk: prefixKey("JEDI#", cols.id),
+    // SK will be a static string "PROFILE"
+    sk: staticKey("PROFILE"),
+  }),
+);
+
+export const jediRank = dynamoEntity(
+  myTable,
+  'JediRank',
+  {
+    jediId: uuid(),
+    position: string().default('initiate'),
+    joinedCouncilDate: string(),
+  },
+  (cols) => ({
+    // Same as the jedi so they can be related
+    pk: prefixKey('JEDI#', cols.jediId),
+    // RANK#initiate
+    sk: prefixKey('RANK#', cols.position),
+  })
+)
+
+```
+
+:::tip{icon="comment-alt"}
+The UUID V7 was chosen for better sorting, since the values are time-sortable with 1 millisecond precision, read more about it [here](https://uuid7.com/)
+:::
+
+## Step 3: Define the relations
+
+Relationships in Mizzle are established using the defineRelations function. This step creates a logical map of how your entities interact, enabling you to perform powerful relational queries—such as fetching a Jedi along with their entire rank history—in a single operation.
+
+```typescript
+// relations.ts
+import { defineRelations } from "@aurios/mizzle";
+import * as schema from "./schema";
+
+export const relations = defineRelations(schema, (r) => ({
+  jedi: {
+    // A Jedi could've a lot of ranks throughout his year
+    ranks: r.many.jediRank({
+      fields: [r.jedi.id],
+      references: [r.jediRank.jediId],
+    }),
+  },
+  jediRank: {
+    // Every registry points to one Jedi only
+    member: r.one.jedi({
+      fields: [r.jediRank.jediId],
+      references: [r.jedi.id],
+    }),
+  },
+}));
+```
+
+## Step 4: Initialize the Client
+
+Initialize the `mizzle` client by passing it an instance of the standard AWS `DynamoDBClient` and the relations we just defined.
+
+```typescript
+// db.ts
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { mizzle } from "@aurios/mizzle";
+import { relations } from "./relations";
+
+const client = new DynamoDBClient({ region: "us-east-1" });
+export const db = mizzle({ client, relations });
+```
+
+## Step 5: Perform Your First Query
+
+Now you can use the fluent API to interact with your data in the best way possible.
+
+### Insert Data
+
+```typescript
+// api/jedi/new.ts
+import { jedi } from "$lib/schema.ts";
+
+const newJedi = await db
+  .insert(jedi)
+  .values({
+    name: "Luke Skywalker",
+    homeworld: "Tatooine",
+  })
+  .returning();
+
+console.log(newJedi.id); // The auto-generated UUID
+```
+
+### Select Data
+
+Mizzle intelligently routes your request to `GetItem`, `Query`, or `Scan` based on the filters you provide.
+
+```typescript
+// /api/jedi/get.ts
+import { jedi } from "$lib/schema.ts"
+import { eq } from "@aurios/mizzle";
+
+// This will use GetItem because both PK and SK are fully resolved
+const user = await db.select().from(jedi).where(eq(jedi.id, "some-uuid")).execute();
+```
+
+## Next Steps
+
+- Explore [Single-Table Design](/introduction/single-table-design/) patterns.
+- Check the [API Reference](/reference/select/).
+- Learn about the [CLI Reference](/cli-reference/) for managing migrations.

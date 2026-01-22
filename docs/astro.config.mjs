@@ -4,6 +4,8 @@ import starlightLinksValidator from 'starlight-links-validator';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'astro/config';
 import starlightPageActions from 'starlight-page-actions';
+import starlightLlmsTxt from 'starlight-llms-txt';
+import mermaid from 'astro-mermaid';
 
 // https://astro.build/config
 export default defineConfig({
@@ -13,12 +15,15 @@ export default defineConfig({
         plugins: [tailwindcss()],
     },
     integrations: [
+        mermaid({
+            theme: 'forest',
+            autoTheme: true
+        }),
         starlight({
             plugins: [
                 starlightLinksValidator(),
-                starlightPageActions({
-                    baseUrl: 'https://mizzle-docs.vercel.app/'
-                })
+                starlightPageActions(),
+                starlightLlmsTxt(),
             ],
             title: 'mizzle',
             components: {
@@ -37,14 +42,21 @@ export default defineConfig({
             social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/realfakenerd/mizzle' }],
             sidebar: [
                 {
-                    label: 'Guides',
+                    label: 'Introduction',
                     items: [
-                        { label: 'Introduction', slug: 'guides/introduction' },
-                        { label: 'Getting Started', slug: 'guides/getting-started' },
-                        { label: 'Architecture', slug: 'guides/architecture' },
-                        { label: 'Single-Table Design', slug: 'guides/single-table-design' },
-                    ],
+                        { label: 'Overview', slug: 'introduction/overview' },
+                        { label: 'Getting Started', slug: 'introduction/getting-started' },
+                        { label: 'Architecture', slug: 'introduction/architecture' },
+                        { label: 'Single-Table Design', slug: 'introduction/single-table-design' },
+                    ]
                 },
+                // {
+                //     label: 'Guides',
+                //     items: [
+                //         { label: 'Introduction', slug: 'guides/introduction' },
+                //         { label: 'Architecture', slug: 'guides/architecture' },
+                //     ],
+                // },
                 {
                     label: 'Internals',
                     items: [
