@@ -31,11 +31,11 @@ animate([
 
 <div class="hero relative">
   <div class="grid-bg"></div>
-  <div id="_top" class="hero-content" style="--stack-gap: 2rem;">
-    <div class="stack">
-      <div class="stack" style="--stack-gap: 1rem;">
-        <h1 set:html={title} />
-        <p set:html={tagline} />
+  <div id="_top" class="hero-content flex flex-col gap-x-4 gap-y-8">
+    <div class="flex flex-col gap-4 justify-between">
+      <div class="flex flex-col">
+          <h1 class="text-6xl md:text-8xl" set:html={title} />
+          <p set:html={tagline} />
       </div>
       <div class="sl-flex actions">
         {
@@ -97,15 +97,9 @@ animate([
     opacity: var(--grid-opacity);
   }
 
-  .stack {
-    display: flex;
-    flex-direction: column;
-    gap: var(--stack-gap, 1.5rem);
-
     h1, p {
         font-family: 'Comfortaa Variable';
     }
-  }
 
   .hero-content {
     display: flex;
@@ -113,13 +107,6 @@ animate([
     max-width: min(36rem, 100%);
     padding: 3rem var(--sl-content-pad-x);
     text-align: center;
-  }
-
-  h1 {
-    font-size: clamp(var(--sl-text-2xl), 5vw, var(--sl-text-6xl));
-    line-height: var(--sl-line-height-headings);
-    font-weight: 600;
-    color: var(--sl-color-white);
   }
 
   .actions {
