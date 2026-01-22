@@ -1,9 +1,9 @@
 // @ts-check
 import starlight from '@astrojs/starlight';
 import starlightLinksValidator from 'starlight-links-validator';
-import startlightLlmsTxt from 'starlight-llms-txt';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'astro/config';
+import starlightPageActions from 'starlight-page-actions';
 
 // https://astro.build/config
 export default defineConfig({
@@ -14,7 +14,12 @@ export default defineConfig({
     },
     integrations: [
         starlight({
-            plugins: [starlightLinksValidator(), startlightLlmsTxt()],
+            plugins: [
+                starlightLinksValidator(),
+                starlightPageActions({
+                    baseUrl: 'https://mizzle-docs.vercel.app/'
+                })
+            ],
             title: 'mizzle',
             components: {
                 Hero: './src/components/Hero.astro'
