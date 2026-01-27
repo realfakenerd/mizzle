@@ -14,7 +14,7 @@ export class InsertBuilder<TEntity extends Entity> {
     constructor(
         private entity: TEntity,
         private client: IMizzleClient,
-    ) {}
+    ) { }
 
     /**
      * Sets the values to be inserted into the database.
@@ -71,7 +71,7 @@ export class InsertBase<
     buildItem(): Record<string, unknown> {
         const itemToSave = this.processValues(this.valuesData);
         const resolution = this.resolveKeys(undefined, itemToSave);
-        
+
         const finalItem: Record<string, unknown> = { ...itemToSave, ...resolution.keys };
 
         // Also resolve GSI keys if they are defined in strategies but not in resolution.keys
@@ -164,11 +164,11 @@ export class InsertBase<
             }
 
             const finalValue = item[key];
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            item[key] = typeof (col as any).mapToDynamoValue === "function" 
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                ? (col as any).mapToDynamoValue(finalValue) 
-                : finalValue;
+
+            // Check if column has mapToDynamoValue method (it's on the Column class)
+            if (col instanceof Column) {
+                item[key] = col.mapToDynamoValue(finalValue);
+            }
 
             if (["SS", "NS", "BS"].includes(col.columnType)) {
                 if (Array.isArray(finalValue)) {
