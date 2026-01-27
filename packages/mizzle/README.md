@@ -49,7 +49,7 @@ const users = dynamoEntity(myTable, "users", {
 });
 
 // Query
-const result = await db.select().from(users).where(eq(users.id, "123")).execute();
+const result = await db.select().from(users).where(eq(users.id, "123"));
 ```
 
 ## License

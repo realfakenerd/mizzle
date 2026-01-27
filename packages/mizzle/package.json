@@ -1,8 +1,9 @@
 {
     "name": "@aurios/mizzle",
-    "version": "1.1.2",
     "description": "a drizzle-like orm for dynamoDB",
+    "version": "1.1.2",
     "type": "module",
+    "license": "MIT",
     "homepage": "https://mizzle-docs.vercel.app",
     "main": "./dist/index.js",
     "module": "./dist/index.js",
@@ -70,5 +71,16 @@
         "@mizzle/shared": "workspace:*",
         "@mizzle/tsconfig": "workspace:*",
         "tsup": "^8.5.1"
-    }
+    },
+    "keywords": [
+        "mizzle",
+        "orm",
+        "dynamodb",
+        "nosql",
+        "singletable",
+        "database",
+        "typescript",
+        "ts",
+        "aws"
+    ]
 }
