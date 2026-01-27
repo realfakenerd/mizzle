@@ -35,7 +35,7 @@ jobs:
               run: |
                   bun run build
                   if [ -n "$(git status --porcelain)" ]; then
-                  echo "Arquivos gerados estao desatualizados. Rode 'bun run build' localmente."
+                  echo "Generated files are outdated. Run 'bun run build' locally."
                   git status
                   exit 1
                   fi
