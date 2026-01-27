@@ -14,6 +14,7 @@
   "dependencies": {
     "@astrojs/starlight": "^0.37.4",
     "@astrojs/starlight-tailwind": "^4.0.2",
+    "@astrojs/svelte": "^7.2.5",
     "@fontsource-variable/comfortaa": "^5.2.8",
     "@mermaid-js/layout-elk": "^0.2.0",
     "@tailwindcss/vite": "^4.1.18",
@@ -25,6 +26,7 @@
     "starlight-contextual-menu": "^0.1.5",
     "starlight-package-managers": "^0.12.0",
     "starlight-page-actions": "^0.4.0",
+    "svelte": "^5.48.3",
     "tailwindcss": "^4.1.18",
     "valibot": "^1.2.0"
   },
