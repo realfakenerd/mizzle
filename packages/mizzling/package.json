@@ -1,40 +1,55 @@
 {
-  "name": "@aurios/mizzling",
-  "version": "1.1.1",
-  "private": false,
-  "type": "module",
-  "bin": {
-    "mizzling": "./dist/cli.js"
-  },
-  "exports": {
-    ".": "./dist/index.js"
-  },
-  "author": {
-    "name": "Lucas",
-    "url": "https://github.com/realfakenerd"
-  },
-  "repository": {
-    "url": "git+https://github.com/realfakenerd/mizzle"
-  },
-  "scripts": {
-    "check": "tsc --noEmit",
-    "build": "tsup",
-    "lint": "bunx oxlint --type-aware src",
-    "prepublishOnly": "bun run build"
-  },
-  "dependencies": {
-    "@aws-sdk/client-dynamodb": "3.962.0",
-    "@aws-sdk/credential-provider-ini": "3.962.0",
-    "@aws-sdk/lib-dynamodb": "3.962.0",
-    "@clack/prompts": "^0.11.0",
-    "@mizzle/shared": "workspace:*",
-    "@smithy/node-http-handler": "^4.4.7",
-    "commander": "^14.0.2",
-    "fast-glob": "^3.3.3"
-  },
-  "devDependencies": {
-    "@mizzle/tsconfig": "workspace:*",
-    "@aurios/mizzle": "workspace:*",
-    "tsup": "^8.5.1"
-  }
+    "name": "@aurios/mizzling",
+    "description": "A CLI tool for managing Mizzle projects",
+    "version": "1.1.1",
+    "type": "module",
+    "license": "MIT",
+    "homepage": "https://mizzle-docs.vercel.app",
+    "bin": {
+        "mizzling": "./dist/cli.js"
+    },
+    "exports": {
+        ".": "./dist/index.js"
+    },
+    "author": {
+        "name": "Lucas",
+        "url": "https://github.com/realfakenerd"
+    },
+    "repository": {
+        "url": "git+https://github.com/realfakenerd/mizzle",
+        "type": "git",
+        "directory": "packages/mizzling"
+    },
+    "scripts": {
+        "check": "tsc --noEmit",
+        "build": "tsup",
+        "lint": "bunx oxlint --type-aware src",
+        "prepublishOnly": "bun run build"
+    },
+    "dependencies": {
+        "@aws-sdk/client-dynamodb": "3.962.0",
+        "@aws-sdk/credential-provider-ini": "3.962.0",
+        "@aws-sdk/lib-dynamodb": "3.962.0",
+        "@clack/prompts": "^0.11.0",
+        "@mizzle/shared": "workspace:*",
+        "@smithy/node-http-handler": "^4.4.7",
+        "commander": "^14.0.2",
+        "fast-glob": "^3.3.3"
+    },
+    "devDependencies": {
+        "@mizzle/tsconfig": "workspace:*",
+        "@aurios/mizzle": "workspace:*",
+        "tsup": "^8.5.1"
+    },
+    "keywords": [
+        "mizzle",
+        "orm",
+        "dynamodb",
+        "nosql",
+        "singletable",
+        "database",
+        "typescript",
+        "ts",
+        "aws"
+    ]
 }
