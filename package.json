@@ -1,6 +1,5 @@
 {
     "name": "mizzle",
-    "private": true,
     "type": "module",
     "workspaces": [
         "packages/*",
@@ -21,7 +20,7 @@
         "changeset:version": "changeset version",
         "changeset:publish": "changeset publish"
     },
-    "packageManager": "bun@1.3.5",
+    "packageManager": "bun@1.3.7",
     "devDependencies": {
         "@aurios/mizzle": "workspace:*",
         "@aws-sdk/client-dynamodb": "3.962.0",
