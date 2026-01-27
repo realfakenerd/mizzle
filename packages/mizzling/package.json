@@ -31,7 +31,6 @@
         "@aws-sdk/credential-provider-ini": "3.962.0",
         "@aws-sdk/lib-dynamodb": "3.962.0",
         "@clack/prompts": "^0.11.0",
-        "@mizzle/shared": "workspace:*",
         "@smithy/node-http-handler": "^4.4.7",
         "commander": "^14.0.2",
         "fast-glob": "^3.3.3"
@@ -39,6 +38,7 @@
     "devDependencies": {
         "@mizzle/tsconfig": "workspace:*",
         "@aurios/mizzle": "workspace:*",
+        "@mizzle/shared": "workspace:*",
         "tsup": "^8.5.1"
     },
     "keywords": [
