@@ -18,8 +18,8 @@
         "check:turbo": "turbo run check check:root",
         "lint:turbo": "turbo run lint lint:root",
         "lint:root": "bunx oxlint --type-aware test",
-        "release": "turbo run build && changeset publish",
-        "version": "changeset version"
+        "changeset:version": "changeset version",
+        "changeset:publish": "changeset publish"
     },
     "packageManager": "bun@1.3.5",
     "devDependencies": {
