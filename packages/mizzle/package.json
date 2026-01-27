@@ -1,69 +1,74 @@
 {
-  "name": "@aurios/mizzle",
-  "version": "1.1.1",
-  "private": false,
-  "description": "a drizzle-like orm for dynamoDB",
-  "type": "module",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "development": "./src/index.ts"
+    "name": "@aurios/mizzle",
+    "version": "1.1.2",
+    "description": "a drizzle-like orm for dynamoDB",
+    "type": "module",
+    "homepage": "https://mizzle-docs.vercel.app",
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "development": "./src/index.ts"
+        },
+        "./columns": {
+            "types": "./dist/columns.d.ts",
+            "import": "./dist/columns.js",
+            "development": "./src/columns/index.ts"
+        },
+        "./table": {
+            "types": "./dist/table.d.ts",
+            "import": "./dist/table.js",
+            "development": "./src/core/table.ts"
+        },
+        "./snapshot": {
+            "types": "./dist/snapshot.d.ts",
+            "import": "./dist/snapshot.js",
+            "development": "./src/core/snapshot.ts"
+        },
+        "./diff": {
+            "types": "./dist/diff.d.ts",
+            "import": "./dist/diff.js",
+            "development": "./src/core/diff.ts"
+        },
+        "./introspection": {
+            "types": "./dist/introspection.d.ts",
+            "import": "./dist/introspection.js",
+            "development": "./src/core/introspection.ts"
+        },
+        "./db": {
+            "types": "./dist/db.d.ts",
+            "import": "./dist/db.js",
+            "development": "./src/db.ts"
+        }
     },
-    "./columns": {
-      "types": "./dist/columns.d.ts",
-      "import": "./dist/columns.js",
-      "development": "./src/columns/index.ts"
+    "author": {
+        "name": "Lucas",
+        "url": "https://github.com/realfakenerd"
     },
-    "./table": {
-      "types": "./dist/table.d.ts",
-      "import": "./dist/table.js",
-      "development": "./src/core/table.ts"
+    "repository": {
+        "url": "git+https://github.com/realfakenerd/mizzle",
+        "type": "git",
+        "directory": "packages/mizzle"
     },
-    "./snapshot": {
-      "types": "./dist/snapshot.d.ts",
-      "import": "./dist/snapshot.js",
-      "development": "./src/core/snapshot.ts"
+    "bugs": {
+        "url": "https://github.com/realfakenerd/mizzle/issues"
     },
-    "./diff": {
-      "types": "./dist/diff.d.ts",
-      "import": "./dist/diff.js",
-      "development": "./src/core/diff.ts"
+    "scripts": {
+        "check": "tsc --noEmit",
+        "build": "tsup",
+        "lint": "bunx oxlint --type-aware src",
+        "prepublishOnly": "bun run build"
     },
-    "./introspection": {
-      "types": "./dist/introspection.d.ts",
-      "import": "./dist/introspection.js",
-      "development": "./src/core/introspection.ts"
+    "dependencies": {
+        "@aws-sdk/client-dynamodb": "3.962.0",
+        "@aws-sdk/lib-dynamodb": "3.962.0"
     },
-    "./db": {
-      "types": "./dist/db.d.ts",
-      "import": "./dist/db.js",
-      "development": "./src/db.ts"
+    "devDependencies": {
+        "@mizzle/shared": "workspace:*",
+        "@mizzle/tsconfig": "workspace:*",
+        "tsup": "^8.5.1"
     }
-  },
-  "author": {
-    "name": "Lucas",
-    "url": "https://github.com/realfakenerd"
-  },
-  "repository": {
-    "url": "git+https://github.com/realfakenerd/mizzle"
-  },
-  "scripts": {
-    "check": "tsc --noEmit",
-    "build": "tsup",
-    "lint": "bunx oxlint --type-aware src",
-    "prepublishOnly": "bun run build"
-  },
-  "dependencies": {
-    "@aws-sdk/client-dynamodb": "3.962.0",
-    "@aws-sdk/lib-dynamodb": "3.962.0"
-  },
-  "devDependencies": {
-    "@mizzle/shared": "workspace:*",
-    "@mizzle/tsconfig": "workspace:*",
-    "tsup": "^8.5.1"
-  }
 }
