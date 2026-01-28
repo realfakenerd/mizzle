@@ -1,86 +1,85 @@
 {
-    "name": "@aurios/mizzle",
-    "description": "a drizzle-like orm for dynamoDB",
-    "version": "1.1.2",
-    "type": "module",
-    "license": "MIT",
-    "homepage": "https://mizzle-docs.vercel.app",
-    "main": "./dist/index.js",
-    "module": "./dist/index.js",
-    "types": "./dist/index.d.ts",
-    "exports": {
-        ".": {
-            "types": "./dist/index.d.ts",
-            "import": "./dist/index.js",
-            "development": "./src/index.ts"
-        },
-        "./columns": {
-            "types": "./dist/columns.d.ts",
-            "import": "./dist/columns.js",
-            "development": "./src/columns/index.ts"
-        },
-        "./table": {
-            "types": "./dist/table.d.ts",
-            "import": "./dist/table.js",
-            "development": "./src/core/table.ts"
-        },
-        "./snapshot": {
-            "types": "./dist/snapshot.d.ts",
-            "import": "./dist/snapshot.js",
-            "development": "./src/core/snapshot.ts"
-        },
-        "./diff": {
-            "types": "./dist/diff.d.ts",
-            "import": "./dist/diff.js",
-            "development": "./src/core/diff.ts"
-        },
-        "./introspection": {
-            "types": "./dist/introspection.d.ts",
-            "import": "./dist/introspection.js",
-            "development": "./src/core/introspection.ts"
-        },
-        "./db": {
-            "types": "./dist/db.d.ts",
-            "import": "./dist/db.js",
-            "development": "./src/db.ts"
-        }
+  "name": "@aurios/mizzle",
+  "version": "1.1.2",
+  "description": "a drizzle-like orm for dynamoDB",
+  "keywords": [
+    "aws",
+    "database",
+    "dynamodb",
+    "mizzle",
+    "nosql",
+    "orm",
+    "singletable",
+    "ts",
+    "typescript"
+  ],
+  "homepage": "https://mizzle-docs.vercel.app",
+  "bugs": {
+    "url": "https://github.com/realfakenerd/mizzle/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Lucas",
+    "url": "https://github.com/realfakenerd"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/realfakenerd/mizzle",
+    "directory": "packages/mizzle"
+  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "development": "./src/index.ts"
     },
-    "author": {
-        "name": "Lucas",
-        "url": "https://github.com/realfakenerd"
+    "./columns": {
+      "types": "./dist/columns.d.ts",
+      "import": "./dist/columns.js",
+      "development": "./src/columns/index.ts"
     },
-    "repository": {
-        "url": "git+https://github.com/realfakenerd/mizzle",
-        "type": "git",
-        "directory": "packages/mizzle"
+    "./table": {
+      "types": "./dist/table.d.ts",
+      "import": "./dist/table.js",
+      "development": "./src/core/table.ts"
     },
-    "bugs": {
-        "url": "https://github.com/realfakenerd/mizzle/issues"
+    "./snapshot": {
+      "types": "./dist/snapshot.d.ts",
+      "import": "./dist/snapshot.js",
+      "development": "./src/core/snapshot.ts"
     },
-    "scripts": {
-        "check": "tsc --noEmit",
-        "build": "tsup",
-        "lint": "bunx oxlint --type-aware src",
-        "prepublishOnly": "bun run build"
+    "./diff": {
+      "types": "./dist/diff.d.ts",
+      "import": "./dist/diff.js",
+      "development": "./src/core/diff.ts"
     },
-    "dependencies": {
-        "@aws-sdk/client-dynamodb": "3.962.0",
-        "@aws-sdk/lib-dynamodb": "3.962.0"
+    "./introspection": {
+      "types": "./dist/introspection.d.ts",
+      "import": "./dist/introspection.js",
+      "development": "./src/core/introspection.ts"
     },
-    "devDependencies": {
-        "@mizzle/shared": "workspace:*",
-        "@mizzle/tsconfig": "workspace:*",
-        "tsup": "^8.5.1"
-    },
-    "keywords": [
-        "mizzle",
-        "orm",
-        "dynamodb",
-        "nosql",
-        "singletable",
-        "database",
-        "typescript",
-        "ts",
-        "aws"
-    ]
+    "./db": {
+      "types": "./dist/db.d.ts",
+      "import": "./dist/db.js",
+      "development": "./src/db.ts"
+    }
+  },
+  "scripts": {
+    "check": "tsc --noEmit",
+    "build": "tsup",
+    "prepublishOnly": "bun run build"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "3.962.0",
+    "@aws-sdk/lib-dynamodb": "3.962.0"
+  },
+  "devDependencies": {
+    "@mizzle/shared": "workspace:*",
+    "@mizzle/tsconfig": "workspace:*",
+    "tsup": "^8.5.1"
+  }
 }

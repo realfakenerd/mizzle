@@ -1,17 +1,15 @@
 {
   "name": "@mizzle/shared",
-  "private":true,
   "version": "0.0.3",
+  "private": true,
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
     "check": "tsc --noEmit",
-    "build": "tsc --noEmit false --allowImportingTsExtensions false",
-    "lint": "eslint \"src/**/*.ts\""
+    "build": "tsc --noEmit false --allowImportingTsExtensions false"
   },
   "devDependencies": {
-    "@mizzle/tsconfig": "workspace:*",
-    "@mizzle/eslint-config": "workspace:*"
+    "@mizzle/tsconfig": "workspace:*"
   }
 }
