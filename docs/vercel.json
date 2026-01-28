@@ -1,6 +1,11 @@
 {
-  "buildCommand": "bun run build",
-  "outputDirectory": "dist",
-  "framework": "astro",
-  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
+    "buildCommand": "pnpm build",
+    "outputDirectory": "dist",
+    "framework": "astro",
+    "rewrites": [
+        {
+            "source": "/(.*)",
+            "destination": "/"
+        }
+    ]
 }
