@@ -34,7 +34,7 @@
     "scripts": {
         "check": "tsc --noEmit",
         "build": "tsup",
-        "prepublishOnly": "bun run build",
+        "prepublishOnly": "pnpm build",
         "test": "vitest run"
     },
     "dependencies": {
