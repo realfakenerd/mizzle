@@ -75,7 +75,6 @@
     "scripts": {
         "check": "tsc --noEmit",
         "build": "tsup",
-        "prepublishOnly": "pnpm build",
         "test": "vitest run"
     },
     "dependencies": {
