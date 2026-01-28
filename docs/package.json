@@ -1,41 +1,44 @@
 {
-  "name": "docs",
-  "version": "0.0.1",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "dev": "astro dev",
-    "start": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview",
-    "astro": "astro",
-    "check": "astro check"
-  },
-  "dependencies": {
-    "@astrojs/starlight": "^0.37.4",
-    "@astrojs/starlight-tailwind": "^4.0.2",
-    "@astrojs/svelte": "^7.2.5",
-    "@fontsource-variable/comfortaa": "^5.2.8",
-    "@mermaid-js/layout-elk": "^0.2.0",
-    "@tailwindcss/vite": "^4.1.18",
-    "astro": "^5.16.15",
-    "astro-mermaid": "^1.3.1",
-    "mermaid": "^11.12.2",
-    "motion": "^12.29.2",
-    "sharp": "^0.34.5",
-    "starlight-contextual-menu": "^0.1.5",
-    "starlight-package-managers": "^0.12.0",
-    "starlight-page-actions": "^0.4.0",
-    "svelte": "^5.48.3",
-    "tailwindcss": "^4.1.18",
-    "valibot": "^1.2.0"
-  },
-  "devDependencies": {
-    "@4hse/astro-llms-txt": "^1.0.4",
-    "@astrojs/check": "latest",
-    "@mizzle/tsconfig": "workspace:*",
-    "eslint": "^8.57.1",
-    "starlight-links-validator": "^0.19.2",
-    "typescript": "^5.9.3"
-  }
+    "name": "docs",
+    "version": "0.0.1",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "astro dev",
+        "start": "astro dev",
+        "build": "astro build",
+        "preview": "astro preview",
+        "astro": "astro",
+        "check": "astro check"
+    },
+    "dependencies": {
+        "@astrojs/starlight": "^0.37.4",
+        "@astrojs/starlight-tailwind": "^4.0.2",
+        "@astrojs/svelte": "^7.2.5",
+        "@fontsource-variable/comfortaa": "^5.2.8",
+        "@mermaid-js/layout-elk": "^0.2.0",
+        "@tailwindcss/vite": "^4.1.18",
+        "astro": "^5.16.15",
+        "astro-mermaid": "^1.3.1",
+        "mermaid": "^11.12.2",
+        "motion": "^12.29.2",
+        "sharp": "^0.34.5",
+        "starlight-contextual-menu": "^0.1.5",
+        "starlight-package-managers": "^0.12.0",
+        "starlight-page-actions": "^0.4.0",
+        "svelte": "^5.48.3",
+        "tailwindcss": "^4.1.18",
+        "valibot": "^1.2.0"
+    },
+    "devDependencies": {
+        "@4hse/astro-llms-txt": "^1.0.4",
+        "@astrojs/check": "latest",
+        "@repo/typescript-config": "workspace:*",
+        "eslint": "^8.57.1",
+        "starlight-links-validator": "^0.19.2",
+        "typescript": "^5.9.3"
+    },
+    "engines": {
+        "node": "v24.10.0"
+    }
 }
