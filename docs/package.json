@@ -40,6 +40,6 @@
         "typescript": "^5.9.3"
     },
     "engines": {
-        "node": "v24.10.0"
+        "node": "v20.20.0"
     }
 }
