@@ -28,12 +28,6 @@ jobs:
         with:
           bun-version: latest
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          registry-url: 'https://registry.npmjs.org'
-
       - name: Install
         run: bun install
 
@@ -51,7 +45,6 @@ jobs:
         uses: changesets/action@v1
         with:
           version: bun run changeset:version
-          publish: bun run changeset:publish
+          publish: npx changeset publish --provenance
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_CONFIG_PROVENANCE: true
