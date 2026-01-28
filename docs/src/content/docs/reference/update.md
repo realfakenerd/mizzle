@@ -12,11 +12,7 @@ import { db } from "./db";
 import { users } from "./schema";
 import { eq } from "@aurios/mizzle";
 
-await db
-  .update(users)
-  .set({ name: "Jane Doe" })
-  .where(eq(users.id, "123"))
-  .execute();
+await db.update(users).set({ name: "Jane Doe" }).where(eq(users.id, "123")).execute();
 ```
 
 ## Methods

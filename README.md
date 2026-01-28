@@ -34,12 +34,12 @@ import { dynamoTable, string } from "@aurios/mizzle";
 
 // Defines the physical table structure
 export const myTable = dynamoTable("MyDynamoTable", {
-    pk: string("pk"),
-    sk: string("sk"),
-    // Optional: Define indexes
-    // indexes: {
-    //   gsi1: gsi("gsi1pk", "gsi1sk")
-    // }
+  pk: string("pk"),
+  sk: string("sk"),
+  // Optional: Define indexes
+  // indexes: {
+  //   gsi1: gsi("gsi1pk", "gsi1sk")
+  // }
 });
 ```
 
@@ -49,34 +49,34 @@ Map your logical entity to the physical table. Define columns and the strategy t
 
 ```ts
 import {
-    dynamoEntity,
-    string,
-    uuid,
-    number,
-    boolean,
-    list,
-    prefixKey,
-    staticKey,
+  dynamoEntity,
+  string,
+  uuid,
+  number,
+  boolean,
+  list,
+  prefixKey,
+  staticKey,
 } from "@aurios/mizzle";
 
 export const user = dynamoEntity(
-    myTable,
-    "User",
-    {
-        id: uuid(), // Automatically generates a UUID v7
-        name: string(),
-        email: string(),
-        age: number(),
-        isActive: boolean(),
-        tags: list(string()),
-    },
-    (cols) => ({
-        // Strategy: Map entity fields to Physical Keys
-        // PK becomes "USER#<id>"
-        pk: prefixKey("USER#", cols.id),
-        // SK becomes "PROFILE" (Static value)
-        sk: staticKey("PROFILE"),
-    }),
+  myTable,
+  "User",
+  {
+    id: uuid(), // Automatically generates a UUID v7
+    name: string(),
+    email: string(),
+    age: number(),
+    isActive: boolean(),
+    tags: list(string()),
+  },
+  (cols) => ({
+    // Strategy: Map entity fields to Physical Keys
+    // PK becomes "USER#<id>"
+    pk: prefixKey("USER#", cols.id),
+    // SK becomes "PROFILE" (Static value)
+    sk: staticKey("PROFILE"),
+  }),
 );
 ```
 
@@ -96,17 +96,17 @@ Mizzle automatically resolves the PK and SK based on your strategy and the data 
 
 ```ts
 const newUser = await db
-    .insert(user)
-    .values({
-        name: "Alice",
-        email: "alice@example.com",
-        age: 30,
-        isActive: true,
-        tags: ["typescript", "dynamodb"],
-        // 'id' is auto-generated!
-    })
-    .returning()
-    .execute();
+  .insert(user)
+  .values({
+    name: "Alice",
+    email: "alice@example.com",
+    age: 30,
+    isActive: true,
+    tags: ["typescript", "dynamodb"],
+    // 'id' is auto-generated!
+  })
+  .returning()
+  .execute();
 
 console.log(newUser.id); // e.g., "018c..."
 console.log(newUser.pk); // "USER#018c..."
@@ -148,11 +148,11 @@ Update items using a fluent builder with support for `set`, `add`, `remove`, and
 
 ```ts
 await db
-    .update(user)
-    .set({ name: "Alice Smith" })
-    .add({ age: 1 }) // Increment age
-    .where(eq(user.id, "018c..."))
-    .execute();
+  .update(user)
+  .set({ name: "Alice Smith" })
+  .add({ age: 1 }) // Increment age
+  .where(eq(user.id, "018c..."))
+  .execute();
 ```
 
 ## Supported Column Types
@@ -184,31 +184,31 @@ Create a `mizzle.config.ts` in your project root:
 import { defineConfig } from "@aurios/mizzle";
 
 export default defineConfig({
-    schema: "./schema.ts", // Path to your schema definitions
-    out: "./migrations", // Where to store snapshots and scripts
-    region: "us-east-1", // Optional: Target AWS region
-    endpoint: "http://localhost:8000", // Optional: For local development
+  schema: "./schema.ts", // Path to your schema definitions
+  out: "./migrations", // Where to store snapshots and scripts
+  region: "us-east-1", // Optional: Target AWS region
+  endpoint: "http://localhost:8000", // Optional: For local development
 });
 ```
 
 ### 2. Commands
 
 - **`generate`**: Scans your schema and creates a new migration if changes are detected.
-    ```bash
-    bun x mizzle generate --name add_users_table
-    ```
+  ```bash
+  bun x mizzle generate --name add_users_table
+  ```
 - **`push`**: Directly syncs your local schema with the remote DynamoDB environment.
-    ```bash
-    bun x mizzle push --yes
-    ```
+  ```bash
+  bun x mizzle push --yes
+  ```
 - **`list`**: Lists all tables in your DynamoDB environment with their keys and indexes.
-    ```bash
-    bun x mizzle list
-    ```
+  ```bash
+  bun x mizzle list
+  ```
 - **`drop`**: Interactively select and delete tables from the remote environment.
-    ```bash
-    bun x mizzle drop
-    ```
+  ```bash
+  bun x mizzle drop
+  ```
 
 ## Roadmap
 

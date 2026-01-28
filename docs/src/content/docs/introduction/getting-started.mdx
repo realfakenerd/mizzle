@@ -147,7 +147,7 @@ Mizzle intelligently routes your request to `GetItem`, `Query`, or `Scan` based 
 
 ```typescript
 // /api/jedi/get.ts
-import { jedi } from "$lib/schema.ts"
+import { jedi } from "$lib/schema.ts";
 import { eq } from "@aurios/mizzle";
 
 // This will use GetItem because both PK and SK are fully resolved

@@ -4,45 +4,47 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { intro, outro, spinner } from "@clack/prompts";
 
 interface ListOptions {
-    config: MizzleConfig;
-    client?: DynamoDBClient;
+  config: MizzleConfig;
+  client?: DynamoDBClient;
 }
 
 export async function listCommand(options: ListOptions) {
-    intro("Mizzle List Tables");
-    
-    const client = options.client || getClient(options.config);
-    const s = spinner();
-    s.start("Fetching remote tables...");
+  intro("Mizzle List Tables");
 
-    try {
-        const snapshot = await getRemoteSnapshot(client);
-        s.stop("Fetched remote tables.");
-        
-        const tables = Object.values(snapshot.tables);
+  const client = options.client || getClient(options.config);
+  const s = spinner();
+  s.start("Fetching remote tables...");
 
-        if (tables.length === 0) {
-            console.log("No tables found in the remote environment.");
-            outro("Done");
-            return;
-        }
+  try {
+    const snapshot = await getRemoteSnapshot(client);
+    s.stop("Fetched remote tables.");
 
-        console.log(`Found ${tables.length} tables:`);
-        for (const table of tables) {
-            console.log(`- ${table.TableName}`);
-            const pk = table.KeySchema.find((k: any) => k.KeyType === "HASH")?.AttributeName;
-            const sk = table.KeySchema.find((k: any) => k.KeyType === "RANGE")?.AttributeName;
-            console.log(`  PK: ${pk}, SK: ${sk || "(none)"}`);
-            
-            if (table.GlobalSecondaryIndexes && table.GlobalSecondaryIndexes.length > 0) {
-                 console.log(`  GSIs: ${table.GlobalSecondaryIndexes.map((g: any) => g.IndexName).join(", ")}`);
-            }
-        }
+    const tables = Object.values(snapshot.tables);
 
-        outro("Done");
-    } catch (error) {
-        s.stop("Failed to fetch tables.");
-        console.error("Error listing tables:", error);
-        process.exit(1);
+    if (tables.length === 0) {
+      console.log("No tables found in the remote environment.");
+      outro("Done");
+      return;
     }
+
+    console.log(`Found ${tables.length} tables:`);
+    for (const table of tables) {
+      console.log(`- ${table.TableName}`);
+      const pk = table.KeySchema.find((k: any) => k.KeyType === "HASH")?.AttributeName;
+      const sk = table.KeySchema.find((k: any) => k.KeyType === "RANGE")?.AttributeName;
+      console.log(`  PK: ${pk}, SK: ${sk || "(none)"}`);
+
+      if (table.GlobalSecondaryIndexes && table.GlobalSecondaryIndexes.length > 0) {
+        console.log(
+          `  GSIs: ${table.GlobalSecondaryIndexes.map((g: any) => g.IndexName).join(", ")}`,
+        );
+      }
+    }
+
+    outro("Done");
+  } catch (error) {
+    s.stop("Failed to fetch tables.");
+    console.error("Error listing tables:", error);
+    process.exit(1);
+  }
 }

@@ -11,10 +11,7 @@ The `delete` builder is used to remove items from your DynamoDB tables.
 import { db } from "./db";
 import { users } from "./schema";
 
-await db
-  .delete(users)
-  .where(eq(users.id, "123"))
-  .execute();
+await db.delete(users).where(eq(users.id, "123")).execute();
 ```
 
 ## Methods

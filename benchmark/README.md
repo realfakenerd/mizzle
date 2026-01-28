@@ -10,6 +10,7 @@ Performance benchmark suite comparing Mizzle against AWS SDK v3, Dynamoose, and 
 ## Setup
 
 1. Start DynamoDB Local:
+
    ```bash
    docker-compose up -d dynamodb-local
    ```
@@ -35,6 +36,7 @@ bun benchmark/index.ts large
 ## Metrics
 
 The suite captures the following metrics:
+
 - **Ops/sec:** Throughput (higher is better)
 - **Latency:** Average execution time (lower is better)
 - **Memory Delta:** Heap memory usage increase during the run
@@ -42,31 +44,13 @@ The suite captures the following metrics:
 
 ## Results
 
-
-
 Results are displayed in the console and saved to `results.md` in the current directory.
-
-
 
 ## Mizzle-Only Benchmark
 
-
-
-
-
-
-
 To benchmark Mizzle in isolation (useful for profiling or focused testing):
 
-
-
-
-
-
-
 1. Run the Mizzle-only benchmark:
-
-
 
    ```bash
 
@@ -90,15 +74,7 @@ To benchmark Mizzle in isolation (useful for profiling or focused testing):
 
    ```
 
-
-
-
-
-
-
 2. For profiling, you can add the `--profile` flag manually:
-
-
 
    ```bash
 
@@ -110,11 +86,7 @@ To benchmark Mizzle in isolation (useful for profiling or focused testing):
 
    ```
 
-
-
    Then analyze the profile using the root analysis script:
-
-
 
    ```bash
 
@@ -129,7 +101,3 @@ To benchmark Mizzle in isolation (useful for profiling or focused testing):
 
 
    ```
-
-
-
-

@@ -67,7 +67,7 @@ export default defineConfig({
   schema: "${schema}",
   out: "${out}",
   region: "${region}",
-  ${endpoint ? `endpoint: "${endpoint}",` : "// endpoint: \"http://localhost:8000\","}
+  ${endpoint ? `endpoint: "${endpoint}",` : '// endpoint: "http://localhost:8000",'}
 });
 `;
 

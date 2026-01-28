@@ -16,7 +16,7 @@ await db
   .values({
     id: "123",
     name: "John Doe",
-    email: "john@example.com"
+    email: "john@example.com",
   })
   .execute();
 ```
@@ -54,6 +54,7 @@ Executes the `PutItem` operation against DynamoDB.
 ## Key Resolution
 
 When you call `execute()`, Mizzle performs the following steps:
+
 1.  **Defaults:** Applies any `default` or `defaultFn` values defined in your columns.
 2.  **Strategies:** Executes the `prefixKey`, `staticKey`, or `compositeKey` strategies defined for the entity and any GSIs.
 3.  **Physical Mapping:** Maps the logical fields to the physical table attributes.

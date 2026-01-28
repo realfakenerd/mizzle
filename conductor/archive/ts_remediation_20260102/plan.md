@@ -1,6 +1,7 @@
 # Plan: TypeScript Error Remediation (Source Code) [checkpoint: a934e42]
 
 ## Phase 1: Core Type Foundations [checkpoint: a934e42]
+
 Fix fundamental type definitions in the core module that propagate errors to the builders.
 
 - [x] Task: Fix `src/core/table.ts` - Resolve symbol assignment and interface mismatch errors.
@@ -9,6 +10,7 @@ Fix fundamental type definitions in the core module that propagate errors to the
 - [x] Task: Conductor - User Manual Verification 'Core Type Foundations' (Protocol in workflow.md)
 
 ## Phase 2: Basic Builders [checkpoint: 24c1ee5]
+
 Address errors in the primary data manipulation builders.
 
 - [x] Task: Fix `src/builders/insert.ts` - Resolve `Object.entries` type mismatches and missing property errors on `KeyStrategy`.
@@ -16,6 +18,7 @@ Address errors in the primary data manipulation builders.
 - [x] Task: Conductor - User Manual Verification 'Basic Builders' (Protocol in workflow.md)
 
 ## Phase 3: Advanced Builders & Relational [checkpoint: e86d833]
+
 Fix errors in complex query and update builders.
 
 - [x] Task: Fix `src/builders/query-builder.ts` - Resolve missing exports, type assertions for columns, and index signature errors.
@@ -24,6 +27,7 @@ Fix errors in complex query and update builders.
 - [x] Task: Conductor - User Manual Verification 'Advanced Builders & Relational' (Protocol in workflow.md)
 
 ## Phase 4: Final Verification [checkpoint: 685c52e]
+
 Ensure the entire source tree is clean and no regressions were introduced.
 
 - [x] Task: Final Type Check - Run `bun run check` and ensure zero errors in `src/`.

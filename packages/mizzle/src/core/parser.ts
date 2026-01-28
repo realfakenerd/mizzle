@@ -5,110 +5,103 @@ import { Entity } from "./table";
 import { Column } from "./column";
 
 interface MinimalPhysicalTable {
-    [TABLE_SYMBOLS.PARTITION_KEY]: Column | undefined;
-    [TABLE_SYMBOLS.SORT_KEY]?: Column;
+  [TABLE_SYMBOLS.PARTITION_KEY]: Column | undefined;
+  [TABLE_SYMBOLS.SORT_KEY]?: Column;
 }
 
 /**
  * Parser for DynamoDB item collections (Single-Table Design).
  */
 export class ItemCollectionParser {
-    constructor(private schema: InternalRelationalSchema) {}
+  constructor(private schema: InternalRelationalSchema) {}
 
-    /**
-     * Parse a flat list of items into structured, nested objects.
-     */
-    parse(
-        items: Record<string, unknown>[],
-        rootEntityName: string,
-        relations: Record<string, boolean | object> = {},
-    ): Record<string, unknown>[] {
-        const rootEntityMeta = this.schema.entities[rootEntityName];
-        if (!rootEntityMeta) {
-            throw new Error(`Root entity ${rootEntityName} not found in schema`);
-        }
-
-        const primaryItems: Record<string, unknown>[] = [];
-        const otherItems: Record<string, unknown>[] = [];
-
-        // 1. Identify primary items vs related items
-        for (const item of items) {
-            if (this.isEntity(item, rootEntityMeta.entity)) {
-                primaryItems.push({ ...item });
-            } else {
-                otherItems.push(item);
-            }
-        }
-
-        // 2. For each primary item, find its relations
-        for (const primaryItem of primaryItems) {
-            for (const [relName, relOption] of Object.entries(relations)) {
-                if (!relOption) continue;
-
-                const relConfig = rootEntityMeta.relations[relName];
-                if (!relConfig) continue;
-
-                const targetEntity = relConfig.config.to;
-
-                // Find items that match the target entity type
-                // In Single-Table Design Query, these items usually share the same PK
-                const relatedItems = otherItems.filter((item) =>
-                    this.isEntity(item, targetEntity),
-                );
-
-                if (relatedItems.length > 0) {
-                    if (relConfig.type === "many") {
-                        primaryItem[relName] = relatedItems;
-                    } else if (relConfig.type === "one") {
-                        primaryItem[relName] = relatedItems[0] || null;
-                    }
-                }
-            }
-        }
-
-        return primaryItems;
+  /**
+   * Parse a flat list of items into structured, nested objects.
+   */
+  parse(
+    items: Record<string, unknown>[],
+    rootEntityName: string,
+    relations: Record<string, boolean | object> = {},
+  ): Record<string, unknown>[] {
+    const rootEntityMeta = this.schema.entities[rootEntityName];
+    if (!rootEntityMeta) {
+      throw new Error(`Root entity ${rootEntityName} not found in schema`);
     }
 
-    /**
-     * Check if an item matches an entity definition based on its key strategies.
-     */
-    private isEntity(item: Record<string, unknown>, entity: Entity): boolean {
-        const strategies = entity[ENTITY_SYMBOLS.ENTITY_STRATEGY] as Record<
-            string,
-            KeyStrategy
-        >;
-        const physicalTable = entity[ENTITY_SYMBOLS.PHYSICAL_TABLE] as unknown as MinimalPhysicalTable;
-        if (!physicalTable || !physicalTable[TABLE_SYMBOLS.PARTITION_KEY]) return false;
+    const primaryItems: Record<string, unknown>[] = [];
+    const otherItems: Record<string, unknown>[] = [];
 
-        const pkName = physicalTable[TABLE_SYMBOLS.PARTITION_KEY]!.name;
-        const skName = physicalTable[TABLE_SYMBOLS.SORT_KEY]?.name;
-
-        const pkMatch = this.matchStrategy(item[pkName], strategies.pk);
-        const skMatch = skName
-            ? this.matchStrategy(item[skName], strategies.sk)
-            : true;
-
-        return pkMatch && skMatch;
+    // 1. Identify primary items vs related items
+    for (const item of items) {
+      if (this.isEntity(item, rootEntityMeta.entity)) {
+        primaryItems.push({ ...item });
+      } else {
+        otherItems.push(item);
+      }
     }
 
-    /**
-     * Check if a value matches a key strategy.
-     */
-    private matchStrategy(value: unknown, strategy?: KeyStrategy): boolean {
-        if (!strategy) return true;
-        if (value === undefined || value === null) return false;
+    // 2. For each primary item, find its relations
+    for (const primaryItem of primaryItems) {
+      for (const [relName, relOption] of Object.entries(relations)) {
+        if (!relOption) continue;
 
-        const strValue = String(value);
+        const relConfig = rootEntityMeta.relations[relName];
+        if (!relConfig) continue;
 
-        if (strategy.type === "static") {
-            return strValue === strategy.segments[0];
+        const targetEntity = relConfig.config.to;
+
+        // Find items that match the target entity type
+        // In Single-Table Design Query, these items usually share the same PK
+        const relatedItems = otherItems.filter((item) => this.isEntity(item, targetEntity));
+
+        if (relatedItems.length > 0) {
+          if (relConfig.type === "many") {
+            primaryItem[relName] = relatedItems;
+          } else if (relConfig.type === "one") {
+            primaryItem[relName] = relatedItems[0] || null;
+          }
         }
-
-        if (strategy.type === "prefix" || strategy.type === "composite") {
-            const prefix = strategy.segments[0];
-            return typeof prefix === "string" && strValue.startsWith(prefix);
-        }
-
-        return false;
+      }
     }
+
+    return primaryItems;
+  }
+
+  /**
+   * Check if an item matches an entity definition based on its key strategies.
+   */
+  private isEntity(item: Record<string, unknown>, entity: Entity): boolean {
+    const strategies = entity[ENTITY_SYMBOLS.ENTITY_STRATEGY] as Record<string, KeyStrategy>;
+    const physicalTable = entity[ENTITY_SYMBOLS.PHYSICAL_TABLE] as unknown as MinimalPhysicalTable;
+    if (!physicalTable || !physicalTable[TABLE_SYMBOLS.PARTITION_KEY]) return false;
+
+    const pkName = physicalTable[TABLE_SYMBOLS.PARTITION_KEY]!.name;
+    const skName = physicalTable[TABLE_SYMBOLS.SORT_KEY]?.name;
+
+    const pkMatch = this.matchStrategy(item[pkName], strategies.pk);
+    const skMatch = skName ? this.matchStrategy(item[skName], strategies.sk) : true;
+
+    return pkMatch && skMatch;
+  }
+
+  /**
+   * Check if a value matches a key strategy.
+   */
+  private matchStrategy(value: unknown, strategy?: KeyStrategy): boolean {
+    if (!strategy) return true;
+    if (value === undefined || value === null) return false;
+
+    const strValue = String(value);
+
+    if (strategy.type === "static") {
+      return strValue === strategy.segments[0];
+    }
+
+    if (strategy.type === "prefix" || strategy.type === "composite") {
+      const prefix = strategy.segments[0];
+      return typeof prefix === "string" && strValue.startsWith(prefix);
+    }
+
+    return false;
+  }
 }

@@ -25,20 +25,20 @@ import { stringSet } from "./string-set";
 import { uuid } from "./uuid";
 
 export function getColumnBuilders() {
-    return {
-        binary,
-        binarySet,
-        boolean,
-        date,
-        json,
-        list,
-        map,
-        number,
-        numberSet,
-        string,
-        stringSet,
-        uuid,
-    };
+  return {
+    binary,
+    binarySet,
+    boolean,
+    date,
+    json,
+    list,
+    map,
+    number,
+    numberSet,
+    string,
+    stringSet,
+    uuid,
+  };
 }
 
 export type ColumnsBuilder = ReturnType<typeof getColumnBuilders>;

@@ -1,23 +1,27 @@
 # Plan: Code Documentation Expansion
 
 ## Phase 1: Audit and Structure
+
 - [x] Task: Audit `packages/mizzle` and `packages/shared` for public API surfaces and internal logic candidates. [b26f7e8]
 - [x] Task: Map existing code structures to the `docs/` site directory hierarchy. [9b8d597]
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Audit and Structure' (Protocol in workflow.md) [checkpoint: c77c94e]
 
 ## Phase 2: Public API Reference Documentation
+
 - [x] Task: Document Fluent Writes API in `docs/src/content/docs/reference/fluent-writes.md`. [42cf8ab]
 - [x] Task: Document Unified Select API in `docs/src/content/docs/reference/unified-select.md`. [7bb0e8e]
 - [x] Task: Document Transactions and Batch operations in `docs/src/content/docs/reference/transactions.md`. [0946ce5]
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Public API Reference Documentation' (Protocol in workflow.md) [checkpoint: 6c52de1]
 
 ## Phase 3: Internals and Architectural Guides
+
 - [x] Task: Create Architectural Overview in `docs/src/content/docs/guides/architecture.md`. [64555d5]
 - [x] Task: Document Expression Builder internals in `docs/src/content/docs/internals/expression-builder.md`. [1b143e1]
 - [x] Task: Document Relational Proxy logic in `docs/src/content/docs/internals/relational-proxy.md`. [372648a]
 - [x] Task: Conductor - User Manual Verification 'Phase 3: Internals and Architectural Guides' (Protocol in workflow.md) [checkpoint: 9f4abab]
 
 ## Phase 4: Finalization and Verification
+
 - [x] Task: Update `astro.config.mjs` or sidebar configuration to include new pages. [e59f7f1]
 - [x] Task: Run local documentation server and verify all new links and rendering. [verified build]
 - [x] Task: Fix any broken links or formatting issues. [verified build]

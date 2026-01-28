@@ -12,11 +12,7 @@ import { db } from "./db";
 import { users } from "./schema";
 import { eq } from "@aurios/mizzle";
 
-const result = await db
-  .select()
-  .from(users)
-  .where(eq(users.id, "123"))
-  .execute();
+const result = await db.select().from(users).where(eq(users.id, "123")).execute();
 ```
 
 ## Methods
@@ -57,4 +53,4 @@ Mizzle's `select` is powerful because it abstracts DynamoDB's different read ope
 
 1.  **GetItem:** Triggered when the `where` clause provides both the Partition Key and Sort Key for the main table.
 2.  **Query:** Triggered when only the Partition Key is provided, or when keys matching a Global Secondary Index (GSI) are provided.
-3.  **Scan:** Triggered when no keys can be resolved from the `where` clause. *Note: Scans are expensive and should be used with caution.*
+3.  **Scan:** Triggered when no keys can be resolved from the `where` clause. _Note: Scans are expensive and should be used with caution._

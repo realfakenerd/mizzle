@@ -1,6 +1,7 @@
 # Plan: Documentation with Astro and Starlight
 
 ## Phase 1: Foundation ## Phase 1: Foundation & Scaffolding Scaffolding [checkpoint: 8fc475f]
+
 Initialize the documentation project and integrate it into the monorepo.
 
 - [x] Task: Initialize Astro project with Starlight template in `docs/` using `bun create astro@latest -- --template starlight` (fd8090a)
@@ -10,6 +11,7 @@ Initialize the documentation project and integrate it into the monorepo.
 - [ ] Task: Conductor - User Manual Verification 'Foundation & Scaffolding' (Protocol in workflow.md)
 
 ## Phase 2: Core Guides & Conceptual Content [checkpoint: 46ae78c]
+
 Establish the foundational narrative and usage guides.
 
 - [x] Task: Create "Introduction & Vision" content based on `product.md` (d7d5302)
@@ -18,6 +20,7 @@ Establish the foundational narrative and usage guides.
 - [ ] Task: Conductor - User Manual Verification 'Core Guides & Conceptual Content' (Protocol in workflow.md)
 
 ## Phase 3: API & CLI Reference [checkpoint: 8e87e6a]
+
 Detailed documentation of the technical interfaces.
 
 - [x] Task: Create API Reference pages for `select`, `insert`, `update`, `delete`, and `query` (a01dea6)
@@ -26,6 +29,7 @@ Detailed documentation of the technical interfaces.
 - [ ] Task: Conductor - User Manual Verification 'API & CLI Reference' (Protocol in workflow.md)
 
 ## Phase 4: Deployment & Polish [checkpoint: 9960f97]
+
 Finalize the site for production and host on Vercel.
 
 - [x] Task: Configure `vercel.json` and project settings for documentation hosting (5fc3540)

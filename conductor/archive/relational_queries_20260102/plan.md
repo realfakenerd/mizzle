@@ -1,6 +1,7 @@
 # Plan: Relational Query API Implementation
 
 ## Phase 1: Core Architecture & Schema Types [checkpoint: 49e2f2e]
+
 Establish the foundation for the relational schema and the new initialization logic.
 
 - [x] Task: Update `mizzle` entry point in `src/utils/db.ts` to support `mizzle({ client, relations })`. 3e502d1
@@ -10,6 +11,7 @@ Establish the foundation for the relational schema and the new initialization lo
 - [x] Task: Conductor - User Manual Verification 'Core Architecture & Schema Types' (Protocol in workflow.md)
 
 ## Phase 2: The Query Proxy & FindMany (TDD) [checkpoint: 8fc0c92]
+
 Implement the high-level API access and basic query execution.
 
 - [x] Task: Implement the `db.query` proxy to provide dynamic access to entities in the schema. 4f3a5c3
@@ -19,6 +21,7 @@ Implement the high-level API access and basic query execution.
 - [x] Task: Conductor - User Manual Verification 'The Query Proxy & FindMany' (Protocol in workflow.md)
 
 ## Phase 3: Single-Table Mapping & Item Parsing (TDD) [checkpoint: ad8f859]
+
 Implement the core optimization for Single-Table Design.
 
 - [x] Task: Implement `ItemCollectionParser` to group raw DynamoDB items into structured objects based on relation metadata. 371cafb
@@ -28,6 +31,7 @@ Implement the core optimization for Single-Table Design.
 - [x] Task: Conductor - User Manual Verification 'Single-Table Mapping & Item Parsing' (Protocol in workflow.md)
 
 ## Phase 4: Advanced Relations (1:1, N:M, GSI) [checkpoint: cad1122]
+
 Extend the API to support complex relational patterns.
 
 - [x] Task: Implement support for 1:1 relations and correctly picking the single related item. 3199e81
@@ -37,6 +41,7 @@ Extend the API to support complex relational patterns.
 - [x] Task: Conductor - User Manual Verification 'Advanced Relations' (Protocol in workflow.md)
 
 ## Phase 5: Final Verification & Type Safety [checkpoint: afc0c10]
+
 Ensure the entire implementation is robust and follows the "Drizzle/Prisma" ergonomics.
 
 - [x] Task: Run `bun run check` to verify deep type safety for nested `include` calls. 33556f4

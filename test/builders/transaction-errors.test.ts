@@ -4,40 +4,43 @@ import { TransactionFailedError } from "../../packages/mizzle/src/core/errors";
 import type { IMizzleClient } from "../../packages/mizzle/src/core/client";
 
 describe("Transaction Error Parsing", () => {
-    const mockClient = { send: vi.fn() } as unknown as IMizzleClient;
+  const mockClient = { send: vi.fn() } as unknown as IMizzleClient;
 
-    it("should parse TransactionCanceledException into TransactionFailedError", async () => {
-        const executor = new TransactionExecutor(mockClient);
-        
-        const error = new Error("Transaction Canceled") as Error & { name: string; CancellationReasons: { Code: string; Message?: string }[] };
-        error.name = "TransactionCanceledException";
-        error.CancellationReasons = [
-            { Code: "None" },
-            { Code: "ConditionalCheckFailed", Message: "Condition failed" }
-        ];
+  it("should parse TransactionCanceledException into TransactionFailedError", async () => {
+    const executor = new TransactionExecutor(mockClient);
 
-        vi.mocked(mockClient.send).mockRejectedValueOnce(error);
+    const error = new Error("Transaction Canceled") as Error & {
+      name: string;
+      CancellationReasons: { Code: string; Message?: string }[];
+    };
+    error.name = "TransactionCanceledException";
+    error.CancellationReasons = [
+      { Code: "None" },
+      { Code: "ConditionalCheckFailed", Message: "Condition failed" },
+    ];
 
-        try {
-            await executor.execute("token", []);
-            expect.fail("Should have thrown TransactionFailedError");
-        } catch (e) {
-            expect(e).toBeInstanceOf(TransactionFailedError);
-            const txErr = e as TransactionFailedError;
-            expect(txErr.reasons).toHaveLength(1);
-            expect(txErr.reasons[0]).toMatchObject({
-                index: 1,
-                code: "ConditionalCheckFailed",
-                message: "Condition failed"
-            });
-        }
-    });
+    vi.mocked(mockClient.send).mockRejectedValueOnce(error);
 
-    it("should rethrow other errors", async () => {
-        const executor = new TransactionExecutor(mockClient);
-        const otherError = new Error("Other error");
-        vi.mocked(mockClient.send).mockRejectedValueOnce(otherError);
+    try {
+      await executor.execute("token", []);
+      expect.fail("Should have thrown TransactionFailedError");
+    } catch (e) {
+      expect(e).toBeInstanceOf(TransactionFailedError);
+      const txErr = e as TransactionFailedError;
+      expect(txErr.reasons).toHaveLength(1);
+      expect(txErr.reasons[0]).toMatchObject({
+        index: 1,
+        code: "ConditionalCheckFailed",
+        message: "Condition failed",
+      });
+    }
+  });
 
-        await expect(executor.execute("token", [])).rejects.toThrow("Other error");
-    });
+  it("should rethrow other errors", async () => {
+    const executor = new TransactionExecutor(mockClient);
+    const otherError = new Error("Other error");
+    vi.mocked(mockClient.send).mockRejectedValueOnce(otherError);
+
+    await expect(executor.execute("token", [])).rejects.toThrow("Other error");
+  });
 });

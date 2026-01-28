@@ -1,48 +1,53 @@
 # Implementation Plan: DynamoDB ORM Benchmark
 
 ## Phase 1: Setup & Infrastructure [checkpoint: 63bc185]
+
 - [x] Task: Initialize `benchmark/` workspace (78aa8a2)
-    - [ ] Create `benchmark/` directory at the root
-    - [ ] Create `benchmark/package.json` with dependencies: `@aws-sdk/client-dynamodb`, `@aws-sdk/lib-dynamodb`, `dynamoose`, `electrodb`, and the local `mizzle` package
-    - [ ] Ensure `benchmark` is recognized in the monorepo (root `package.json` workspaces)
+  - [ ] Create `benchmark/` directory at the root
+  - [ ] Create `benchmark/package.json` with dependencies: `@aws-sdk/client-dynamodb`, `@aws-sdk/lib-dynamodb`, `dynamoose`, `electrodb`, and the local `mizzle` package
+  - [ ] Ensure `benchmark` is recognized in the monorepo (root `package.json` workspaces)
 - [x] Task: Configure DynamoDB Local for Benchmarks (ea69437)
-    - [x] Verify `docker-compose.yml` has a suitable DynamoDB Local service
-    - [x] Create a setup/teardown script for benchmark tables
+  - [x] Verify `docker-compose.yml` has a suitable DynamoDB Local service
+  - [x] Create a setup/teardown script for benchmark tables
 - [x] Task: Conductor - User Manual Verification 'Setup & Infrastructure' (Protocol in workflow.md) (fd4db52)
 
 ## Phase 2: Core Benchmark Framework [checkpoint: 0e24444]
+
 - [x] Task: Implement Metrics Collection Utility with tinybench (75ef0ea)
-    - [x] Write Tests: Verify correctness of latency (ms), memory (MB), and CPU (%) tracking using `tinybench` as the engine
-    - [x] Implement: `runBenchmarkTask` wrapper around `tinybench.Bench` to capture resource usage deltas
+  - [x] Write Tests: Verify correctness of latency (ms), memory (MB), and CPU (%) tracking using `tinybench` as the engine
+  - [x] Implement: `runBenchmarkTask` wrapper around `tinybench.Bench` to capture resource usage deltas
 - [x] Task: Implement Data Seeding Utility (ef38553)
-    - [x] Write Tests: Verify generation of 1,000 and 100,000 item datasets with consistent schema
-    - [x] Implement: `DataGenerator` to seed DynamoDB Local for repeatable tests
+  - [x] Write Tests: Verify generation of 1,000 and 100,000 item datasets with consistent schema
+  - [x] Implement: `DataGenerator` to seed DynamoDB Local for repeatable tests
 - [x] Task: Conductor - User Manual Verification 'Core Benchmark Framework' (Protocol in workflow.md) (0e24444)
 
 ## Phase 3: ORM Implementation (Baseline & Mizzle) [checkpoint: f24d516]
+
 - [x] Task: Implement AWS SDK v3 Benchmark Functions (368eec3)
-    - [x] Write Tests: Ensure functions correctly perform all 6 required operations
-    - [x] Implement: `AWSSDKBench` providing task functions for `tinybench`
+  - [x] Write Tests: Ensure functions correctly perform all 6 required operations
+  - [x] Implement: `AWSSDKBench` providing task functions for `tinybench`
 - [x] Task: Implement Mizzle Benchmark Functions (fe488ac)
-    - [x] Write Tests: Ensure Mizzle functions correctly perform operations via its query builder
-    - [x] Implement: `MizzleBench` providing task functions for `tinybench`
+  - [x] Write Tests: Ensure Mizzle functions correctly perform operations via its query builder
+  - [x] Implement: `MizzleBench` providing task functions for `tinybench`
 - [x] Task: Conductor - User Manual Verification 'Baseline & Mizzle Implementation' (Protocol in workflow.md) (f24d516)
 
 ## Phase 4: Competitor Implementation [checkpoint: edfa916]
+
 - [x] Task: Implement Dynamoose Benchmark Functions (508e972)
-    - [x] Write Tests: Ensure Dynamoose functions map schema and perform operations correctly
-    - [x] Implement: `DynamooseBench`
+  - [x] Write Tests: Ensure Dynamoose functions map schema and perform operations correctly
+  - [x] Implement: `DynamooseBench`
 - [x] Task: Implement ElectroDB Benchmark Functions (0a69f53)
-    - [x] Write Tests: Ensure ElectroDB functions handle keys and queries as expected
-    - [x] Implement: `ElectroDBBench`
+  - [x] Write Tests: Ensure ElectroDB functions handle keys and queries as expected
+  - [x] Implement: `ElectroDBBench`
 - [x] Task: Conductor - User Manual Verification 'Competitor Implementation' (Protocol in workflow.md) (edfa916)
 
 ## Phase 5: Execution & Reporting [checkpoint: d198e5a]
+
 - [x] Task: Implement Benchmark Orchestrator with tinybench (0017b12)
-    - [x] Write Tests: Verify orchestrator correctly chains `tinybench.Bench` runs
-    - [x] Implement: Main CLI entry point to execute comparisons across both Small and Large scales using `tinybench`
+  - [x] Write Tests: Verify orchestrator correctly chains `tinybench.Bench` runs
+  - [x] Implement: Main CLI entry point to execute comparisons across both Small and Large scales using `tinybench`
 - [x] Task: Report Generation & Documentation (d705474)
-    - [x] Write Tests: Verify Markdown table generation from `tinybench` result objects
-    - [x] Implement: Report generator to output `results.md`
-    - [x] Create `benchmark/README.md` with execution instructions
+  - [x] Write Tests: Verify Markdown table generation from `tinybench` result objects
+  - [x] Implement: Report generator to output `results.md`
+  - [x] Create `benchmark/README.md` with execution instructions
 - [~] Task: Conductor - User Manual Verification 'Reporting & Finalization' (Protocol in workflow.md)

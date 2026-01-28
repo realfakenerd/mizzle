@@ -18,7 +18,7 @@ describe("json column", () => {
     });
     const col = entity.pk;
     const data = { hello: "world", numbers: [1, 2, 3] };
-    
+
     expect(col.mapToDynamoValue(data)).toBe(JSON.stringify(data));
   });
 
@@ -32,7 +32,7 @@ describe("json column", () => {
     const col = entity.pk;
     const data = { hello: "world" };
     const serialized = JSON.stringify(data);
-    
+
     expect(col.mapFromDynamoValue(serialized)).toEqual(data);
   });
 
@@ -45,7 +45,7 @@ describe("json column", () => {
     });
     const col = entity.pk;
     const invalidJson = "{ invalid }";
-    
+
     expect(col.mapFromDynamoValue(invalidJson as unknown)).toBe(invalidJson);
   });
 });

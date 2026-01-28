@@ -1,37 +1,41 @@
 # Plan: Transparent DynamoDB Error Handling & Smart Retries
 
 ## Phase 1: Foundation & Client Configuration [checkpoint: 3aa82cf]
+
 - [x] Task: Define `RetryConfig` type and update `MizzleConfig` 5f06ec8
-    - Create types for retry configuration (maxAttempts, baseDelay).
-    - Update the core `Mizzle` initialization to accept and store these settings.
+  - Create types for retry configuration (maxAttempts, baseDelay).
+  - Update the core `Mizzle` initialization to accept and store these settings.
 - [x] Task: Implement `ItemSizeExceededError` custom error class 5f06ec8
 - [x] Task: Conductor - User Manual Verification 'Foundation & Client Configuration' (Protocol in workflow.md) 3aa82cf
 
 ## Phase 2: Exponential Backoff & Jitter [checkpoint: d55184e]
+
 - [x] Task: Create `RetryHandler` utility 0226eab
-    - Implement a utility function/class that takes an operation and retry settings.
-    - Implement exponential backoff logic with jitter.
+  - Implement a utility function/class that takes an operation and retry settings.
+  - Implement exponential backoff logic with jitter.
 - [x] Task: Integrate `RetryHandler` into core request execution 4a06505
-    - Identify the central point where AWS SDK calls are made.
-    - Wrap these calls with the `RetryHandler`.
-    - Handle specific retryable exceptions: `ProvisionedThroughputExceededException`, `RequestLimitExceeded`, `InternalServerError`, `ServiceUnavailable`.
+  - Identify the central point where AWS SDK calls are made.
+  - Wrap these calls with the `RetryHandler`.
+  - Handle specific retryable exceptions: `ProvisionedThroughputExceededException`, `RequestLimitExceeded`, `InternalServerError`, `ServiceUnavailable`.
 - [x] Task: Conductor - User Manual Verification 'Exponential Backoff & Jitter' (Protocol in workflow.md) d55184e
 
 ## Phase 3: Smart Batching Resilience [checkpoint: 27c8042]
+
 - [x] Task: Implement `BatchGetItem` recursive retry logic 27c8042
-    - Update `BatchGetItem` to check for `UnprocessedKeys`.
-    - Recursively (or iteratively) retry `UnprocessedKeys` using the `RetryHandler`.
+  - Update `BatchGetItem` to check for `UnprocessedKeys`.
+  - Recursively (or iteratively) retry `UnprocessedKeys` using the `RetryHandler`.
 - [x] Task: Implement `BatchWriteItem` recursive retry logic 27c8042
-    - Update `BatchWriteItem` to check for `UnprocessedItems`.
-    - Recursively retry `UnprocessedItems` using the `RetryHandler`.
+  - Update `BatchWriteItem` to check for `UnprocessedItems`.
+  - Recursively retry `UnprocessedItems` using the `RetryHandler`.
 - [x] Task: Update Batch API return types 27c8042
-    - Ensure `BatchGet` and `BatchWrite` operations return a structure like `{ succeeded: T[], failed: T[] }` when retries are exhausted.
+  - Ensure `BatchGet` and `BatchWrite` operations return a structure like `{ succeeded: T[], failed: T[] }` when retries are exhausted.
 - [x] Task: Conductor - User Manual Verification 'Smart Batching Resilience' (Protocol in workflow.md) 27c8042
 
 ## Phase 4: Client-Side Validation [checkpoint: 5abfa66]
+
 - [x] Task: Implement `calculateItemSize` utility 5abfa66
-    - Create a utility to estimate the byte size of a DynamoDB item.
+  - Create a utility to estimate the byte size of a DynamoDB item.
 - [x] Task: Add size validation to write operations 5abfa66
-    - Inject a check in `insert`, `update`, and `BatchWriteItem` before the network request.
-    - Throw `ItemSizeExceededError` if any item > 400KB.
+  - Inject a check in `insert`, `update`, and `BatchWriteItem` before the network request.
+  - Throw `ItemSizeExceededError` if any item > 400KB.
 - [x] Task: Conductor - User Manual Verification 'Client-Side Validation' (Protocol in workflow.md) 5abfa66

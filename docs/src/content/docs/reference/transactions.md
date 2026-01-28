@@ -25,18 +25,20 @@ await db.transaction(idempotencyToken, (tx) => [
   tx.insert(users).values({ id: "123", name: "Alice" }),
 
   // 2. Decrement an account balance (with a condition)
-  tx.update(accounts)
+  tx
+    .update(accounts)
     .set({ balance: add(-100) })
     .where(eq(accounts.id, "treasury")),
-    
+
   // 3. Delete a pending request
-  tx.delete(requests, { id: "req_999" })
+  tx.delete(requests, { id: "req_999" }),
 ]);
 ```
 
 ### Supported Operations
 
 The `tx` object passed to the callback supports:
+
 - `tx.insert(entity)`
 - `tx.update(entity)`
 - `tx.delete(entity, keys)`
@@ -56,7 +58,7 @@ import { users } from "./schema";
 const operations = [
   { type: "put", item: { id: "1", name: "User 1" } },
   { type: "put", item: { id: "2", name: "User 2" } },
-  { type: "delete", keys: { id: "3" } }
+  { type: "delete", keys: { id: "3" } },
 ];
 
 // Mizzle automatically handles retries for unprocessed items
@@ -73,14 +75,10 @@ Use `db.batchGet` to retrieve up to 100 items at once by their primary keys.
 ```typescript
 import { users } from "./schema";
 
-const keys = [
-  { id: "1" },
-  { id: "2" },
-  { id: "3" }
-];
+const keys = [{ id: "1" }, { id: "2" }, { id: "3" }];
 
 const result = await db.batchGet(users, keys).execute();
 
 console.log(result.succeeded); // Array of found items
-console.log(result.failed);    // Keys that couldn't be processed (e.g. throttling)
+console.log(result.failed); // Keys that couldn't be processed (e.g. throttling)
 ```

@@ -5,72 +5,77 @@ import { BaseBuilder } from "./base";
 import type { IMizzleClient } from "../core/client";
 
 export class BatchGetBuilder {
-    constructor(private client: IMizzleClient) {}
+  constructor(private client: IMizzleClient) {}
 
-    items<TEntity extends Entity>(entity: TEntity, keys: Partial<InferSelectModel<TEntity>>[]) {
-        return new BatchGetBase(entity, this.client, keys);
-    }
+  items<TEntity extends Entity>(entity: TEntity, keys: Partial<InferSelectModel<TEntity>>[]) {
+    return new BatchGetBase(entity, this.client, keys);
+  }
 }
 
 export interface BatchGetResult<T> {
-    succeeded: T[];
-    failed: Partial<T>[];
+  succeeded: T[];
+  failed: Partial<T>[];
 }
 
 export class BatchGetBase<
-    TEntity extends Entity,
-    TResult = InferSelectModel<TEntity>,
+  TEntity extends Entity,
+  TResult = InferSelectModel<TEntity>,
 > extends BaseBuilder<TEntity, BatchGetResult<TResult>> {
-    static readonly [ENTITY_SYMBOLS.ENTITY_KIND]: string = "BatchGetBase";
+  static readonly [ENTITY_SYMBOLS.ENTITY_KIND]: string = "BatchGetBase";
 
-    constructor(
-        entity: TEntity,
-        client: IMizzleClient,
-        private keysData: Partial<InferSelectModel<TEntity>>[],
-    ) {
-        super(entity, client);
+  constructor(
+    entity: TEntity,
+    client: IMizzleClient,
+    private keysData: Partial<InferSelectModel<TEntity>>[],
+  ) {
+    super(entity, client);
+  }
+
+  public override async execute(): Promise<BatchGetResult<TResult>> {
+    const succeeded: TResult[] = [];
+    const failed: Partial<TResult>[] = [];
+
+    // Group keys by resolved DynamoDB keys
+    let currentKeys = this.keysData.map(
+      (k) => this.resolveKeys(undefined, k as Record<string, unknown>).keys,
+    );
+
+    let attempts = 0;
+    const maxBatchAttempts = 5; // Internal limit for unprocessed retries
+
+    while (currentKeys.length > 0 && attempts < maxBatchAttempts) {
+      attempts++;
+
+      const command = new BatchGetCommand({
+        RequestItems: {
+          [this.tableName]: {
+            Keys: currentKeys,
+          },
+        },
+      });
+
+      const response = (await this.client.send(command)) as {
+        Responses?: Record<string, unknown[]>;
+        UnprocessedKeys?: Record<string, { Keys?: Record<string, unknown>[] }>;
+      };
+
+      if (response.Responses?.[this.tableName]) {
+        succeeded.push(...(response.Responses[this.tableName] as TResult[]));
+      }
+
+      const unprocessed = response.UnprocessedKeys?.[this.tableName]?.Keys;
+
+      if (unprocessed && unprocessed.length > 0) {
+        currentKeys = unprocessed;
+      } else {
+        currentKeys = [];
+      }
     }
 
-    public override async execute(): Promise<BatchGetResult<TResult>> {
-        const succeeded: TResult[] = [];
-        const failed: Partial<TResult>[] = [];
-
-        // Group keys by resolved DynamoDB keys
-        let currentKeys = this.keysData.map(k => this.resolveKeys(undefined, k as Record<string, unknown>).keys);
-        
-        let attempts = 0;
-        const maxBatchAttempts = 5; // Internal limit for unprocessed retries
-
-        while (currentKeys.length > 0 && attempts < maxBatchAttempts) {
-            attempts++;
-            
-            const command = new BatchGetCommand({
-                RequestItems: {
-                    [this.tableName]: {
-                        Keys: currentKeys
-                    }
-                }
-            });
-
-            const response = await this.client.send(command) as { Responses?: Record<string, unknown[]>, UnprocessedKeys?: Record<string, { Keys?: Record<string, unknown>[] }> };
-            
-            if (response.Responses?.[this.tableName]) {
-                succeeded.push(...(response.Responses[this.tableName] as TResult[]));
-            }
-
-            const unprocessed = response.UnprocessedKeys?.[this.tableName]?.Keys;
-            
-            if (unprocessed && unprocessed.length > 0) {
-                currentKeys = unprocessed;
-            } else {
-                currentKeys = [];
-            }
-        }
-
-        if (currentKeys.length > 0) {
-            failed.push(...(currentKeys as Partial<TResult>[]));
-        }
-
-        return { succeeded, failed };
+    if (currentKeys.length > 0) {
+      failed.push(...(currentKeys as Partial<TResult>[]));
     }
+
+    return { succeeded, failed };
+  }
 }

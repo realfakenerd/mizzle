@@ -1,81 +1,36 @@
 {
-    "$schema": "https://turbo.build/schema.json",
-    "tasks": {
-        "build": {
-            "dependsOn": ["^build"],
-            "outputs": ["dist/**"],
-            "inputs": [
-                "src/**",
-                "public/**",
-                "package.json",
-                "tsconfig.json",
-                "*.config.*"
-            ]
-        },
-        "test": {
-            "dependsOn": ["^build"],
-            "inputs": [
-                "src/**",
-                "test/**",
-                "public/**",
-                "package.json",
-                "tsconfig.json",
-                "*.config.*"
-            ],
-            "passThroughEnv": [
-                "MIZZLE_CONFIG",
-                "MIZZLE_REGION",
-                "MIZZLE_ENDPOINT",
-                "MIZZLE_SCHEMA",
-                "MIZZLE_OUT",
-                "MIZZLE_VERBOSE",
-                "MIZZLE_STRICT",
-                "AWS_ACCESS_KEY_ID",
-                "AWS_SECRET_ACCESS_KEY",
-                "AWS_REGION"
-            ]
-        },
-        "lint": {
-            "inputs": [
-                "src/**",
-                "test/**",
-                "public/**",
-                ".eslintrc.cjs",
-                "package.json",
-                "tsconfig.json",
-                "*.config.*"
-            ]
-        },
-        "lint:root": {
-            "inputs": [
-                "src/**",
-                "test/**",
-                "public/**",
-                ".eslintrc.cjs",
-                "package.json",
-                "tsconfig.json",
-                "*.config.*"
-            ]
-        },
-        "check": {
-            "inputs": [
-                "src/**",
-                "test/**",
-                "public/**",
-                "package.json",
-                "tsconfig.json",
-                "*.config.*"
-            ]
-        },
-        "check:root": {
-            "inputs": [
-                "src/**",
-                "test/**",
-                "public/**",
-                "package.json",
-                "tsconfig.json",
-                "*.config.*"
-            ]
-        }
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"],
+      "inputs": ["src/**", "public/**", "package.json", "tsconfig.json", "*.config.*"]
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "inputs": ["src/**", "test/**", "public/**", "package.json", "tsconfig.json", "*.config.*"],
+      "passThroughEnv": [
+        "MIZZLE_CONFIG",
+        "MIZZLE_REGION",
+        "MIZZLE_ENDPOINT",
+        "MIZZLE_SCHEMA",
+        "MIZZLE_OUT",
+        "MIZZLE_VERBOSE",
+        "MIZZLE_STRICT",
+        "AWS_ACCESS_KEY_ID",
+        "AWS_SECRET_ACCESS_KEY",
+        "AWS_REGION"
+      ]
+    },
+    "//#lint": {},
+    "//#lint:fix": {},
+    "//#format": {},
+    "//#format:fix": {},
+    "check": {
+      "inputs": ["src/**", "test/**", "public/**", "package.json", "tsconfig.json", "*.config.*"]
+    },
+    "check:root": {
+      "inputs": ["src/**", "test/**", "public/**", "package.json", "tsconfig.json", "*.config.*"]
     }
+  }
 }

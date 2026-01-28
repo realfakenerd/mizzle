@@ -3,20 +3,20 @@
   "version": "0.1.3",
   "private": true,
   "type": "module",
+  "scripts": {
+    "bench:mizzle": "bun mizzle-only-bench.ts"
+  },
   "dependencies": {
+    "@aurios/mizzle": "workspace:*",
     "@aws-sdk/client-dynamodb": "3.962.0",
     "@aws-sdk/lib-dynamodb": "3.962.0",
     "@aws-sdk/node-http-handler": "^3.374.0",
     "dynamoose": "^4.0.4",
     "electrodb": "^3.5.3",
-    "@aurios/mizzle": "workspace:*",
     "tinybench": "^6.0.0"
   },
   "devDependencies": {
     "@types/bun": "latest",
     "typescript": "^5.9.3"
-  },
-  "scripts": {
-    "bench:mizzle": "bun mizzle-only-bench.ts"
   }
 }

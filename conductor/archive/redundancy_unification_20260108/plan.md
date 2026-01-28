@@ -3,6 +3,7 @@
 This plan outlines the steps to unify the query and update builders and refactor the column organization to eliminate redundancy and improve maintainability.
 
 ## Phase 1: Unified Update Architecture
+
 Merge the functionality of the integrated `update.ts` and the standalone `update-builder.ts` into a single, robust implementation.
 
 - [x] Task: Research and define the final API surface for the Unified Update Builder.
@@ -14,6 +15,7 @@ Merge the functionality of the integrated `update.ts` and the standalone `update
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Unified Update Architecture' (Protocol in workflow.md)
 
 ## Phase 2: Unified Query Architecture [checkpoint: 258ee3b]
+
 Consolidate `select.ts` and `query-builder.ts` into a unified query architecture that intelligently handles Get, Query, and Scan operations.
 
 - [x] Task: Research and define the final API surface for the Unified Query Builder.
@@ -25,6 +27,7 @@ Consolidate `select.ts` and `query-builder.ts` into a unified query architecture
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Unified Query Architecture' (Protocol in workflow.md) 258ee3b
 
 ## Phase 3: Column Organization Refactor [checkpoint: 1715062]
+
 Clean up and reorganize column exports to remove duplication and improve package structure.
 
 - [x] Task: Analyze current column file structure and identify optimal organization. 1715062

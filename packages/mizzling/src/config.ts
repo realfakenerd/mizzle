@@ -66,20 +66,20 @@ export interface MizzleConfig {
 
 /**
  * Helper function to define the Mizzle CLI configuration with type safety and autocompletion.
- * 
+ *
  * Typically used in a `mizzle.config.ts` file at the root of your project.
- * 
+ *
  * @example
  * ```ts
  * import { defineConfig } from "@aurios/mizzling";
- * 
+ *
  * export default defineConfig({
  *   schema: "./src/schema.ts",
  *   out: "./mizzle",
  *   region: "us-east-1",
  * });
  * ```
- * 
+ *
  * @param config The Mizzle configuration object.
  * @returns The same configuration object, validated by TypeScript.
  */
@@ -89,20 +89,20 @@ export function defineConfig(config: MizzleConfig): MizzleConfig {
 
 /**
  * Creates a configured DynamoDBClient instance based on the provided configuration.
- * 
+ *
  * It prioritizes credentials in the following order:
  * 1. Explicitly provided `credentials` object.
  * 2. Explicitly provided AWS `profile`.
  * 3. Default "local" credentials if the endpoint is localhost/127.0.0.1.
  * 4. Default AWS SDK credential provider chain (environment variables, IAM roles, etc.).
- * 
+ *
  * @param config The Mizzle configuration.
  * @returns A configured DynamoDBClient instance.
  */
 export function getClient(config: MizzleConfig): DynamoDBClient {
   const agentOptions = {
-      keepAlive: true,
-      maxSockets: Infinity,
+    keepAlive: true,
+    maxSockets: Infinity,
   };
 
   const clientConfig: DynamoDBClientConfig = {
@@ -110,8 +110,8 @@ export function getClient(config: MizzleConfig): DynamoDBClient {
     endpoint: config.endpoint,
     maxAttempts: config.maxAttempts,
     requestHandler: new NodeHttpHandler({
-        httpAgent: new http.Agent(agentOptions),
-        httpsAgent: new https.Agent(agentOptions),
+      httpAgent: new http.Agent(agentOptions),
+      httpsAgent: new https.Agent(agentOptions),
     }),
   };
 
@@ -134,10 +134,10 @@ export function getClient(config: MizzleConfig): DynamoDBClient {
 
 /**
  * Loads the Mizzle configuration from a file (defaulting to mizzle.config.ts).
- * 
+ *
  * Environment variables (MIZZLE_REGION, MIZZLE_ENDPOINT, MIZZLE_SCHEMA, MIZZLE_OUT)
  * will override values provided in the configuration file.
- * 
+ *
  * @param configName The name of the config file to load.
  * @returns A promise that resolves to the loaded and overridden configuration.
  * @throws Error if the configuration file is missing or invalid.
@@ -155,7 +155,7 @@ export async function loadConfig(configName = "mizzle.config.ts"): Promise<Mizzl
     const config = imported.default || imported;
 
     if (!config || typeof config !== "object") {
-       throw new Error("Invalid config: default export must be an object");
+      throw new Error("Invalid config: default export must be an object");
     }
 
     if (!config.schema) {
@@ -178,7 +178,7 @@ export async function loadConfig(configName = "mizzle.config.ts"): Promise<Mizzl
     return finalConfig;
   } catch (error) {
     if (error instanceof Error && error.message.startsWith("Invalid config")) {
-        throw error;
+      throw error;
     }
     const message = error instanceof Error ? error.message : String(error);
     throw new Error(`Failed to load config: ${message}`);

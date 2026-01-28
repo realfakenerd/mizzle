@@ -1,25 +1,25 @@
 @layer base, starlight, theme, components, utilities;
 
-@import '@astrojs/starlight-tailwind';
-@import 'tailwindcss/theme.css' layer(theme);
-@import 'tailwindcss/utilities.css' layer(utilities);
+@import "@astrojs/starlight-tailwind";
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
 
 [data-has-hero] header {
-    background-color: transparent;
-    backdrop-filter: blur(16px);
-    border-bottom-color: var(--sl-color-black);
+  background-color: transparent;
+  backdrop-filter: blur(16px);
+  border-bottom-color: var(--sl-color-black);
 }
 
 @theme {
-    --color-accent-low: oklch(25% 0.12 250);
-    --color-accent: oklch(0.6611 0.1732 250.03);
-    --color-accent-high: oklch(88% 0.05 250);
-    --color-white: oklch(100% 0 250);
-    --color-gray-1: oklch(95% 0.01 250);
-    --color-gray-2: oklch(82% 0.015 250);
-    --color-gray-3: oklch(65% 0.02 250);
-    --color-gray-4: oklch(48% 0.02 250);
-    --color-gray-5: oklch(38% 0.02 250);
-    --color-gray-6: oklch(28% 0.02 250);
-    --color-black: oklch(18% 0.02 250);
+  --color-accent-low: oklch(25% 0.12 250);
+  --color-accent: oklch(0.6611 0.1732 250.03);
+  --color-accent-high: oklch(88% 0.05 250);
+  --color-white: oklch(100% 0 250);
+  --color-gray-1: oklch(95% 0.01 250);
+  --color-gray-2: oklch(82% 0.015 250);
+  --color-gray-3: oklch(65% 0.02 250);
+  --color-gray-4: oklch(48% 0.02 250);
+  --color-gray-5: oklch(38% 0.02 250);
+  --color-gray-6: oklch(28% 0.02 250);
+  --color-black: oklch(18% 0.02 250);
 }

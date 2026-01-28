@@ -17,8 +17,8 @@ const client = new DynamoDBClient({
   region: "us-west-2",
   credentials: {
     accessKeyId: "YOUR_ACCESS_KEY",
-    secretAccessKey: "YOUR_SECRET_KEY"
-  }
+    secretAccessKey: "YOUR_SECRET_KEY",
+  },
 });
 
 const command = new ListTablesCommand({ Limit: 10 });
@@ -52,8 +52,8 @@ const uploadCommand = new PutObjectCommand({
   ContentType: "application/pdf",
   Metadata: {
     author: "John Doe",
-    department: "Finance"
-  }
+    department: "Finance",
+  },
 });
 
 try {
@@ -67,7 +67,7 @@ try {
 // Download and process object
 const downloadCommand = new GetObjectCommand({
   Bucket: "my-bucket",
-  Key: "documents/report.pdf"
+  Key: "documents/report.pdf",
 });
 
 try {
@@ -103,7 +103,7 @@ import {
   PutItemCommand,
   GetItemCommand,
   UpdateItemCommand,
-  DeleteItemCommand
+  DeleteItemCommand,
 } from "@aws-sdk/client-dynamodb";
 
 const client = new DynamoDBClient({ region: "us-west-2" });
@@ -113,24 +113,22 @@ const createTableCommand = new CreateTableCommand({
   TableName: "Users",
   AttributeDefinitions: [
     { AttributeName: "userId", AttributeType: "S" },
-    { AttributeName: "email", AttributeType: "S" }
+    { AttributeName: "email", AttributeType: "S" },
   ],
-  KeySchema: [
-    { AttributeName: "userId", KeyType: "HASH" }
-  ],
+  KeySchema: [{ AttributeName: "userId", KeyType: "HASH" }],
   GlobalSecondaryIndexes: [
     {
       IndexName: "EmailIndex",
       KeySchema: [{ AttributeName: "email", KeyType: "HASH" }],
       Projection: { ProjectionType: "ALL" },
-      ProvisionedThroughput: { ReadCapacityUnits: 5, WriteCapacityUnits: 5 }
-    }
+      ProvisionedThroughput: { ReadCapacityUnits: 5, WriteCapacityUnits: 5 },
+    },
   ],
   BillingMode: "PROVISIONED",
   ProvisionedThroughput: {
     ReadCapacityUnits: 5,
-    WriteCapacityUnits: 5
-  }
+    WriteCapacityUnits: 5,
+  },
 });
 
 try {
@@ -152,11 +150,13 @@ const putCommand = new PutItemCommand({
     age: { N: "30" },
     isActive: { BOOL: true },
     tags: { SS: ["premium", "verified"] },
-    metadata: { M: {
-      createdAt: { S: new Date().toISOString() },
-      source: { S: "web" }
-    }}
-  }
+    metadata: {
+      M: {
+        createdAt: { S: new Date().toISOString() },
+        source: { S: "web" },
+      },
+    },
+  },
 });
 
 await client.send(putCommand);
@@ -166,7 +166,7 @@ const getCommand = new GetItemCommand({
   TableName: "Users",
   Key: { userId: { S: "user123" } },
   ProjectionExpression: "userId, email, #n, age",
-  ExpressionAttributeNames: { "#n": "name" }
+  ExpressionAttributeNames: { "#n": "name" },
 });
 
 const getResult = await client.send(getCommand);
@@ -180,9 +180,9 @@ const updateCommand = new UpdateItemCommand({
   ExpressionAttributeNames: { "#n": "name" },
   ExpressionAttributeValues: {
     ":newAge": { N: "31" },
-    ":newName": { S: "John Smith" }
+    ":newName": { S: "John Smith" },
   },
-  ReturnValues: "ALL_NEW"
+  ReturnValues: "ALL_NEW",
 });
 
 const updateResult = await client.send(updateCommand);
@@ -193,7 +193,7 @@ const deleteCommand = new DeleteItemCommand({
   TableName: "Users",
   Key: { userId: { S: "user123" } },
   ConditionExpression: "attribute_exists(userId)",
-  ReturnValues: "ALL_OLD"
+  ReturnValues: "ALL_OLD",
 });
 
 const deleteResult = await client.send(deleteCommand);
@@ -214,7 +214,7 @@ import {
   GetCommand,
   QueryCommand,
   UpdateCommand,
-  BatchWriteCommand
+  BatchWriteCommand,
 } from "@aws-sdk/lib-dynamodb";
 
 const client = new DynamoDBClient({ region: "us-west-2" });
@@ -224,100 +224,111 @@ const docClient = DynamoDBDocumentClient.from(client, {
   marshallOptions: {
     convertEmptyValues: true,
     removeUndefinedValues: true,
-    convertClassInstanceToMap: true
+    convertClassInstanceToMap: true,
   },
   unmarshallOptions: {
-    wrapNumbers: false
-  }
+    wrapNumbers: false,
+  },
 });
 
 // Put item with native types
-await docClient.send(new PutCommand({
-  TableName: "Products",
-  Item: {
-    productId: "prod-001",
-    name: "Laptop",
-    price: 999.99,
-    inStock: true,
-    categories: ["electronics", "computers"],
-    specifications: {
-      cpu: "Intel i7",
-      ram: "16GB",
-      storage: "512GB SSD"
+await docClient.send(
+  new PutCommand({
+    TableName: "Products",
+    Item: {
+      productId: "prod-001",
+      name: "Laptop",
+      price: 999.99,
+      inStock: true,
+      categories: ["electronics", "computers"],
+      specifications: {
+        cpu: "Intel i7",
+        ram: "16GB",
+        storage: "512GB SSD",
+      },
+      tags: new Set(["featured", "bestseller"]),
+      createdAt: new Date().toISOString(),
     },
-    tags: new Set(["featured", "bestseller"]),
-    createdAt: new Date().toISOString()
-  }
-}));
+  }),
+);
 
 // Get item
-const result = await docClient.send(new GetCommand({
-  TableName: "Products",
-  Key: { productId: "prod-001" }
-}));
+const result = await docClient.send(
+  new GetCommand({
+    TableName: "Products",
+    Key: { productId: "prod-001" },
+  }),
+);
 
 console.log("Product:", result.Item);
 // Output: { productId: 'prod-001', name: 'Laptop', price: 999.99, ... }
 
 // Query with filter
-const queryResult = await docClient.send(new QueryCommand({
-  TableName: "Orders",
-  IndexName: "UserIdIndex",
-  KeyConditionExpression: "userId = :userId AND orderDate > :date",
-  FilterExpression: "#status = :status AND totalAmount > :amount",
-  ExpressionAttributeNames: {
-    "#status": "status"
-  },
-  ExpressionAttributeValues: {
-    ":userId": "user123",
-    ":date": "2024-01-01",
-    ":status": "completed",
-    ":amount": 100
-  },
-  Limit: 20
-}));
+const queryResult = await docClient.send(
+  new QueryCommand({
+    TableName: "Orders",
+    IndexName: "UserIdIndex",
+    KeyConditionExpression: "userId = :userId AND orderDate > :date",
+    FilterExpression: "#status = :status AND totalAmount > :amount",
+    ExpressionAttributeNames: {
+      "#status": "status",
+    },
+    ExpressionAttributeValues: {
+      ":userId": "user123",
+      ":date": "2024-01-01",
+      ":status": "completed",
+      ":amount": 100,
+    },
+    Limit: 20,
+  }),
+);
 
 console.log("Orders:", queryResult.Items);
 console.log("Count:", queryResult.Count);
 
 // Batch write operations
-await docClient.send(new BatchWriteCommand({
-  RequestItems: {
-    "Products": [
-      {
-        PutRequest: {
-          Item: { productId: "prod-002", name: "Mouse", price: 29.99 }
-        }
-      },
-      {
-        PutRequest: {
-          Item: { productId: "prod-003", name: "Keyboard", price: 79.99 }
-        }
-      },
-      {
-        DeleteRequest: {
-          Key: { productId: "prod-old" }
-        }
-      }
-    ]
-  }
-}));
+await docClient.send(
+  new BatchWriteCommand({
+    RequestItems: {
+      Products: [
+        {
+          PutRequest: {
+            Item: { productId: "prod-002", name: "Mouse", price: 29.99 },
+          },
+        },
+        {
+          PutRequest: {
+            Item: { productId: "prod-003", name: "Keyboard", price: 79.99 },
+          },
+        },
+        {
+          DeleteRequest: {
+            Key: { productId: "prod-old" },
+          },
+        },
+      ],
+    },
+  }),
+);
 
 // Update with complex expressions
-const updateResult = await docClient.send(new UpdateCommand({
-  TableName: "Products",
-  Key: { productId: "prod-001" },
-  UpdateExpression: "SET price = price - :discount, #views = #views + :inc, categories = list_append(categories, :newCat)",
-  ExpressionAttributeNames: {
-    "#views": "viewCount"
-  },
-  ExpressionAttributeValues: {
-    ":discount": 50,
-    ":inc": 1,
-    ":newCat": ["sale"]
-  },
-  ReturnValues: "ALL_NEW"
-}));
+const updateResult = await docClient.send(
+  new UpdateCommand({
+    TableName: "Products",
+    Key: { productId: "prod-001" },
+    UpdateExpression:
+      "SET price = price - :discount, #views = #views + :inc, categories = list_append(categories, :newCat)",
+    ExpressionAttributeNames: {
+      "#views": "viewCount",
+    },
+    ExpressionAttributeValues: {
+      ":discount": 50,
+      ":inc": 1,
+      ":newCat": ["sale"],
+    },
+    ReturnValues: "ALL_NEW",
+  }),
+);
 
 console.log("Updated product:", updateResult.Attributes);
 ```
@@ -332,43 +343,43 @@ import { DynamoDBDocumentClient, PutCommand, GetCommand, NumberValue } from "@aw
 
 const client = DynamoDBClient.from(new DynamoDBClient({}), {
   marshallOptions: {
-    allowImpreciseNumbers: false // Default: throws error on large numbers
+    allowImpreciseNumbers: false, // Default: throws error on large numbers
   },
   unmarshallOptions: {
-    wrapNumbers: true // Return NumberValue for all numbers
-  }
+    wrapNumbers: true, // Return NumberValue for all numbers
+  },
 });
 
 // Store large numbers precisely
-await client.send(new PutCommand({
-  TableName: "FinancialData",
-  Item: {
-    transactionId: "tx-001",
-    // Use NumberValue for numbers that exceed MAX_SAFE_INTEGER
-    accountBalance: NumberValue.from("999999999999999999999.99"),
-    smallNumber: 123, // Regular numbers work fine
-    scientificNotation: NumberValue.from("1.23e+25"),
-    // Number sets with mixed types
-    amounts: new Set([
-      100,
-      NumberValue.from("888888888888888888888.88"),
-      500
-    ])
-  }
-}));
+await client.send(
+  new PutCommand({
+    TableName: "FinancialData",
+    Item: {
+      transactionId: "tx-001",
+      // Use NumberValue for numbers that exceed MAX_SAFE_INTEGER
+      accountBalance: NumberValue.from("999999999999999999999.99"),
+      smallNumber: 123, // Regular numbers work fine
+      scientificNotation: NumberValue.from("1.23e+25"),
+      // Number sets with mixed types
+      amounts: new Set([100, NumberValue.from("888888888888888888888.88"), 500]),
+    },
+  }),
+);
 
 // Retrieve and handle large numbers
-const result = await client.send(new GetCommand({
-  TableName: "FinancialData",
-  Key: { transactionId: "tx-001" }
-}));
+const result = await client.send(
+  new GetCommand({
+    TableName: "FinancialData",
+    Key: { transactionId: "tx-001" },
+  }),
+);
 
 const balance = result.Item.accountBalance;
 
 if (balance instanceof NumberValue) {
   console.log("Precise balance:", balance.toString());
   // Use with a big number library
-  const Decimal = require('decimal.js');
+  const Decimal = require("decimal.js");
   const preciseBalance = new Decimal(balance.toString());
   console.log("Calculate with precision:", preciseBalance.times(1.05).toString());
 }
@@ -379,14 +390,16 @@ const customClient = DynamoDBDocumentClient.from(new DynamoDBClient({}), {
     wrapNumbers: (numStr) => {
       // Convert all numbers to BigInt
       return BigInt(numStr);
-    }
-  }
+    },
+  },
 });
 
-const bigIntResult = await customClient.send(new GetCommand({
-  TableName: "FinancialData",
-  Key: { transactionId: "tx-001" }
-}));
+const bigIntResult = await customClient.send(
+  new GetCommand({
+    TableName: "FinancialData",
+    Key: { transactionId: "tx-001" },
+  }),
+);
 
 // All numbers are now BigInt
 console.log("Balance as BigInt:", bigIntResult.Item.accountBalance);
@@ -401,7 +414,12 @@ Use async iterators and paginator functions to efficiently process paginated API
 
 ```javascript
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, paginateScan, paginateQuery, ScanCommand } from "@aws-sdk/lib-dynamodb";
+import {
+  DynamoDBDocumentClient,
+  paginateScan,
+  paginateQuery,
+  ScanCommand,
+} from "@aws-sdk/lib-dynamodb";
 import { S3Client, paginateListObjectsV2 } from "@aws-sdk/client-s3";
 
 // DynamoDB pagination
@@ -410,14 +428,14 @@ const dynamoClient = DynamoDBDocumentClient.from(new DynamoDBClient({ region: "u
 // Method 1: Using paginator helper (recommended)
 const paginatorConfig = {
   client: dynamoClient,
-  pageSize: 100
+  pageSize: 100,
 };
 
 const scanParams = {
   TableName: "LargeTable",
   FilterExpression: "#status = :active",
   ExpressionAttributeNames: { "#status": "status" },
-  ExpressionAttributeValues: { ":active": "active" }
+  ExpressionAttributeValues: { ":active": "active" },
 };
 
 let totalItems = 0;
@@ -429,7 +447,7 @@ for await (const page of paginateScan(paginatorConfig, scanParams)) {
   console.log(`Page ${pageCount}: ${page.Items.length} items`);
 
   // Process items
-  page.Items.forEach(item => {
+  page.Items.forEach((item) => {
     console.log("Processing:", item.id);
   });
 
@@ -443,11 +461,13 @@ let lastEvaluatedKey = undefined;
 let manualPageCount = 0;
 
 do {
-  const response = await dynamoClient.send(new ScanCommand({
-    TableName: "LargeTable",
-    Limit: 50,
-    ExclusiveStartKey: lastEvaluatedKey
-  }));
+  const response = await dynamoClient.send(
+    new ScanCommand({
+      TableName: "LargeTable",
+      Limit: 50,
+      ExclusiveStartKey: lastEvaluatedKey,
+    }),
+  );
 
   manualPageCount++;
   console.log(`Manual page ${manualPageCount}: ${response.Items.length} items`);
@@ -460,11 +480,11 @@ const s3Client = new S3Client({ region: "us-east-1" });
 
 for await (const page of paginateListObjectsV2(
   { client: s3Client },
-  { Bucket: "my-large-bucket", Prefix: "documents/" }
+  { Bucket: "my-large-bucket", Prefix: "documents/" },
 )) {
   console.log(`Found ${page.Contents?.length || 0} objects`);
 
-  page.Contents?.forEach(obj => {
+  page.Contents?.forEach((obj) => {
     console.log(`  ${obj.Key} - ${obj.Size} bytes - ${obj.LastModified}`);
   });
 }
@@ -477,8 +497,8 @@ const queryPaginator = paginateQuery(
     IndexName: "StatusIndex",
     KeyConditionExpression: "#status = :status",
     ExpressionAttributeNames: { "#status": "status" },
-    ExpressionAttributeValues: { ":status": "pending" }
-  }
+    ExpressionAttributeValues: { ":status": "pending" },
+  },
 );
 
 const allPendingOrders = [];
@@ -521,8 +541,8 @@ async function uploadLargeFile(filePath, bucket, key) {
       ServerSideEncryption: "AES256",
       Metadata: {
         originalName: filePath,
-        uploadedBy: "user123"
-      }
+        uploadedBy: "user123",
+      },
     },
 
     // Configure multipart upload
@@ -532,13 +552,13 @@ async function uploadLargeFile(filePath, bucket, key) {
 
     tags: [
       { Key: "Environment", Value: "Production" },
-      { Key: "Department", Value: "Media" }
-    ]
+      { Key: "Department", Value: "Media" },
+    ],
   });
 
   // Track upload progress
   upload.on("httpUploadProgress", (progress) => {
-    const percentage = (progress.loaded / fileStats.size * 100).toFixed(2);
+    const percentage = ((progress.loaded / fileStats.size) * 100).toFixed(2);
     console.log(`Upload progress: ${percentage}% (${progress.loaded}/${fileStats.size} bytes)`);
     console.log(`Part: ${progress.part}, Key: ${progress.Key}`);
   });
@@ -564,10 +584,10 @@ async function uploadFromBuffer(buffer, bucket, key) {
     params: {
       Bucket: bucket,
       Key: key,
-      Body: buffer
+      Body: buffer,
     },
     queueSize: 3,
-    partSize: 1024 * 1024 * 5 // 5MB parts
+    partSize: 1024 * 1024 * 5, // 5MB parts
   });
 
   return await upload.done();
@@ -580,8 +600,8 @@ async function uploadWithAbort(filePath, bucket, key, maxDuration) {
     params: {
       Bucket: bucket,
       Key: key,
-      Body: createReadStream(filePath)
-    }
+      Body: createReadStream(filePath),
+    },
   });
 
   // Abort after timeout
@@ -631,8 +651,8 @@ async function uploadWithCancel(bucket, key, body) {
   const abortController = new AbortController();
 
   // Setup cancel button handler
-  const cancelButton = document.querySelector('.cancel-upload');
-  cancelButton.addEventListener('click', () => {
+  const cancelButton = document.querySelector(".cancel-upload");
+  cancelButton.addEventListener("click", () => {
     abortController.abort();
     console.log("Upload canceled by user");
   });
@@ -640,12 +660,12 @@ async function uploadWithCancel(bucket, key, body) {
   const command = new PutObjectCommand({
     Bucket: bucket,
     Key: key,
-    Body: body
+    Body: body,
   });
 
   try {
     const result = await s3Client.send(command, {
-      abortSignal: abortController.signal
+      abortSignal: abortController.signal,
     });
     console.log("Upload completed:", result.ETag);
     return result;
@@ -671,7 +691,7 @@ async function getWithTimeout(bucket, key, timeoutMs) {
 
   try {
     const result = await s3Client.send(command, {
-      abortSignal: abortController.signal
+      abortSignal: abortController.signal,
     });
     clearTimeout(timeoutId);
     return result;
@@ -694,12 +714,12 @@ async function cancelableScan(tableName) {
 
   const command = new ScanCommand({
     TableName: tableName,
-    Limit: 1000
+    Limit: 1000,
   });
 
   try {
     const result = await dynamoClient.send(command, {
-      abortSignal: abortController.signal
+      abortSignal: abortController.signal,
     });
 
     console.log(`Scanned ${result.Items.length} items`);
@@ -717,11 +737,10 @@ async function cancelableScan(tableName) {
 async function raceRequests(bucket, keys) {
   const abortController = new AbortController();
 
-  const requests = keys.map(key =>
-    s3Client.send(
-      new GetObjectCommand({ Bucket: bucket, Key: key }),
-      { abortSignal: abortController.signal }
-    )
+  const requests = keys.map((key) =>
+    s3Client.send(new GetObjectCommand({ Bucket: bucket, Key: key }), {
+      abortSignal: abortController.signal,
+    }),
   );
 
   try {
@@ -777,8 +796,8 @@ s3Client.middlewareStack.add(
     name: "LoggingMiddleware",
     step: "build",
     priority: "high",
-    override: true
-  }
+    override: true,
+  },
 );
 
 // Add custom header to all S3 requests
@@ -793,8 +812,8 @@ s3Client.middlewareStack.add(
   {
     name: "CustomHeaderMiddleware",
     step: "build",
-    override: true
-  }
+    override: true,
+  },
 );
 
 // Add retry logic with custom backoff
@@ -814,15 +833,15 @@ s3Client.middlewareStack.add(
 
         const delay = Math.pow(2, attempts) * 1000; // Exponential backoff
         console.log(`Retry attempt ${attempts} after ${delay}ms`);
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
   },
   {
     name: "CustomRetryMiddleware",
     step: "finalizeRequest",
-    priority: "high"
-  }
+    priority: "high",
+  },
 );
 
 // Command-specific middleware
@@ -830,7 +849,7 @@ const dynamoClient = new DynamoDBClient({ region: "us-west-2" });
 const queryCommand = new QueryCommand({
   TableName: "Users",
   KeyConditionExpression: "userId = :userId",
-  ExpressionAttributeValues: { ":userId": { S: "user123" } }
+  ExpressionAttributeValues: { ":userId": { S: "user123" } },
 });
 
 // Add middleware before marshalling (modify input)
@@ -844,8 +863,8 @@ queryCommand.middlewareStack.addRelativeTo(
   {
     relation: "before",
     toMiddleware: "serializerMiddleware",
-    name: "InputModificationMiddleware"
-  }
+    name: "InputModificationMiddleware",
+  },
 );
 
 // Add middleware after unmarshalling (modify output)
@@ -856,9 +875,9 @@ queryCommand.middlewareStack.addRelativeTo(
 
     // Transform output
     if (result.output.Items) {
-      result.output.Items = result.output.Items.map(item => ({
+      result.output.Items = result.output.Items.map((item) => ({
         ...item,
-        processedAt: new Date().toISOString()
+        processedAt: new Date().toISOString(),
       }));
     }
 
@@ -867,8 +886,8 @@ queryCommand.middlewareStack.addRelativeTo(
   {
     relation: "before",
     toMiddleware: "deserializerMiddleware",
-    name: "OutputTransformMiddleware"
-  }
+    name: "OutputTransformMiddleware",
+  },
 );
 
 // Authentication middleware
@@ -886,8 +905,8 @@ authenticatedClient.middlewareStack.add(
   {
     name: "AuthMiddleware",
     step: "finalizeRequest",
-    priority: "high"
-  }
+    priority: "high",
+  },
 );
 
 // Helper functions
@@ -900,7 +919,7 @@ function isRetryable(error) {
     "RequestTimeout",
     "RequestTimeoutException",
     "ServiceUnavailable",
-    "ThrottlingException"
+    "ThrottlingException",
   ];
   return retryableErrors.includes(error.name);
 }
@@ -911,11 +930,13 @@ async function getAuthToken() {
 }
 
 // Execute commands with middleware
-await s3Client.send(new PutObjectCommand({
-  Bucket: "my-bucket",
-  Key: "test.txt",
-  Body: "Hello World"
-}));
+await s3Client.send(
+  new PutObjectCommand({
+    Bucket: "my-bucket",
+    Key: "test.txt",
+    Body: "Hello World",
+  }),
+);
 
 await dynamoClient.send(queryCommand);
 ```
@@ -933,9 +954,7 @@ import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
 
 // Initialize clients OUTSIDE handler for container reuse
-const dynamoClient = DynamoDBDocumentClient.from(
-  new DynamoDBClient({})
-);
+const dynamoClient = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
 const s3Client = new S3Client({});
 
@@ -945,7 +964,7 @@ const snsClient = new SNSClient({});
 export const handler = async (event) => {
   const response = {
     statusCode: 200,
-    headers: { "Content-Type": "application/json" }
+    headers: { "Content-Type": "application/json" },
   };
 
   try {
@@ -953,10 +972,12 @@ export const handler = async (event) => {
     const userId = event.pathParameters?.userId;
 
     // Get user from DynamoDB
-    const userResult = await dynamoClient.send(new GetCommand({
-      TableName: process.env.USERS_TABLE,
-      Key: { userId }
-    }));
+    const userResult = await dynamoClient.send(
+      new GetCommand({
+        TableName: process.env.USERS_TABLE,
+        Key: { userId },
+      }),
+    );
 
     if (!userResult.Item) {
       response.statusCode = 404;
@@ -966,42 +987,47 @@ export const handler = async (event) => {
 
     // Fetch user's profile image from S3
     const imageKey = `profiles/${userId}/avatar.jpg`;
-    const imageResult = await s3Client.send(new GetObjectCommand({
-      Bucket: process.env.PROFILE_IMAGES_BUCKET,
-      Key: imageKey
-    }));
+    const imageResult = await s3Client.send(
+      new GetObjectCommand({
+        Bucket: process.env.PROFILE_IMAGES_BUCKET,
+        Key: imageKey,
+      }),
+    );
 
     // Update last accessed timestamp
-    await dynamoClient.send(new PutCommand({
-      TableName: process.env.USERS_TABLE,
-      Item: {
-        ...userResult.Item,
-        lastAccessedAt: new Date().toISOString()
-      }
-    }));
+    await dynamoClient.send(
+      new PutCommand({
+        TableName: process.env.USERS_TABLE,
+        Item: {
+          ...userResult.Item,
+          lastAccessedAt: new Date().toISOString(),
+        },
+      }),
+    );
 
     // Send notification
-    await snsClient.send(new PublishCommand({
-      TopicArn: process.env.NOTIFICATIONS_TOPIC,
-      Message: JSON.stringify({
-        userId,
-        action: "profile_accessed",
-        timestamp: new Date().toISOString()
+    await snsClient.send(
+      new PublishCommand({
+        TopicArn: process.env.NOTIFICATIONS_TOPIC,
+        Message: JSON.stringify({
+          userId,
+          action: "profile_accessed",
+          timestamp: new Date().toISOString(),
+        }),
+        Subject: "Profile Access Notification",
       }),
-      Subject: "Profile Access Notification"
-    }));
+    );
 
     response.body = JSON.stringify({
       user: userResult.Item,
-      imageUrl: await imageResult.Body.transformToString()
+      imageUrl: await imageResult.Body.transformToString(),
     });
-
   } catch (error) {
     console.error("Error:", error);
     response.statusCode = 500;
     response.body = JSON.stringify({
       error: "Internal Server Error",
-      message: error.message
+      message: error.message,
     });
   }
 
@@ -1012,37 +1038,41 @@ export const handler = async (event) => {
 export const s3EventHandler = async (event) => {
   const promises = event.Records.map(async (record) => {
     const bucket = record.s3.bucket.name;
-    const key = decodeURIComponent(record.s3.object.key.replace(/\+/g, ' '));
+    const key = decodeURIComponent(record.s3.object.key.replace(/\+/g, " "));
 
     console.log(`Processing ${key} from ${bucket}`);
 
     // Get object
-    const getResult = await s3Client.send(new GetObjectCommand({
-      Bucket: bucket,
-      Key: key
-    }));
+    const getResult = await s3Client.send(
+      new GetObjectCommand({
+        Bucket: bucket,
+        Key: key,
+      }),
+    );
 
     const content = await getResult.Body.transformToString();
 
     // Store metadata in DynamoDB
-    await dynamoClient.send(new PutCommand({
-      TableName: process.env.FILES_TABLE,
-      Item: {
-        fileKey: key,
-        bucket,
-        size: getResult.ContentLength,
-        contentType: getResult.ContentType,
-        processedAt: new Date().toISOString(),
-        lineCount: content.split('\n').length
-      }
-    }));
+    await dynamoClient.send(
+      new PutCommand({
+        TableName: process.env.FILES_TABLE,
+        Item: {
+          fileKey: key,
+          bucket,
+          size: getResult.ContentLength,
+          contentType: getResult.ContentType,
+          processedAt: new Date().toISOString(),
+          lineCount: content.split("\n").length,
+        },
+      }),
+    );
   });
 
   await Promise.all(promises);
 
   return {
     statusCode: 200,
-    body: JSON.stringify({ processed: event.Records.length })
+    body: JSON.stringify({ processed: event.Records.length }),
   };
 };
 
@@ -1058,13 +1088,15 @@ export const streamHandler = async (event) => {
       // Process new items
       if (newItem.status?.S === "pending") {
         // Trigger processing workflow
-        await snsClient.send(new PublishCommand({
-          TopicArn: process.env.PROCESSING_TOPIC,
-          Message: JSON.stringify({
-            recordId: newItem.id.S,
-            action: "process"
-          })
-        }));
+        await snsClient.send(
+          new PublishCommand({
+            TopicArn: process.env.PROCESSING_TOPIC,
+            Message: JSON.stringify({
+              recordId: newItem.id.S,
+              action: "process",
+            }),
+          }),
+        );
       }
     }
 

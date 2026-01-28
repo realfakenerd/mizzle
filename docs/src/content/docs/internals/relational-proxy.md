@@ -12,9 +12,9 @@ The entry point for relational queries is `db.query`. Unlike traditional ORMs th
 When you initialize `mizzle`, you pass a `relations` schema:
 
 ```typescript
-const db = mizzle({ 
-  client, 
-  relations: { users, posts, comments } 
+const db = mizzle({
+  client,
+  relations: { users, posts, comments },
 });
 ```
 
@@ -39,8 +39,8 @@ When you execute a query like:
 const user = await db.query.users.findFirst({
   where: eq(users.id, "u1"),
   with: {
-    posts: true
-  }
+    posts: true,
+  },
 });
 ```
 
@@ -55,7 +55,7 @@ One of Mizzle's most powerful features is its optimization for Single-Table Desi
 
 If the query targets a **Partition Key** (and no specific Index), Mizzle assumes you might be accessing an **Item Collection**.
 
-1.  **Item Collection Fetch**: Instead of just fetching the user, Mizzle modifies the query to fetch *all* items in that partition (e.g., `PK = "USER#u1"`).
+1.  **Item Collection Fetch**: Instead of just fetching the user, Mizzle modifies the query to fetch _all_ items in that partition (e.g., `PK = "USER#u1"`).
 2.  **In-Memory Parsing**: It receives a raw list of items (User + Posts + Profiles, etc.) stored under that PK.
 3.  **ItemCollectionParser**: The `ItemCollectionParser` takes this mixed list and reconstructs the object graph. It filters for the requested entity (`User`) and automatically populates the requested relations (`posts`) if they were returned in the same query.
 
@@ -81,6 +81,7 @@ The `extractMetadata` function (in `core/relations.ts`) transforms the user-frie
 ### `resolveStrategies`
 
 Located in `core/strategies.ts`, this function is the "brain" of Mizzle's query planning. It looks at the `where` clause and the entity's definition (PKs, SKs, LSIs, GSIs) to decide:
+
 - Can I use `GetItem`?
 - Should I use `Query` on the table?
 - Should I use `Query` on a GSI?

@@ -1,16 +1,15 @@
 {
   "name": "docs",
+  "version": "0.0.1",
   "private": true,
   "type": "module",
-  "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "check": "astro check",
-    "lint": "bunx oxlint ."
+    "check": "astro check"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.37.4",
@@ -34,7 +33,6 @@
   "devDependencies": {
     "@4hse/astro-llms-txt": "^1.0.4",
     "@astrojs/check": "latest",
-    "@mizzle/eslint-config": "workspace:*",
     "@mizzle/tsconfig": "workspace:*",
     "eslint": "^8.57.1",
     "starlight-links-validator": "^0.19.2",

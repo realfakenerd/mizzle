@@ -3,6 +3,7 @@
 This plan outlines the development of the Mizzle Migration CLI, providing a robust way to manage DynamoDB infrastructure using a Drizzle-like experience.
 
 ## Phase 1: Foundation & Configuration [checkpoint: cc6dbec]
+
 Setup the core CLI structure, configuration loading, and schema discovery logic.
 
 - [x] Task: Initialize CLI Package Structure and Dependencies (Clack, etc.) [01d6ea7]
@@ -11,6 +12,7 @@ Setup the core CLI structure, configuration loading, and schema discovery logic.
 - [ ] Task: Conductor - User Manual Verification 'Foundation & Configuration' (Protocol in workflow.md)
 
 ## Phase 2: State Management (Snapshots & Diffing) [checkpoint: 63e4a45]
+
 Implement the logic for tracking schema state and detecting changes.
 
 - [x] Task: Define JSON Snapshot schema and storage logic [d6f9e7a]
@@ -19,6 +21,7 @@ Implement the logic for tracking schema state and detecting changes.
 - [ ] Task: Conductor - User Manual Verification 'State Management' (Protocol in workflow.md)
 
 ## Phase 3: Command Implementation - `generate` & `push` [checkpoint: ebfcec5]
+
 Build the core commands for creating migrations and syncing with DynamoDB.
 
 - [x] Task: Implement generate command: Create snapshots and TS migration scripts [a8ad09e]
@@ -27,6 +30,7 @@ Build the core commands for creating migrations and syncing with DynamoDB.
 - [ ] Task: Conductor - User Manual Verification 'Core Commands' (Protocol in workflow.md)
 
 ## Phase 4: Utilities - `list` & `drop` [checkpoint: 6d5d3a5]
+
 Add helper commands for environment inspection and cleanup.
 
 - [x] Task: Implement list command: Fetch and display remote DynamoDB table metadata [6016526]
@@ -35,6 +39,7 @@ Add helper commands for environment inspection and cleanup.
 - [ ] Task: Conductor - User Manual Verification 'Utilities' (Protocol in workflow.md)
 
 ## Phase 5: Integration & Polishing [checkpoint: 6463d9c]
+
 Ensure all components work together and the user experience is seamless.
 
 - [x] Task: Perform end-to-end testing of the full migration lifecycle [a608ed3]

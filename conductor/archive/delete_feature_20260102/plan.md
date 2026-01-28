@@ -1,6 +1,7 @@
 # Plan: Delete Feature Implementation
 
 ## Phase 1: Foundation and API Integration [checkpoint: 6477bd6]
+
 Set up the core `DeleteBuilder` class and integrate it into the main library entry point.
 
 - [x] Task: Create `src/builders/delete.ts` with basic `DeleteBuilder` structure and types.
@@ -8,6 +9,7 @@ Set up the core `DeleteBuilder` class and integrate it into the main library ent
 - [x] Task: Conductor - User Manual Verification 'Foundation and API Integration' (Protocol in workflow.md)
 
 ## Phase 2: Core Deletion (TDD) [checkpoint: e2c4bfc]
+
 Implement the fundamental deletion logic using a Test-Driven Development approach.
 
 - [x] Task: Write failing integration tests in `test/builders/delete.test.ts` covering basic deletion by PK.
@@ -15,6 +17,7 @@ Implement the fundamental deletion logic using a Test-Driven Development approac
 - [x] Task: Conductor - User Manual Verification 'Core Deletion' (Protocol in workflow.md)
 
 ## Phase 3: Returning Attributes (TDD) [checkpoint: 20f6d3d]
+
 Add support for returning the deleted item's data.
 
 - [x] Task: Write failing tests in `test/builders/delete.test.ts` for the `.returning()` method.
@@ -22,6 +25,7 @@ Add support for returning the deleted item's data.
 - [x] Task: Conductor - User Manual Verification 'Returning Attributes' (Protocol in workflow.md)
 
 ## Phase 4: Final Verification and Type Safety [checkpoint: d75093d]
+
 Ensure the implementation is robust, type-safe, and regression-free.
 
 - [x] Task: Run `bun run check` to verify type safety of the new API.

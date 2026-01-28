@@ -9,21 +9,18 @@ import { dropCommand } from "./commands/drop";
 
 const program = new Command();
 
-program
-  .name("mizzle")
-  .description("Mizzle Migration CLI")
-  .version("0.0.1");
+program.name("mizzle").description("Mizzle Migration CLI").version("0.0.1");
 
 program
   .command("init")
   .description("Initialize Mizzle configuration")
   .action(async () => {
     try {
-        await initCommand();
+      await initCommand();
     } catch (e) {
-        const message = e instanceof Error ? e.message : String(e);
-        p.log.error(message);
-        process.exit(1);
+      const message = e instanceof Error ? e.message : String(e);
+      p.log.error(message);
+      process.exit(1);
     }
   });
 
@@ -33,12 +30,12 @@ program
   .option("-n, --name <name>", "Migration name")
   .action(async (options) => {
     try {
-        const config = await loadConfig();
-        await generateCommand({ config, name: options.name });
+      const config = await loadConfig();
+      await generateCommand({ config, name: options.name });
     } catch (e) {
-        const message = e instanceof Error ? e.message : String(e);
-        p.log.error(message);
-        process.exit(1);
+      const message = e instanceof Error ? e.message : String(e);
+      p.log.error(message);
+      process.exit(1);
     }
   });
 
@@ -48,12 +45,12 @@ program
   .option("-y, --yes", "Skip confirmation")
   .action(async (options) => {
     try {
-        const config = await loadConfig();
-        await pushCommand({ config, force: options.yes });
+      const config = await loadConfig();
+      await pushCommand({ config, force: options.yes });
     } catch (e) {
-        const message = e instanceof Error ? e.message : String(e);
-        p.log.error(message);
-        process.exit(1);
+      const message = e instanceof Error ? e.message : String(e);
+      p.log.error(message);
+      process.exit(1);
     }
   });
 
@@ -62,12 +59,12 @@ program
   .description("List all existing DynamoDB tables in the environment")
   .action(async () => {
     try {
-        const config = await loadConfig();
-        await listCommand({ config });
+      const config = await loadConfig();
+      await listCommand({ config });
     } catch (e) {
-        const message = e instanceof Error ? e.message : String(e);
-        p.log.error(message);
-        process.exit(1);
+      const message = e instanceof Error ? e.message : String(e);
+      p.log.error(message);
+      process.exit(1);
     }
   });
 
@@ -76,12 +73,12 @@ program
   .description("Interactive command to select and delete DynamoDB tables")
   .action(async () => {
     try {
-        const config = await loadConfig();
-        await dropCommand({ config });
+      const config = await loadConfig();
+      await dropCommand({ config });
     } catch (e) {
-        const message = e instanceof Error ? e.message : String(e);
-        p.log.error(message);
-        process.exit(1);
+      const message = e instanceof Error ? e.message : String(e);
+      p.log.error(message);
+      process.exit(1);
     }
   });
 

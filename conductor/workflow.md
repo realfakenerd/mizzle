@@ -20,45 +20,45 @@ All tasks follow a strict lifecycle:
 2. **Mark In Progress:** Before beginning work, edit `plan.md` and change the task from `[ ]` to `[~]`
 
 3. **Write Failing Tests (Red Phase):**
-    - Create a new test file for the feature or bug fix.
-    - Write one or more unit tests that clearly define the expected behavior and acceptance criteria for the task.
-    - **CRITICAL:** Run the tests and confirm that they fail as expected. This is the "Red" phase of TDD. Do not proceed until you have failing tests.
+   - Create a new test file for the feature or bug fix.
+   - Write one or more unit tests that clearly define the expected behavior and acceptance criteria for the task.
+   - **CRITICAL:** Run the tests and confirm that they fail as expected. This is the "Red" phase of TDD. Do not proceed until you have failing tests.
 
 4. **Implement to Pass Tests (Green Phase):**
-    - Write the minimum amount of application code necessary to make the failing tests pass.
-    - Run the test suite again and confirm that all tests now pass. This is the "Green" phase.
+   - Write the minimum amount of application code necessary to make the failing tests pass.
+   - Run the test suite again and confirm that all tests now pass. This is the "Green" phase.
 
 5. **Refactor (Optional but Recommended):**
-    - With the safety of passing tests, refactor the implementation code and the test code to improve clarity, remove duplication, and enhance performance without changing the external behavior.
-    - Rerun tests to ensure they still pass after refactoring.
+   - With the safety of passing tests, refactor the implementation code and the test code to improve clarity, remove duplication, and enhance performance without changing the external behavior.
+   - Rerun tests to ensure they still pass after refactoring.
 
 6. **Verify Coverage:** Run coverage reports using the project's chosen tools. For example, in a Python project, this might look like:
 
-    ```bash
-    pytest --cov=app --cov-report=html
-    ```
+   ```bash
+   pytest --cov=app --cov-report=html
+   ```
 
-    Target: >80% coverage for new code. The specific tools and commands will vary by language and framework.
+   Target: >80% coverage for new code. The specific tools and commands will vary by language and framework.
 
 7. **Document Deviations:** If implementation differs from tech stack:
-    - **STOP** implementation
-    - Update `tech-stack.md` with new design
-    - Add dated note explaining the change
-    - Resume implementation
+   - **STOP** implementation
+   - Update `tech-stack.md` with new design
+   - Add dated note explaining the change
+   - Resume implementation
 
 8. **Commit Code Changes:**
-    - Stage all code changes related to the task.
-    - Propose a clear, concise commit message e.g, `feat(ui): Create basic HTML structure for calculator`.
-    - Perform the commit.
+   - Stage all code changes related to the task.
+   - Propose a clear, concise commit message e.g, `feat(ui): Create basic HTML structure for calculator`.
+   - Perform the commit.
 
 9. **Attach Task Summary with Git Notes:**
-    - **Step 9.1: Get Commit Hash:** Obtain the hash of the _just-completed commit_ (`git log -1 --format="%H"`).
-    - **Step 9.2: Draft Note Content:** Create a detailed summary for the completed task. This should include the task name, a summary of changes, a list of all created/modified files, and the core "why" for the change.
-    - **Step 9.3: Attach Note:** Use the `git notes` command to attach the summary to the commit.
-        ```bash
-        # The note content from the previous step is passed via the -m flag.
-        git notes add -m "<note content>" <commit_hash>
-        ```
+   - **Step 9.1: Get Commit Hash:** Obtain the hash of the _just-completed commit_ (`git log -1 --format="%H"`).
+   - **Step 9.2: Draft Note Content:** Create a detailed summary for the completed task. This should include the task name, a summary of changes, a list of all created/modified files, and the core "why" for the change.
+   - **Step 9.3: Attach Note:** Use the `git notes` command to attach the summary to the commit.
+     ```bash
+     # The note content from the previous step is passed via the -m flag.
+     git notes add -m "<note content>" <commit_hash>
+     ```
 
 10. **Get and Record Task Commit SHA:**
     - **Step 10.1: Update Plan:** Read `plan.md`, find the line for the completed task, update its status from `[~]` to `[x]`, and append the first 7 characters of the _just-completed commit's_ commit hash.
@@ -78,9 +78,9 @@ All tasks follow a strict lifecycle:
     - **Step 2.1: Determine Phase Scope:** To identify the files changed in this phase, you must first find the starting point. Read `plan.md` to find the Git commit SHA of the _previous_ phase's checkpoint. If no previous checkpoint exists, the scope is all changes since the first commit.
     - **Step 2.2: List Changed Files:** Execute `git diff --name-only <previous_checkpoint_sha> HEAD` to get a precise list of all files modified during this phase.
     - **Step 2.3: Verify and Create Tests:** For each file in the list:
-        - **CRITICAL:** First, check its extension. Exclude non-code files (e.g., `.json`, `.md`, `.yaml`).
-        - For each remaining code file, verify a corresponding test file exists.
-        - If a test file is missing, you **must** create one. Before writing the test, **first, analyze other test files in the repository to determine the correct naming convention and testing style.** The new tests **must** validate the functionality described in this phase's tasks (`plan.md`).
+      - **CRITICAL:** First, check its extension. Exclude non-code files (e.g., `.json`, `.md`, `.yaml`).
+      - For each remaining code file, verify a corresponding test file exists.
+      - If a test file is missing, you **must** create one. Before writing the test, **first, analyze other test files in the repository to determine the correct naming convention and testing style.** The new tests **must** validate the functionality described in this phase's tasks (`plan.md`).
 
 3.  **Execute Automated Tests with Proactive Debugging:**
     - Before execution, you **must** announce the exact shell command you will use to run the tests.
@@ -93,27 +93,27 @@ All tasks follow a strict lifecycle:
     - You **must** generate a step-by-step plan that walks the user through the verification process, including any necessary commands and specific, expected outcomes.
     - The plan you present to the user **must** follow this format:
 
-        **For a Frontend Change:**
+      **For a Frontend Change:**
 
-        ```
-        The automated tests have passed. For manual verification, please follow these steps:
+      ```
+      The automated tests have passed. For manual verification, please follow these steps:
 
-        **Manual Verification Steps:**
-        1.  **Start the development server with the command:** `npm run dev`
-        2.  **Open your browser to:** `http://localhost:3000`
-        3.  **Confirm that you see:** The new user profile page, with the user's name and email displayed correctly.
-        ```
+      **Manual Verification Steps:**
+      1.  **Start the development server with the command:** `npm run dev`
+      2.  **Open your browser to:** `http://localhost:3000`
+      3.  **Confirm that you see:** The new user profile page, with the user's name and email displayed correctly.
+      ```
 
-        **For a Backend Change:**
+      **For a Backend Change:**
 
-        ```
-        The automated tests have passed. For manual verification, please follow these steps:
+      ```
+      The automated tests have passed. For manual verification, please follow these steps:
 
-        **Manual Verification Steps:**
-        1.  **Ensure the server is running.**
-        2.  **Execute the following command in your terminal:** `curl -X POST http://localhost:8080/api/v1/users -d '{"name": "test"}'`
-        3.  **Confirm that you receive:** A JSON response with a status of `201 Created`.
-        ```
+      **Manual Verification Steps:**
+      1.  **Ensure the server is running.**
+      2.  **Execute the following command in your terminal:** `curl -X POST http://localhost:8080/api/v1/users -d '{"name": "test"}'`
+      3.  **Confirm that you receive:** A JSON response with a status of `201 Created`.
+      ```
 
 5.  **Await Explicit User Feedback:**
     - After presenting the detailed plan, ask the user for confirmation: "**Does this meet your expectations? Please confirm with yes or provide feedback on what needs to be changed.**"
@@ -205,37 +205,37 @@ bun run test
 Before requesting review:
 
 1. **Functionality**
-    - Feature works as specified
-    - Edge cases handled
-    - Error messages are user-friendly
+   - Feature works as specified
+   - Edge cases handled
+   - Error messages are user-friendly
 
 2. **Code Quality**
-    - Follows style guide
-    - DRY principle applied
-    - Clear variable/function names
-    - Appropriate comments
+   - Follows style guide
+   - DRY principle applied
+   - Clear variable/function names
+   - Appropriate comments
 
 3. **Testing**
-    - Unit tests comprehensive
-    - Integration tests pass
-    - Coverage adequate (>80%)
+   - Unit tests comprehensive
+   - Integration tests pass
+   - Coverage adequate (>80%)
 
 4. **Security**
-    - No hardcoded secrets
-    - Input validation present
-    - SQL injection prevented
-    - XSS protection in place
+   - No hardcoded secrets
+   - Input validation present
+   - SQL injection prevented
+   - XSS protection in place
 
 5. **Performance**
-    - Database queries optimized
-    - Images optimized
-    - Caching implemented where needed
+   - Database queries optimized
+   - Images optimized
+   - Caching implemented where needed
 
 6. **Mobile Experience**
-    - Touch targets adequate (44x44px)
-    - Text readable without zooming
-    - Performance acceptable on mobile
-    - Interactions feel native
+   - Touch targets adequate (44x44px)
+   - Text readable without zooming
+   - Performance acceptable on mobile
+   - Interactions feel native
 
 ## Commit Guidelines
 

@@ -3,7 +3,7 @@ title: Unified Select
 description: Deep dive into Mizzle's intelligent data retrieval engine.
 ---
 
-Mizzle's "Unified Select" is an abstraction layer over DynamoDB's `GetItem`, `Query`, and `Scan` operations. Instead of manually choosing which low-level operation to use, you express *what* you want (using `.where()`), and Mizzle determines the most efficient way to fetch it.
+Mizzle's "Unified Select" is an abstraction layer over DynamoDB's `GetItem`, `Query`, and `Scan` operations. Instead of manually choosing which low-level operation to use, you express _what_ you want (using `.where()`), and Mizzle determines the most efficient way to fetch it.
 
 ## How Routing Works
 
@@ -29,11 +29,7 @@ Sometimes Mizzle might default to a Scan or the main table when you intend to us
 ```typescript
 // Forces usage of the 'GSI1' index.
 // If the filter doesn't match GSI1's keys, this will throw or result in an empty query.
-await db.select()
-  .from(users)
-  .index("GSI1") 
-  .where(eq(users.email, "test@example.com"))
-  .execute();
+await db.select().from(users).index("GSI1").where(eq(users.email, "test@example.com")).execute();
 ```
 
 ## Auto-Pagination & Iterators
@@ -55,11 +51,12 @@ for await (const order of query.iterator()) {
 - **`.limit(n)`**: Stops the iterator after `n` items are yielded, regardless of how many pages are fetched.
 
 ```typescript
-await db.select()
+await db
+  .select()
   .from(logs)
   .pageSize(100) // Fetch 100 at a time from AWS
-  .limit(500)    // Stop after processing 500 total
-  .execute();    // .execute() automatically aggregates all pages up to the limit
+  .limit(500) // Stop after processing 500 total
+  .execute(); // .execute() automatically aggregates all pages up to the limit
 ```
 
 ## Consistency
@@ -67,11 +64,12 @@ await db.select()
 By default, DynamoDB reads are "Eventually Consistent". You can request "Strongly Consistent" reads (consuming 2x capacity) if you need to see the absolute latest data immediately after a write.
 
 ```typescript
-await db.select()
+await db
+  .select()
   .from(users)
   .where(eq(users.id, "123"))
   .consistentRead() // Enable strong consistency
   .execute();
 ```
 
-*Note: Consistent reads are generally supported on the main table and Local Secondary Indexes (LSIs), but NOT on Global Secondary Indexes (GSIs).*
+_Note: Consistent reads are generally supported on the main table and Local Secondary Indexes (LSIs), but NOT on Global Secondary Indexes (GSIs)._

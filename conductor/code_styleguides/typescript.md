@@ -8,9 +8,9 @@ This document summarizes key rules and best practices from the Google TypeScript
 - **Modules:** Use ES6 modules (`import`/`export`). **Do not use `namespace`.**
 - **Exports:** Use named exports (`export {MyClass};`). **Do not use default exports.**
 - **Classes:**
-    - **Do not use `#private` fields.** Use TypeScript's `private` visibility modifier.
-    - Mark properties never reassigned outside the constructor with `readonly`.
-    - **Never use the `public` modifier** (it's the default). Restrict visibility with `private` or `protected` where possible.
+  - **Do not use `#private` fields.** Use TypeScript's `private` visibility modifier.
+  - Mark properties never reassigned outside the constructor with `readonly`.
+  - **Never use the `public` modifier** (it's the default). Restrict visibility with `private` or `protected` where possible.
 - **Functions:** Prefer function declarations for named functions. Use arrow functions for anonymous functions/callbacks.
 - **String Literals:** Use single quotes (`'`). Use template literals (`` ` ``) for interpolation and multi-line strings.
 - **Equality Checks:** Always use triple equals (`===`) and not equals (`!==`).
