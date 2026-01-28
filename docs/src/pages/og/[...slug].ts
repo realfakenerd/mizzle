@@ -1,7 +1,6 @@
 import { getCollection } from 'astro:content'
 import { OGImageRoute } from 'astro-og-canvas'
 
-// Busca todas as entradas da coleção 'docs'
 const entries = await getCollection('docs')
 const pages = Object.fromEntries(entries.map(({ data, id }) => [id, { data }]))
 
@@ -12,14 +11,10 @@ export const { getStaticPaths, GET } = await OGImageRoute({
         return {
             title: page.data.title,
             description: page.data.description,
-            
-            // Adicionando a logo do Mizzle
             logo: {
                 path: './src/assets/logo.png',
-                size: [80], // Define a altura da logo em pixels
+                size: [80],
             },
-
-            // Configurando a tipografia
             font: {
                 title: {
                     families: ['Comfortaa Variable'],
@@ -30,13 +25,9 @@ export const { getStaticPaths, GET } = await OGImageRoute({
                     weight: 'Normal',
                 },
             },
-
-            // Carregando o arquivo de fonte do node_modules
             fonts: [
                 './node_modules/@fontsource-variable/comfortaa/files/comfortaa-latin-wght-normal.woff2',
             ],
-
-            // Seus estilos de cores e bordas
             bgGradient: [[24, 24, 27]],
             border: { color: [63, 63, 70], width: 20 },
             padding: 120,
