@@ -1,4 +1,4 @@
-import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "@mizzle/shared";
+import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "@repo/shared";
 import type { InternalRelationalSchema } from "./relations";
 import { type KeyStrategy } from "./strategies";
 import { Entity } from "./table";

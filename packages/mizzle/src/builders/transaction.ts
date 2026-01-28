@@ -6,7 +6,7 @@ import { DeleteBuilder } from "./delete";
 import { Expression } from "../expressions/operators";
 import { BaseBuilder } from "./base";
 import type { IMizzleClient } from "../core/client";
-import { ENTITY_SYMBOLS } from "@mizzle/shared";
+import { ENTITY_SYMBOLS } from "@repo/shared";
 import { buildExpression } from "../expressions/builder";
 import { buildUpdateExpressionString } from "../expressions/update-builder";
 import { TransactionFailedError } from "../core/errors";

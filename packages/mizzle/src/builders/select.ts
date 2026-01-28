@@ -1,5 +1,5 @@
 import { GetCommand, QueryCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
-import { ENTITY_SYMBOLS } from "@mizzle/shared";
+import { ENTITY_SYMBOLS } from "@repo/shared";
 import { Column } from "../core/column";
 import type { SelectedFields as SelectedFieldsBase } from "../core/operations";
 import { type Expression } from "../expressions/operators";

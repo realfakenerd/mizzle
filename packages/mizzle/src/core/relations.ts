@@ -1,4 +1,4 @@
-import { RELATION_SYMBOLS } from "@mizzle/shared";
+import { RELATION_SYMBOLS } from "@repo/shared";
 import { Entity } from "./table";
 import { Column } from "./column";
 

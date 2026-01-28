@@ -5,7 +5,7 @@ import type { Entity, InferSelectedModel } from "../core/table";
 import { ItemCollectionParser } from "../core/parser";
 import type { InternalRelationalSchema } from "../core/relations";
 import { resolveStrategies } from "../core/strategies";
-import { TABLE_SYMBOLS, ENTITY_SYMBOLS, mapToLogical } from "@mizzle/shared";
+import { TABLE_SYMBOLS, ENTITY_SYMBOLS, mapToLogical } from "@repo/shared";
 import { Column } from "../core/column";
 import { type IMizzleClient } from "../core/client";
 

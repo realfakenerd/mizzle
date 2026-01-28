@@ -1,10 +1,14 @@
 {
-  "extends": "@mizzle/tsconfig/base.json",
-  "compilerOptions": {
-    "outDir": "./dist",
-    "paths": {
-      "@mizzle/shared": ["./../shared/src/index.ts"]
-    }
-  },
-  "include": ["src"]
+    "extends": "@repo/typescript-config/base.json",
+    "compilerOptions": {
+        "outDir": "./dist",
+        "paths": {
+            "@repo/shared": [
+                "./../shared/src/index.ts"
+            ]
+        }
+    },
+    "include": [
+        "src"
+    ]
 }

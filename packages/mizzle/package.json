@@ -71,7 +71,8 @@
     "scripts": {
         "check": "tsc --noEmit",
         "build": "tsup",
-        "prepublishOnly": "bun run build"
+        "prepublishOnly": "bun run build",
+        "test": "vitest run"
     },
     "dependencies": {
         "@aws-sdk/client-dynamodb": "3.962.0",

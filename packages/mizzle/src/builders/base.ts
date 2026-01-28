@@ -1,10 +1,10 @@
 import { type IMizzleClient } from "../core/client";
 import { Entity } from "../core/table";
 import { QueryPromise } from "./query-promise";
-import { resolveTableName, mapToLogical } from "@mizzle/shared";
+import { resolveTableName, mapToLogical } from "@repo/shared";
 import { resolveStrategies, type StrategyResolution } from "../core/strategies";
 import { type Expression } from "../expressions/operators";
-import { ENTITY_SYMBOLS } from "@mizzle/shared";
+import { ENTITY_SYMBOLS } from "@repo/shared";
 
 export abstract class BaseBuilder<TEntity extends Entity, TResult> extends QueryPromise<TResult> {
   constructor(

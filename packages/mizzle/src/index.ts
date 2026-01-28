@@ -1,4 +1,4 @@
-export * from "@mizzle/shared";
+export * from "@repo/shared";
 export * from "./expressions/operators";
 export * from "./expressions/builder";
 export * from "./expressions/actions";

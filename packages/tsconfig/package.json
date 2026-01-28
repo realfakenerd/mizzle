@@ -1,12 +1,12 @@
 {
-  "name": "@mizzle/tsconfig",
-  "version": "0.0.0",
-  "private": true,
-  "files": [
-    "base.json"
-  ],
-  "scripts": {
-    "check": "echo 'no-op'",
-    "lint": "echo 'no-op'"
-  }
+    "name": "@repo/typescript-config",
+    "version": "0.0.0",
+    "private": true,
+    "files": [
+        "base.json"
+    ],
+    "scripts": {
+        "check": "echo 'no-op'",
+        "lint": "echo 'no-op'"
+    }
 }

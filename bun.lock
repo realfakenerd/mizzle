@@ -18,8 +18,9 @@
         "@aws-sdk/client-dynamodb": "3.962.0",
         "@aws-sdk/lib-dynamodb": "3.962.0",
         "@changesets/cli": "^2.29.8",
-        "@mizzle/shared": "workspace:*",
-        "@mizzle/tsconfig": "workspace:*",
+        "@repo/shared": "workspace:*",
+        "@repo/typescript-config": "workspace:*",
+        "@repo/vitest-config": "workspace:*",
         "@types/bun": "latest",
         "@typescript-eslint/eslint-plugin": "^8.54.0",
         "@typescript-eslint/parser": "^8.54.0",
@@ -57,6 +58,7 @@
       "name": "docs",
       "version": "0.0.1",
       "dependencies": {
+        "@astrojs/partytown": "^2.1.4",
         "@astrojs/starlight": "^0.37.4",
         "@astrojs/starlight-tailwind": "^4.0.2",
         "@astrojs/svelte": "^7.2.5",
@@ -78,7 +80,7 @@
       "devDependencies": {
         "@4hse/astro-llms-txt": "^1.0.4",
         "@astrojs/check": "latest",
-        "@mizzle/tsconfig": "workspace:*",
+        "@repo/typescript-config": "workspace:*",
         "eslint": "^8.57.1",
         "starlight-links-validator": "^0.19.2",
         "typescript": "^5.9.3",
@@ -86,20 +88,21 @@
     },
     "packages/mizzle": {
       "name": "@aurios/mizzle",
-      "version": "1.1.2",
+      "version": "1.1.3",
       "dependencies": {
         "@aws-sdk/client-dynamodb": "3.962.0",
         "@aws-sdk/lib-dynamodb": "3.962.0",
       },
       "devDependencies": {
-        "@mizzle/shared": "workspace:*",
-        "@mizzle/tsconfig": "workspace:*",
+        "@repo/shared": "workspace:*",
+        "@repo/typescript-config": "workspace:*",
+        "@repo/vitest-config": "workspace:*",
         "tsup": "^8.5.1",
       },
     },
     "packages/mizzling": {
       "name": "@aurios/mizzling",
-      "version": "1.1.1",
+      "version": "1.1.2",
       "bin": {
         "mizzling": "./dist/cli.js",
       },
@@ -114,21 +117,33 @@
       },
       "devDependencies": {
         "@aurios/mizzle": "workspace:*",
-        "@mizzle/shared": "workspace:*",
-        "@mizzle/tsconfig": "workspace:*",
+        "@repo/shared": "workspace:*",
+        "@repo/typescript-config": "workspace:*",
+        "@repo/vitest-config": "workspace:*",
         "tsup": "^8.5.1",
       },
     },
     "packages/shared": {
-      "name": "@mizzle/shared",
+      "name": "@repo/shared",
       "version": "0.0.3",
       "devDependencies": {
-        "@mizzle/tsconfig": "workspace:*",
+        "@repo/typescript-config": "workspace:*",
       },
     },
     "packages/tsconfig": {
-      "name": "@mizzle/tsconfig",
+      "name": "@repo/typescript-config",
       "version": "0.0.0",
+    },
+    "packages/vitest-config": {
+      "name": "@repo/vitest-config",
+      "version": "0.0.0",
+      "dependencies": {
+        "vitest": "latest",
+      },
+      "devDependencies": {
+        "@repo/typescript-config": "workspace:*",
+        "typescript": "latest",
+      },
     },
   },
   "packages": {
@@ -149,6 +164,8 @@
     "@astrojs/markdown-remark": ["@astrojs/markdown-remark@6.3.10", "", { "dependencies": { "@astrojs/internal-helpers": "0.7.5", "@astrojs/prism": "3.3.0", "github-slugger": "^2.0.0", "hast-util-from-html": "^2.0.3", "hast-util-to-text": "^4.0.2", "import-meta-resolve": "^4.2.0", "js-yaml": "^4.1.1", "mdast-util-definitions": "^6.0.0", "rehype-raw": "^7.0.0", "rehype-stringify": "^10.0.1", "remark-gfm": "^4.0.1", "remark-parse": "^11.0.0", "remark-rehype": "^11.1.2", "remark-smartypants": "^3.0.2", "shiki": "^3.19.0", "smol-toml": "^1.5.2", "unified": "^11.0.5", "unist-util-remove-position": "^5.0.0", "unist-util-visit": "^5.0.0", "unist-util-visit-parents": "^6.0.2", "vfile": "^6.0.3" } }, "sha512-kk4HeYR6AcnzC4QV8iSlOfh+N8TZ3MEStxPyenyCtemqn8IpEATBFMTJcfrNW32dgpt6MY3oCkMM/Tv3/I4G3A=="],
 
     "@astrojs/mdx": ["@astrojs/mdx@4.3.13", "", { "dependencies": { "@astrojs/markdown-remark": "6.3.10", "@mdx-js/mdx": "^3.1.1", "acorn": "^8.15.0", "es-module-lexer": "^1.7.0", "estree-util-visit": "^2.0.0", "hast-util-to-html": "^9.0.5", "piccolore": "^0.1.3", "rehype-raw": "^7.0.0", "remark-gfm": "^4.0.1", "remark-smartypants": "^3.0.2", "source-map": "^0.7.6", "unist-util-visit": "^5.0.0", "vfile": "^6.0.3" }, "peerDependencies": { "astro": "^5.0.0" } }, "sha512-IHDHVKz0JfKBy3//52JSiyWv089b7GVSChIXLrlUOoTLWowG3wr2/8hkaEgEyd/vysvNQvGk+QhysXpJW5ve6Q=="],
+
+    "@astrojs/partytown": ["@astrojs/partytown@2.1.4", "", { "dependencies": { "@qwik.dev/partytown": "^0.11.0", "mrmime": "^2.0.1" } }, "sha512-loUrAu0cGYFDC6dHVRiomdsBJ41VjDYXPA+B3Br51V5hENFgDSOLju86OIj1TvBACcsB22UQV7BlppODDG5gig=="],
 
     "@astrojs/prism": ["@astrojs/prism@3.3.0", "", { "dependencies": { "prismjs": "^1.30.0" } }, "sha512-q8VwfU/fDZNoDOf+r7jUnMC2//H2l0TuQ6FkGJL8vD8nw/q5KiL3DS1KKBI3QhI9UQhpJ5dc7AtqfbXWuOgLCQ=="],
 
@@ -484,10 +501,6 @@
 
     "@mizzle/benchmark": ["@mizzle/benchmark@workspace:benchmark"],
 
-    "@mizzle/shared": ["@mizzle/shared@workspace:packages/shared"],
-
-    "@mizzle/tsconfig": ["@mizzle/tsconfig@workspace:packages/tsconfig"],
-
     "@nodelib/fs.scandir": ["@nodelib/fs.scandir@2.1.5", "", { "dependencies": { "@nodelib/fs.stat": "2.0.5", "run-parallel": "^1.1.9" } }, "sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g=="],
 
     "@nodelib/fs.stat": ["@nodelib/fs.stat@2.0.5", "", {}, "sha512-RkhPPp2zrqDAQA/2jNhnztcPAlv64XdhIp7a7454A5ovI7Bukxgt7MX7udwAu3zg1DcpPU0rz3VV1SeaqvY4+A=="],
@@ -553,6 +566,14 @@
     "@pagefind/linux-x64": ["@pagefind/linux-x64@1.4.0", "", { "os": "linux", "cpu": "x64" }, "sha512-z4oddcWwQ0UHrTHR8psLnVlz6USGJ/eOlDPTDYZ4cI8TK8PgwRUPQZp9D2iJPNIPcS6Qx/E4TebjuGJOyK8Mmg=="],
 
     "@pagefind/windows-x64": ["@pagefind/windows-x64@1.4.0", "", { "os": "win32", "cpu": "x64" }, "sha512-NkT+YAdgS2FPCn8mIA9bQhiBs+xmniMGq1LFPDhcFn0+2yIUEiIG06t7bsZlhdjknEQRTSdT7YitP6fC5qwP0g=="],
+
+    "@qwik.dev/partytown": ["@qwik.dev/partytown@0.11.2", "", { "dependencies": { "dotenv": "^16.4.7" }, "bin": { "partytown": "bin/partytown.cjs" } }, "sha512-795y49CqBiKiwKAD+QBZlzlqEK275hVcazZ7wBPSfgC23L+vWuA7PJmMpgxojOucZHzYi5rAAQ+IP1I3BKVZxw=="],
+
+    "@repo/shared": ["@repo/shared@workspace:packages/shared"],
+
+    "@repo/typescript-config": ["@repo/typescript-config@workspace:packages/tsconfig"],
+
+    "@repo/vitest-config": ["@repo/vitest-config@workspace:packages/vitest-config"],
 
     "@rollup/pluginutils": ["@rollup/pluginutils@5.3.0", "", { "dependencies": { "@types/estree": "^1.0.0", "estree-walker": "^2.0.2", "picomatch": "^4.0.2" }, "peerDependencies": { "rollup": "^1.20.0||^2.0.0||^3.0.0||^4.0.0" }, "optionalPeers": ["rollup"] }, "sha512-5EdhGZtnu3V88ces7s53hhfK5KSASnJZv8Lulpc04cWO3REESroJXg73DFsOmgbU2BhwV0E20bu2IDZb3VKW4Q=="],
 
@@ -2263,6 +2284,8 @@
     "@manypkg/get-packages/@changesets/types": ["@changesets/types@4.1.0", "", {}, "sha512-LDQvVDv5Kb50ny2s25Fhm3d9QSZimsoUGBsUioj6MC3qbMUCuC8GPIvk/M6IvXx3lYhAs0lwWUQLb+VIEUCECw=="],
 
     "@manypkg/get-packages/fs-extra": ["fs-extra@8.1.0", "", { "dependencies": { "graceful-fs": "^4.2.0", "jsonfile": "^4.0.0", "universalify": "^0.1.0" } }, "sha512-yhlQgA6mnOJUKOsRUFsgJdQCvkKhcz8tlZG5HBQfReYZy46OwLcY+Zia0mtdHsOo9y/hP+CxMN0TU9QxoOtG4g=="],
+
+    "@qwik.dev/partytown/dotenv": ["dotenv@16.6.1", "", {}, "sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow=="],
 
     "@rollup/pluginutils/estree-walker": ["estree-walker@2.0.2", "", {}, "sha512-Rfkk/Mp/DL7JVje3u18FxFujQlTNR2q6QfMSMB7AvCBx91NGj/ba3kCfza0f6dVDbw7YlRf/nDrn7pQrCCyQ/w=="],
 

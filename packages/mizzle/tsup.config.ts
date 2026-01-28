@@ -13,7 +13,7 @@ export default defineConfig({
   format: "esm",
   dts: true,
   clean: true,
-  noExternal: ["@mizzle/shared"],
+  noExternal: ["@repo/shared"],
   external: [/^@aws-sdk\//, "uuid"],
   minify: true,
   splitting: true,

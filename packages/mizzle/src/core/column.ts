@@ -1,5 +1,5 @@
-import { INFER_MODE, NULLS, ORDER } from "@mizzle/shared";
-import type { Update } from "@mizzle/shared";
+import { INFER_MODE, NULLS, ORDER } from "@repo/shared";
+import type { Update } from "@repo/shared";
 import type {
   ColumnBuilderBaseConfig,
   ColumnBuilderRuntimeConfig,

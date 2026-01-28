@@ -3,7 +3,7 @@
   "include": ["packages/*/src", "test"],
   "compilerOptions": {
     "paths": {
-      "@mizzle/shared": ["./packages/shared/src/index.ts"],
+      "@repo/shared": ["./packages/shared/src/index.ts"],
       "@aurios/mizzle": ["./packages/mizzle/src/index.ts"],
       "@aurios/mizzle/columns": ["./packages/mizzle/src/columns/index.ts"],
       "@aurios/mizzle/table": ["./packages/mizzle/src/core/table.ts"],

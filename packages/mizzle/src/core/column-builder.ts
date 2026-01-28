@@ -1,6 +1,6 @@
 import { type Column, ExtraConfigColumn } from "./column";
 import type { AnyTable } from "./table";
-import type { Assume, Simplify } from "@mizzle/shared";
+import type { Assume, Simplify } from "@repo/shared";
 
 export type ColumnDataType = "S" | "N" | "BOOL" | "M" | "L" | "B" | "BS" | "NS" | "NULL" | "SS";
 

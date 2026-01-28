@@ -14,7 +14,7 @@ Set up the monorepo structure, workspace configuration, and shared base configur
 Extract common utilities and constants into a dedicated package to be used by both the library and CLI.
 
 - [x] Task: Create `packages/shared` and migrate code from `src/utils` and `src/constants` f8d2aa6
-- [x] Task: Update internal imports in `src/` to use `@mizzle/shared` 050aaa4
+- [x] Task: Update internal imports in `src/` to use `@repo/shared` 050aaa4
 - [x] Task: Conductor - User Manual Verification 'Shared Package Extraction' (Protocol in workflow.md) 9b93400
 
 ## Phase 3: Core Library Modularization (`mizzle`) [checkpoint: e231b88]

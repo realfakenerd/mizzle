@@ -1,4 +1,4 @@
-import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "@mizzle/shared";
+import { ENTITY_SYMBOLS, TABLE_SYMBOLS } from "@repo/shared";
 import { Column } from "./column";
 import { BinaryExpression, LogicalExpression, type Expression } from "../expressions/operators";
 import { Entity } from "./table";

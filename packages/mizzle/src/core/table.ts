@@ -1,5 +1,5 @@
-import { ENTITY_SYMBOLS, INFER_MODE, TABLE_SYMBOLS } from "@mizzle/shared";
-import type { Simplify, Update } from "@mizzle/shared";
+import { ENTITY_SYMBOLS, INFER_MODE, TABLE_SYMBOLS } from "@repo/shared";
+import type { Simplify, Update } from "@repo/shared";
 import { Column, type GetColumnData } from "./column";
 import type { BuildColumns, ColumnBuider, ColumnBuilderBase } from "./column-builder";
 import { getColumnBuilders, type ColumnsBuilder } from "../columns";

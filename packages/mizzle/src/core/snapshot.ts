@@ -2,7 +2,7 @@ import { join } from "path";
 import { writeFile, readFile, mkdir, readdir } from "fs/promises";
 import { existsSync } from "fs";
 import { PhysicalTable, Entity } from "./table";
-import { TABLE_SYMBOLS, ENTITY_SYMBOLS } from "@mizzle/shared";
+import { TABLE_SYMBOLS, ENTITY_SYMBOLS } from "@repo/shared";
 import { Column } from "./column";
 import type {
   AttributeDefinition,

@@ -1,5 +1,5 @@
 import { BatchWriteCommand } from "@aws-sdk/lib-dynamodb";
-import { ENTITY_SYMBOLS } from "@mizzle/shared";
+import { ENTITY_SYMBOLS } from "@repo/shared";
 import { Entity, type InferInsertModel } from "../core/table";
 import { BaseBuilder } from "./base";
 import type { IMizzleClient } from "../core/client";

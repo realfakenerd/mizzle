@@ -1,15 +1,16 @@
 {
-  "name": "@mizzle/shared",
-  "version": "0.0.3",
-  "private": true,
-  "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "scripts": {
-    "check": "tsc --noEmit",
-    "build": "tsc --noEmit false --allowImportingTsExtensions false"
-  },
-  "devDependencies": {
-    "@mizzle/tsconfig": "workspace:*"
-  }
+    "name": "@repo/shared",
+    "version": "0.0.3",
+    "private": true,
+    "type": "module",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "scripts": {
+        "check": "tsc --noEmit",
+        "build": "tsc --noEmit false --allowImportingTsExtensions false",
+        "test": "vitest run"
+    },
+    "devDependencies": {
+        "@repo/typescript-config": "workspace:*"
+    }
 }
