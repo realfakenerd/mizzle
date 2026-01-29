@@ -1,98 +1,81 @@
-🌧️ Mizzling CLI
+# 🌧️ Mizzling CLI
 
 Mizzling is the official command-line interface for the Mizzle ORM, designed to manage DynamoDB migrations and schemas with ease. It provides a streamlined workflow for initializing projects, detecting schema changes, and applying them to your AWS environment.
-🚀 Installation
 
-You can install the CLI as a development dependency in your project using your preferred package manager:
-Bash
+You can skip this and see a better documentation [here](https://mizzle-docs.vercel.app)
 
-# Using npm
+## 🚀 Installation
 
-npm install -D @aurios/mizzling
+You can install the CLI as a development dependency in your project using your preferred package manager, so let's get started:
 
-# Using pnpm
+```bash
+npm install @aurios/mizzling
+# or
+bun add @aurios/mizzling
+```
 
-pnpm add -D @aurios/mizzling
-
-The CLI is accessible via the mizzling command.
-🛠️ Commands
+## 🛠️ Commands
 
 The CLI offers several commands to manage your DynamoDB infrastructure:
 
-1. mizzling init
+1. `bunx mizzling init`: Initializes a new Mizzle configuration in your current directory. This is an interactive command that guides you through:
 
-Initializes a new Mizzle configuration in your current directory. This is an interactive command that guides you through:
+- Setting the path to your schema files.
+- Defining the output directory for migrations and snapshots.
+- Configuring the AWS region and optional custom endpoints (e.g., for local development with DynamoDB Local or LocalStack).
 
-    Setting the path to your schema files.
+It generates a mizzle.config.ts file upon completion.
 
-    Defining the output directory for migrations and snapshots.
+2. `bunx mizzling generate [--name <name>]`: Analyzes your current schema and compares it against the last saved snapshot to generate a new migration script.
 
-    Configuring the AWS region and optional custom endpoints (e.g., for local development with DynamoDB Local or LocalStack).
+It automatically detects created, deleted, or updated tables.
 
-It generates a mizzle.config.ts file upon completion. 2. mizzling generate
+Creates a TypeScript migration file with up and down functions for version control.
 
-Analyzes your current schema and compares it against the last saved snapshot to generate a new migration script.
+3. `bunx mizzling push [-y, --yes]`: Directly applies schema changes to your target DynamoDB environment without generating migration files.
 
-    Usage: mizzling generate [--name <name>].
+The `--yes` flag skips the interactive confirmation prompt. Useful for rapid prototyping and synchronizing development environments.
 
-    It automatically detects created, deleted, or updated tables.
+4. `bunx mizzling list`: Provides a summary of all existing DynamoDB tables in the configured environment.
 
-    Creates a TypeScript migration file with up and down functions for version control.
+For each table, it displays:
 
-3. mizzling push
+- The table name.
+- Primary Key (PK) and Sort Key (SK) attributes.
+- A list of Global Secondary Indexes (GSIs).
 
-Directly applies schema changes to your target DynamoDB environment without generating migration files.
+5. `bunx mizzling drop`: An interactive tool to safely remove tables from your environment.
 
-    Usage: mizzling push [-y, --yes].
+It fetches a list of remote tables and allows you to select multiple items for deletion.
 
-    The --yes flag skips the interactive confirmation prompt.
+> Warning: This action is irreversible and requires explicit
+> confirmation before proceeding.
 
-    Useful for rapid prototyping and synchronizing development environments.
-
-4. mizzling list
-
-Provides a summary of all existing DynamoDB tables in the configured environment. For each table, it displays:
-
-    The table name.
-
-    Primary Key (PK) and Sort Key (SK) attributes.
-
-    A list of Global Secondary Indexes (GSIs).
-
-5. mizzling drop
-
-An interactive tool to safely remove tables from your environment.
-
-    It fetches a list of remote tables and allows you to select multiple items for deletion.
-
-    Warning: This action is irreversible and requires explicit confirmation before proceeding.
-
-⚙️ Configuration (mizzle.config.ts)
+## ⚙️ Configuration (mizzle.config.ts)
 
 Mizzling uses a central configuration file. You can use the defineConfig helper for full TypeScript type safety:
 TypeScript
 
+```ts
 import { defineConfig } from "@aurios/mizzling";
 
 export default defineConfig({
-schema: "./src/schema.ts",
-out: "./migrations",
-region: "us-east-1",
-// endpoint: "http://localhost:8000", // Optional for local dev
+  schema: "./src/schema.ts",
+  out: "./migrations",
+  region: "us-east-1",
+  // endpoint: "http://localhost:8000", // Optional for local dev
 });
+```
 
-Environment Overrides
+## Environment Overrides
 
 Configuration values can be overridden using environment variables:
 
-    MIZZLE_REGION: Overrides the AWS region.
+- MIZZLE_REGION: Overrides the AWS region.
+- MIZZLE_ENDPOINT: Overrides the DynamoDB endpoint.
+- MIZZLE_SCHEMA: Overrides the schema path.
+- MIZZLE_OUT: Overrides the migrations output directory.
 
-    MIZZLE_ENDPOINT: Overrides the DynamoDB endpoint.
-
-    MIZZLE_SCHEMA: Overrides the schema path.
-
-    MIZZLE_OUT: Overrides the migrations output directory.
-
-📄 License
+## 📄 License
 
 This project is licensed under the MIT License.
