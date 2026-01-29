@@ -105,8 +105,8 @@ export default defineConfig({
                     items: [
                         { label: "Overview", slug: "introduction/overview" },
                         { label: "Getting Started", slug: "introduction/getting-started" },
-                        { label: "Architecture", slug: "introduction/architecture" },
                         { label: "Single-Table Design", slug: "introduction/single-table-design" },
+                        { label: "Architecture", slug: "introduction/architecture" },
                     ],
                 },
                 // {
@@ -122,14 +122,17 @@ export default defineConfig({
                         { label: "Expression Builder", slug: "internals/expression-builder" },
                         { label: "Relational Proxy", slug: "internals/relational-proxy" },
                     ],
+                    collapsed: true,
                 },
                 {
                     label: "API Reference",
                     autogenerate: { directory: "reference" },
+                    collapsed: true,
                 },
                 {
                     label: "CLI Reference",
                     slug: "cli-reference",
+                    collapsed: true,
                 },
             ],
         }),
