@@ -1,5 +1,8 @@
 # 🌧️ mizzle
 
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/realfakenerd/mizzle/release.yml?style=flat&color=0EA5E9)
+![GitHub License](https://img.shields.io/github/license/realfakenerd/mizzle?style=flat&color=0EA5E9)
+
 **Mizzle** is a light and _type-safe_ ORM for **DynamoDB** built with TypeScript. It is designed to provide a "Drizzle-like" developer experience, simplifying your interactions with DynamoDB through a fluid, intuitive API while handling the complexities of Single-Table Design.
 
 ## Vision

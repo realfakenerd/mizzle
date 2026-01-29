@@ -1,5 +1,10 @@
 # 🌧️ mizzle
 
+![NPM Last Update](https://img.shields.io/npm/last-update/%40aurios%2Fmizzle?style=flat&color=0EA5E9)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/realfakenerd/mizzle/release.yml?style=flat&color=0EA5E9)
+![GitHub License](https://img.shields.io/github/license/realfakenerd/mizzle?style=flat&color=0EA5E9)
+
+![NPM Downloads](https://img.shields.io/npm/dw/%40aurios%2Fmizzle?style=flat&color=0EA5E9)
 A Drizzle-like ORM for DynamoDB. Mizzle provides a type-safe, fluent API for interacting with DynamoDB, supporting relational queries, batch operations, and transactions.
 
 ## Key Features

@@ -1,4 +1,9 @@
-# 🌧️ Mizzling CLI
+# 🌧️ mizzling CLI
+
+![NPM Last Update](https://img.shields.io/npm/last-update/%40aurios%2Fmizzling?style=flat&color=0EA5E9)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/realfakenerd/mizzle/release.yml?style=flat&color=0EA5E9)
+![NPM Downloads](https://img.shields.io/npm/dw/%40aurios%2Fmizzling?style=flat&color=0EA5E9)
+![GitHub License](https://img.shields.io/github/license/realfakenerd/mizzle?style=flat&color=0EA5E9)
 
 Mizzling is the official command-line interface for the Mizzle ORM, designed to manage DynamoDB migrations and schemas with ease. It provides a streamlined workflow for initializing projects, detecting schema changes, and applying them to your AWS environment.
 
