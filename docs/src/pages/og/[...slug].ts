@@ -15,6 +15,9 @@ export const { getStaticPaths, GET } = await OGImageRoute({
                 path: './src/assets/logo.png',
                 size: [80],
             },
+            bgImage: {
+                path: './src/assets/bg.png',
+            },
             font: {
                 title: {
                     families: ['Comfortaa Variable'],
@@ -28,9 +31,6 @@ export const { getStaticPaths, GET } = await OGImageRoute({
             fonts: [
                 './node_modules/@fontsource-variable/comfortaa/files/comfortaa-latin-wght-normal.woff2',
             ],
-            bgGradient: [[24, 24, 27]],
-            border: { color: [63, 63, 70], width: 20 },
-            padding: 120,
         }
     },
 })
