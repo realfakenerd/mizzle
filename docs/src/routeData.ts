@@ -8,8 +8,7 @@ export const onRequest = defineRouteMiddleware((context) => {
         context.site,
     )
 
-    // Get the array of all tags to include in the `<head>` of the current page.
-    const { head } = context.locals.starlightRoute
+    const { head, siteTitle } = context.locals.starlightRoute
 
     // Add the `<meta/>` tags for the Open Graph images.
     head.push({
@@ -19,5 +18,9 @@ export const onRequest = defineRouteMiddleware((context) => {
     head.push({
         tag: 'meta',
         attrs: { name: 'twitter:image', content: ogImageUrl.href },
+    })
+    head.push({
+        tag: 'meta',
+        attrs: { name: 'twitter:title', content: siteTitle },
     })
 })
