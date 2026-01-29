@@ -1,18 +1,10 @@
-# Mizzle
+# 🌧️ mizzle
 
 **Mizzle** is a light and _type-safe_ ORM for **DynamoDB** built with TypeScript. It is designed to provide a "Drizzle-like" developer experience, simplifying your interactions with DynamoDB through a fluid, intuitive API while handling the complexities of Single-Table Design.
 
 ## Vision
 
 Mizzle aims to minimize boilerplate and maximize developer velocity. It abstracts away the raw DynamoDB JSON structures and key management, allowing you to define your data models using familiar TypeScript schemas and interact with them using a SQL-like query builder.
-
-## Installation
-
-Install Mizzle and the required AWS SDK dependencies:
-
-```bash
-bun add mizzle @aws-sdk/client-dynamodb @aws-sdk/lib-dynamodb
-```
 
 ## How It Works
 
@@ -23,203 +15,19 @@ Mizzle separates the concept of the **Physical Table** (the actual DynamoDB tabl
 
 Key Strategies (like `prefixKey`) automatically handle the construction of PK/SK values based on your data, so you don't have to manually string-concatenate "USER#123" every time.
 
-## How to Use
+## Mono-bi-pkg
 
-### 1. Define the Physical Table
+This is a monorepo, if you want to you can read each individual package's README for more details:
 
-First, define the structure of your DynamoDB table. This matches your `Serverless.yml` or Terraform definition.
+- [mizzle](https://github/realfakenerd/packages/mizzle)
+- [mizzling](https://github/realfakenerd/packages/mizzling)
 
-```ts
-import { dynamoTable, string } from "@aurios/mizzle";
+Or better yet, visit [the documentation](https://mizzle-docs.vercel.app)
 
-// Defines the physical table structure
-export const myTable = dynamoTable("MyDynamoTable", {
-  pk: string("pk"),
-  sk: string("sk"),
-  // Optional: Define indexes
-  // indexes: {
-  //   gsi1: gsi("gsi1pk", "gsi1sk")
-  // }
-});
-```
+## Contributing
 
-### 2. Define the Entity
+Contributions are welcome! Please open an problem or submit a pr ;).
 
-Map your logical entity to the physical table. Define columns and the strategy to generate keys.
+## License
 
-```ts
-import {
-  dynamoEntity,
-  string,
-  uuid,
-  number,
-  boolean,
-  list,
-  prefixKey,
-  staticKey,
-} from "@aurios/mizzle";
-
-export const user = dynamoEntity(
-  myTable,
-  "User",
-  {
-    id: uuid(), // Automatically generates a UUID v7
-    name: string(),
-    email: string(),
-    age: number(),
-    isActive: boolean(),
-    tags: list(string()),
-  },
-  (cols) => ({
-    // Strategy: Map entity fields to Physical Keys
-    // PK becomes "USER#<id>"
-    pk: prefixKey("USER#", cols.id),
-    // SK becomes "PROFILE" (Static value)
-    sk: staticKey("PROFILE"),
-  }),
-);
-```
-
-### 3. Initialize the Client
-
-```ts
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { mizzle } from "@aurios/mizzle";
-
-const client = new DynamoDBClient({ region: "us-east-1" });
-const db = mizzle(client);
-```
-
-### 4. Insert Data
-
-Mizzle automatically resolves the PK and SK based on your strategy and the data provided.
-
-```ts
-const newUser = await db
-  .insert(user)
-  .values({
-    name: "Alice",
-    email: "alice@example.com",
-    age: 30,
-    isActive: true,
-    tags: ["typescript", "dynamodb"],
-    // 'id' is auto-generated!
-  })
-  .returning()
-  .execute();
-
-console.log(newUser.id); // e.g., "018c..."
-console.log(newUser.pk); // "USER#018c..."
-```
-
-### 5. Select Data
-
-#### Get Item (By Primary Key)
-
-If you provide enough filters to resolve the Primary Key, Mizzle uses `GetItem`.
-
-```ts
-import { eq } from "@aurios/mizzle";
-
-const result = await db.select().from(user).where(eq(user.id, newUser.id));
-// Returns an array with the user
-```
-
-#### Query (By Partition Key or Index)
-
-If you provide the Partition Key (and optionally Sort Key), Mizzle uses `Query`.
-
-```ts
-// Queries are also supported via GSIs if defined in your schema
-const admins = await db.select().from(user).where(eq(user.role, "admin"));
-```
-
-#### Scan
-
-If no keys can be resolved, Mizzle defaults to a `Scan` (use with caution!).
-
-```ts
-const allUsers = await db.select().from(user).execute();
-```
-
-### 6. Update Data
-
-Update items using a fluent builder with support for `set`, `add`, `remove`, and `delete` (for sets).
-
-```ts
-await db
-  .update(user)
-  .set({ name: "Alice Smith" })
-  .add({ age: 1 }) // Increment age
-  .where(eq(user.id, "018c..."))
-  .execute();
-```
-
-## Supported Column Types
-
-Mizzle supports a wide range of DynamoDB types:
-
-- `string()`: `S`
-- `number()`: `N`
-- `boolean()`: `BOOL`
-- `uuid()`: `S` (Auto-generating UUID v7)
-- `list(type)`: `L`
-- `map({ ... })`: `M`
-- `stringSet()`: `SS`
-- `numberSet()`: `NS`
-- `binary()`: `B`
-- `binarySet()`: `BS`
-- `json()`: `S` (Serialized JSON)
-- `date()`: `S` (ISO 8601 String)
-
-## CLI & Migrations
-
-Mizzle includes a CLI to manage your DynamoDB schema and track changes over time using snapshots and migration scripts.
-
-### 1. Configuration
-
-Create a `mizzle.config.ts` in your project root:
-
-```ts
-import { defineConfig } from "@aurios/mizzle";
-
-export default defineConfig({
-  schema: "./schema.ts", // Path to your schema definitions
-  out: "./migrations", // Where to store snapshots and scripts
-  region: "us-east-1", // Optional: Target AWS region
-  endpoint: "http://localhost:8000", // Optional: For local development
-});
-```
-
-### 2. Commands
-
-- **`generate`**: Scans your schema and creates a new migration if changes are detected.
-  ```bash
-  bun x mizzle generate --name add_users_table
-  ```
-- **`push`**: Directly syncs your local schema with the remote DynamoDB environment.
-  ```bash
-  bun x mizzle push --yes
-  ```
-- **`list`**: Lists all tables in your DynamoDB environment with their keys and indexes.
-  ```bash
-  bun x mizzle list
-  ```
-- **`drop`**: Interactively select and delete tables from the remote environment.
-  ```bash
-  bun x mizzle drop
-  ```
-
-## Roadmap
-
-- [x] **Core Types:** String, Number, Boolean, UUID, List, Map, Sets, Date.
-- [x] **Insert Operation:** Type-safe insertion with auto-generated keys.
-- [x] **Select Operation:** Intelligent routing to GetItem, Query, or Scan.
-- [x] **Key Strategies:** Prefix, Static, and Composite keys.
-- [x] **Global Secondary Indexes:** Support for querying GSIs.
-- [x] **Update Operation:** Fluent builder for `UpdateItem`.
-- [x] **Delete Operation:** Fluent builder for `DeleteItem`.
-- [x] **Relational Queries:** `db.query.users.findMany({ with: { posts: true } })`.
-- [x] **Migration Tools:** CLI for managing table creation/updates.
-- [x] **Transactions:** `TransactWriteItems` and `TransactGetItems` support.
-- [ ] **Middleware:** Global hooks for before/after operations.
+MIT
