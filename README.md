@@ -22,8 +22,8 @@ Key Strategies (like `prefixKey`) automatically handle the construction of PK/SK
 
 This is a monorepo, if you want to you can read each individual package's README for more details:
 
-- [mizzle](https://github/realfakenerd/packages/mizzle)
-- [mizzling](https://github/realfakenerd/packages/mizzling)
+- [mizzle](https://github/realfakenerd/mizzle/packages/mizzle)
+- [mizzling](https://github/realfakenerd/mizzle/packages/mizzling)
 
 Or better yet, visit [the documentation](https://mizzle-docs.vercel.app)
 
