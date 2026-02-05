@@ -1,6 +1,6 @@
 {
     "name": "@aurios/mizzle",
-    "version": "1.1.4",
+    "version": "1.1.5",
     "description": "a drizzle-like orm for dynamoDB",
     "publishConfig": {
         "access": "public",
