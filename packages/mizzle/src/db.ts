@@ -10,15 +10,21 @@ import { DeleteBuilder } from "./builders/delete";
 import { BatchGetBuilder } from "./builders/batch-get";
 import { BatchWriteBuilder, type BatchWriteOperation } from "./builders/batch-write";
 import { TransactionProxy } from "./builders/transaction";
-import { extractMetadata, type InternalRelationalSchema } from "./core/relations";
+import { extractMetadata, type InternalRelationalSchema, type MultiRelationsDefinition } from "./core/relations";
 import { RetryHandler, type RetryConfig } from "./core/retry";
 import { MizzleClient, type IMizzleClient } from "./core/client";
 
-export type QuerySchema<TSchema extends Record<string, any>> = {
-  [K in keyof TSchema as TSchema[K] extends Entity ? K : never]: RelationnalQueryBuilder<
-    TSchema[K] extends Entity ? TSchema[K] : never
-  >;
-};
+export type QuerySchema<TSchema extends Record<string, any>> = TSchema extends MultiRelationsDefinition<
+  infer T
+>
+  ? {
+      [K in keyof T]: RelationnalQueryBuilder<T[K]>;
+    }
+  : {
+      [K in keyof TSchema as TSchema[K] extends Entity ? K : never]: RelationnalQueryBuilder<
+        TSchema[K] extends Entity ? TSchema[K] : never
+      >;
+    };
 
 /**
  * DynamoDB database instance.
