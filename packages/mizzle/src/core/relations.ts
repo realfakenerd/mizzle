@@ -238,6 +238,18 @@ export function extractMetadata(schema: Record<string, unknown>): InternalRelati
     entities: {},
   };
 
+  // If the schema itself is a MultiRelationsDefinition, unwrap it
+  if (schema && (schema as any)[RELATION_SYMBOLS.RELATION_CONFIG] && (schema as any).definitions) {
+    const multiDef = schema as unknown as MultiRelationsDefinition;
+    for (const [key, entity] of Object.entries(multiDef.schema)) {
+      metadata.entities[key] = {
+        entity,
+        relations: multiDef.definitions[key] || {},
+      };
+    }
+    return metadata;
+  }
+
   // First pass: identify entities
   for (const [key, value] of Object.entries(schema)) {
     if (value instanceof Entity) {
