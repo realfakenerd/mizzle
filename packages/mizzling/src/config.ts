@@ -142,12 +142,21 @@ export function getClient(config: MizzleConfig): DynamoDBClient {
  * @returns A promise that resolves to the loaded and overridden configuration.
  * @throws Error if the configuration file is missing or invalid.
  */
-export async function loadConfig(configName = "mizzle.config.ts"): Promise<MizzleConfig> {
+export async function loadConfig(configName?: string): Promise<MizzleConfig> {
   const envConfig = process.env.MIZZLE_CONFIG;
-  const configPath = envConfig || join(process.cwd(), configName);
+  let configPath = envConfig;
 
-  if (!existsSync(configPath)) {
-    throw new Error(`Could not find ${configName} in current directory.`);
+  if (!configPath) {
+    const tsPath = join(process.cwd(), configName || "mizzle.config.ts");
+    const jsPath = join(process.cwd(), configName || "mizzle.config.js");
+
+    if (existsSync(tsPath)) {
+      configPath = tsPath;
+    } else if (existsSync(jsPath)) {
+      configPath = jsPath;
+    } else {
+      throw new Error(`Could not find ${configName || "mizzle.config.ts/js"} in current directory.`);
+    }
   }
 
   try {
