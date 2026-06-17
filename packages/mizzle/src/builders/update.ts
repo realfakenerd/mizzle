@@ -14,6 +14,7 @@ import {
   partitionUpdateValues,
   buildUpdateExpressionString,
 } from "../expressions/update-builder";
+import { marshallDates } from "../core/marshalling";
 
 export class UpdateBuilder<TEntity extends Entity, TResult = unknown> extends BaseBuilder<
   TEntity,
@@ -168,7 +169,7 @@ export class UpdateBuilder<TEntity extends Entity, TResult = unknown> extends Ba
       if (column.onUpdateFn && !this._state.set[key] && !this._state.remove.includes(key)) {
         const val = column.onUpdateFn();
         this._state.set[key] = {
-          value: typeof column.mapToDynamoValue === "function" ? column.mapToDynamoValue(val) : val,
+          value: typeof column.mapToDynamoValue === "function" ? column.mapToDynamoValue(val) : marshallDates(val),
         };
       }
     }

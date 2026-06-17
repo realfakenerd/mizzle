@@ -62,6 +62,19 @@ export interface MizzleConfig {
    * Require user confirmation before pushing any changes to the database.
    */
   strict?: boolean;
+  /**
+   * Optional nested database credentials (compatible with Drizzle-style config).
+   */
+  dbCredentials?: {
+    region?: string;
+    endpoint?: string;
+    credentials?: {
+      accessKeyId: string;
+      secretAccessKey: string;
+      sessionToken?: string;
+    };
+    profile?: string;
+  };
 }
 
 /**
@@ -105,9 +118,14 @@ export function getClient(config: MizzleConfig): DynamoDBClient {
     maxSockets: Infinity,
   };
 
+  const region = config.region || config.dbCredentials?.region || "us-east-1";
+  const endpoint = config.endpoint || config.dbCredentials?.endpoint;
+  const credentials = config.credentials || config.dbCredentials?.credentials;
+  const profile = config.profile || config.dbCredentials?.profile;
+
   const clientConfig: DynamoDBClientConfig = {
-    region: config.region || "us-east-1",
-    endpoint: config.endpoint,
+    region,
+    endpoint,
     maxAttempts: config.maxAttempts,
     requestHandler: new NodeHttpHandler({
       httpAgent: new http.Agent(agentOptions),
@@ -115,14 +133,15 @@ export function getClient(config: MizzleConfig): DynamoDBClient {
     }),
   };
 
-  if (config.credentials) {
-    clientConfig.credentials = config.credentials;
-  } else if (config.profile) {
-    clientConfig.credentials = fromIni({ profile: config.profile });
-  } else if (
-    config.endpoint &&
-    (config.endpoint.includes("localhost") || config.endpoint.includes("127.0.0.1"))
-  ) {
+  if (credentials) {
+    clientConfig.credentials = {
+      accessKeyId: credentials.accessKeyId,
+      secretAccessKey: credentials.secretAccessKey,
+      ...(credentials.sessionToken ? { sessionToken: credentials.sessionToken } : {}),
+    };
+  } else if (profile) {
+    clientConfig.credentials = fromIni({ profile });
+  } else if (endpoint && (endpoint.includes("localhost") || endpoint.includes("127.0.0.1"))) {
     clientConfig.credentials = {
       accessKeyId: "local",
       secretAccessKey: "local",

@@ -77,14 +77,19 @@
         "build": "tsup",
         "test": "vitest run"
     },
-    "dependencies": {
-        "@aws-sdk/client-dynamodb": "3.962.0",
-        "@aws-sdk/lib-dynamodb": "3.962.0"
+    "dependencies": {},
+    "peerDependencies": {
+        "@aws-sdk/client-dynamodb": "^3.0.0",
+        "@aws-sdk/lib-dynamodb": "^3.0.0",
+        "uuid": "^13.0.0"
     },
     "devDependencies": {
+        "@aws-sdk/client-dynamodb": "3.962.0",
+        "@aws-sdk/lib-dynamodb": "3.962.0",
         "@repo/shared": "workspace:*",
         "@repo/typescript-config": "workspace:*",
         "@repo/vitest-config": "workspace:*",
-        "tsup": "^8.5.1"
+        "tsup": "^8.5.1",
+        "uuid": "^13.0.0"
     }
 }

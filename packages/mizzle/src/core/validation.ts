@@ -37,6 +37,10 @@ function calculateValueSize(value: unknown): number {
     return 1;
   }
 
+  if (value instanceof Date) {
+    return Buffer.byteLength(value.toISOString(), "utf8");
+  }
+
   if (value instanceof Buffer || value instanceof Uint8Array) {
     return value.byteLength;
   }

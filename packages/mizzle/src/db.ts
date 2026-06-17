@@ -1,4 +1,4 @@
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient, CreateTableCommand, DeleteTableCommand } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import { InsertBuilder } from "./builders/insert";
 import { RelationnalQueryBuilder } from "./builders/relational-builder";
@@ -224,7 +224,41 @@ export class DynamoDB<TSchema extends Record<string, any> = Record<string, any>>
     const executor = new TransactionExecutor(this.docClient);
     await executor.execute(token, operations);
   }
+
+  /**
+   * Helper to create a new DynamoDB physical table.
+   * Typically used inside generated migration files.
+   */
+  async createTable(tableName: string, schema: any): Promise<void> {
+    await this.docClient.send(
+      new CreateTableCommand({
+        TableName: tableName,
+        AttributeDefinitions: schema.AttributeDefinitions,
+        KeySchema: schema.KeySchema,
+        GlobalSecondaryIndexes: schema.GlobalSecondaryIndexes,
+        LocalSecondaryIndexes: schema.LocalSecondaryIndexes,
+        BillingMode: schema.BillingMode ?? "PAY_PER_REQUEST",
+      }),
+    );
+  }
+
+  /**
+   * Helper to delete a DynamoDB physical table.
+   * Typically used inside generated migration files.
+   */
+  async deleteTable(tableName: string): Promise<void> {
+    await this.docClient.send(
+      new DeleteTableCommand({
+        TableName: tableName,
+      }),
+    );
+  }
 }
+
+/**
+ * Type alias representing a Mizzle database instance.
+ */
+export type Mizzle = DynamoDB;
 
 /**
  * Configuration for initializing Mizzle.

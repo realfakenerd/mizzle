@@ -7,6 +7,8 @@ import type { KeyStrategy } from "../core/strategies";
 import { type IMizzleClient } from "../core/client";
 import { calculateItemSize } from "../core/validation";
 import { ItemSizeExceededError } from "../core/errors";
+import { marshallDates } from "../core/marshalling";
+import { processValues } from "../core/builder-utils";
 
 export class InsertBuilder<TEntity extends Entity> {
   static readonly [ENTITY_SYMBOLS.ENTITY_KIND]: string = "InsertBuilder";
@@ -69,7 +71,7 @@ export class InsertBase<TEntity extends Entity, TResult = undefined> extends Bas
 
   /** @internal */
   buildItem(): Record<string, unknown> {
-    const itemToSave = this.processValues(this.valuesData);
+    const itemToSave = processValues(this.entity, this.valuesData);
     const resolution = this.resolveKeys(undefined, itemToSave);
 
     const finalItem: Record<string, unknown> = { ...itemToSave, ...resolution.keys };
@@ -154,39 +156,5 @@ export class InsertBase<TEntity extends Entity, TResult = undefined> extends Bas
     if (strategy.type === "prefix") return resolvedParts.join("");
     if (strategy.type === "composite") return resolvedParts.join(strategy.separator || "#");
     return undefined;
-  }
-
-  private processValues(values: InferInsertModel<TEntity>): Record<string, unknown> {
-    const item: Record<string, unknown> = { ...(values as Record<string, unknown>) };
-    const columns = this.entity[ENTITY_SYMBOLS.COLUMNS] as Record<string, Column>;
-
-    for (const key in columns) {
-      const col = columns[key];
-      if (!col) continue;
-
-      const value = item[key];
-
-      if (value === undefined) {
-        if (col.default !== undefined) item[key] = col.default;
-        else if (col.defaultFn) item[key] = col.defaultFn();
-      }
-
-      const finalValue = item[key];
-
-      // Check if column has mapToDynamoValue method (it's on the Column class)
-      if (col instanceof Column) {
-        item[key] = col.mapToDynamoValue(finalValue);
-      }
-
-      if (["SS", "NS", "BS"].includes(col.columnType)) {
-        if (Array.isArray(finalValue)) {
-          const setVal = new Set(finalValue);
-          item[key] = setVal;
-          if (setVal.size === 0) delete item[key];
-        }
-      }
-    }
-
-    return item;
   }
 }

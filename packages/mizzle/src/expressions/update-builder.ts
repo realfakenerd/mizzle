@@ -1,5 +1,6 @@
 import { type Column } from "../core/column";
 import { UpdateAction, SetAction, AddAction, DeleteAction } from "./actions";
+import { marshallDates } from "../core/marshalling";
 
 export interface UpdateState {
   set: Record<string, { value: unknown; functionName?: string; usePathAsFirstArg?: boolean }>;
@@ -28,7 +29,7 @@ export function partitionUpdateValues(
       col &&
       typeof (col as unknown as { mapToDynamoValue: Function }).mapToDynamoValue === "function"
         ? (col as unknown as { mapToDynamoValue: (v: unknown) => unknown }).mapToDynamoValue(v)
-        : v;
+        : marshallDates(v);
 
     if (val instanceof UpdateAction) {
       switch (val.action) {

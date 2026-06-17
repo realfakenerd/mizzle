@@ -5,6 +5,7 @@ import { BaseBuilder } from "./base";
 import type { IMizzleClient } from "../core/client";
 import { calculateItemSize } from "../core/validation";
 import { ItemSizeExceededError } from "../core/errors";
+import { processValues } from "../core/builder-utils";
 
 export type BatchWriteOperation<TEntity extends Entity> =
   | { type: "put"; item: InferInsertModel<TEntity> }
@@ -43,23 +44,26 @@ export class BatchWriteBase<TEntity extends Entity> extends BaseBuilder<
 
     const requests = this.ops.map((op) => {
       if (op.type === "put") {
-        const item = op.item as Record<string, unknown>;
+        const itemToSave = processValues(this.entity, op.item);
+        const resolution = this.resolveKeys(undefined, itemToSave);
+        const finalItem: Record<string, unknown> = { ...itemToSave, ...resolution.keys };
 
         // Size validation
-        const size = calculateItemSize(item);
+        const size = calculateItemSize(finalItem);
         if (size > 400 * 1024) {
           throw new ItemSizeExceededError(`Item in batch exceeds the 400KB limit.`);
         }
 
         return {
           PutRequest: {
-            Item: item,
+            Item: finalItem,
           },
         };
       } else {
+        const resolution = this.resolveKeys(undefined, op.keys as Record<string, unknown>);
         return {
           DeleteRequest: {
-            Key: op.keys as Record<string, unknown>,
+            Key: resolution.keys,
           },
         };
       }

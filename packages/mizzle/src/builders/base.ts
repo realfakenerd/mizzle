@@ -5,6 +5,7 @@ import { resolveTableName, mapToLogical } from "@repo/shared";
 import { resolveStrategies, type StrategyResolution } from "../core/strategies";
 import { type Expression } from "../expressions/operators";
 import { ENTITY_SYMBOLS } from "@repo/shared";
+import { marshallDates } from "../core/marshalling";
 
 export abstract class BaseBuilder<TEntity extends Entity, TResult> extends QueryPromise<TResult> {
   constructor(
@@ -50,7 +51,7 @@ export abstract class BaseBuilder<TEntity extends Entity, TResult> extends Query
 
     const addValue = (value: unknown) => {
       const placeholder = `:${prefix}v${valueCount++}`;
-      expressionAttributeValues[placeholder] = value;
+      expressionAttributeValues[placeholder] = marshallDates(value);
       return placeholder;
     };
 

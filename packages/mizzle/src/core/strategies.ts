@@ -66,7 +66,8 @@ function resolveKeyStrategy(
     const col = strategy.segments[1];
     const val = availableValues[col.name];
     if (val === undefined || val === null) return undefined;
-    const strVal = String(val);
+    const mapped = col.mapToDynamoValue(val);
+    const strVal = String(mapped);
     if (strVal.startsWith(prefix)) return strVal;
     return prefix + strVal;
   }
@@ -83,7 +84,8 @@ function resolveKeyStrategy(
         return undefined;
       }
 
-      resolvedParts.push(String(val));
+      const mapped = segment.mapToDynamoValue(val);
+      resolvedParts.push(String(mapped));
     }
   }
 
