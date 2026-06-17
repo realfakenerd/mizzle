@@ -208,14 +208,13 @@ importers:
         version: 5.9.3
 
   packages/mizzle:
-    dependencies:
+    devDependencies:
       '@aws-sdk/client-dynamodb':
         specifier: 3.962.0
         version: 3.962.0
       '@aws-sdk/lib-dynamodb':
         specifier: 3.962.0
         version: 3.962.0(@aws-sdk/client-dynamodb@3.962.0)
-    devDependencies:
       '@repo/shared':
         specifier: workspace:*
         version: link:../shared
@@ -228,6 +227,9 @@ importers:
       tsup:
         specifier: ^8.5.1
         version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2)
+      uuid:
+        specifier: ^13.0.0
+        version: 13.0.0
 
   packages/mizzling:
     dependencies:
