@@ -7,10 +7,19 @@
         }
     ],
     "commit": false,
-    "fixed": [],
+    "fixed": [
+        [
+            "@aurios/mizzle",
+            "@aurios/mizzling"
+        ]
+    ],
     "linked": [],
     "access": "public",
     "baseBranch": "main",
+    "updateInternalDependencies": "patch",
     "bumpVersionsWithWorkspaceProtocolOnly": true,
-    "ignore": []
+    "ignore": [
+        "docs",
+        "@mizzle/benchmark"
+    ]
 }
