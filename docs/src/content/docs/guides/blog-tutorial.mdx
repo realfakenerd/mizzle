@@ -1,0 +1,202 @@
+---
+title: "Tutorial: Build a Relational Blog"
+description: An end-to-end guide on building a blog with relationships using Single-Table Design.
+---
+
+In this tutorial, you will learn how to design, define, and query a relational data model in DynamoDB using Mizzle. We will build a simple **Blog Platform** containing Users, Posts, and Comments.
+
+## Goal schema structure
+
+Within a single physical DynamoDB table, we want to store:
+- **Users**: Identified by a `userId`.
+- **Posts**: Created by a specific user, identified by a `postId`.
+- **Comments**: Created on a specific post by a user, identified by a `commentId`.
+
+---
+
+## Step 1: Define the Physical Table
+
+First, define the physical table schema in `schema.ts`. Since we are using Single-Table Design, we will use generic primary keys (`pk` and `sk`).
+
+```typescript
+// db/schema.ts
+import { dynamoTable, string } from "@aurios/mizzle";
+
+export const blogTable = dynamoTable("BlogTable", {
+  pk: string("pk"),
+  sk: string("sk"),
+});
+```
+
+---
+
+## Step 2: Define the Logical Entities
+
+Now, let's define the logical entities mapping to our physical table structure.
+
+```typescript
+// db/schema.ts
+import { dynamoEntity, uuid, string, prefixKey, staticKey } from "@aurios/mizzle";
+import { blogTable } from "./schema";
+
+// User Entity
+export const users = dynamoEntity(
+  blogTable,
+  "User",
+  {
+    id: uuid(), // Auto-generates a time-sortable UUID v7
+    username: string(),
+    email: string(),
+  },
+  (cols) => ({
+    pk: prefixKey("USER#", cols.id),
+    sk: staticKey("PROFILE"),
+  })
+);
+
+// Post Entity
+export const posts = dynamoEntity(
+  blogTable,
+  "Post",
+  {
+    id: uuid(),
+    authorId: uuid(),
+    title: string(),
+    content: string(),
+  },
+  (cols) => ({
+    // Co-locate posts under the author's partition key
+    pk: prefixKey("USER#", cols.authorId),
+    sk: prefixKey("POST#", cols.id),
+  })
+);
+
+// Comment Entity
+export const comments = dynamoEntity(
+  blogTable,
+  "Comment",
+  {
+    id: uuid(),
+    postId: uuid(),
+    authorId: uuid(),
+    body: string(),
+  },
+  (cols) => ({
+    // Co-locate comments under the post partition key
+    pk: prefixKey("POST#", cols.postId),
+    sk: prefixKey("COMMENT#", cols.id),
+  })
+);
+```
+
+---
+
+## Step 3: Define Relationships
+
+To enable high-level relational querying, define the relationships between your entities:
+
+```typescript
+// db/relations.ts
+import { defineRelations } from "@aurios/mizzle";
+import * as schema from "./schema";
+
+export const relations = defineRelations(schema, (r) => ({
+  users: {
+    posts: r.many.posts({
+      fields: [r.users.id],
+      references: [r.posts.authorId],
+    }),
+  },
+  posts: {
+    author: r.one.users({
+      fields: [r.posts.authorId],
+      references: [r.users.id],
+    }),
+    comments: r.many.comments({
+      fields: [r.posts.id],
+      references: [r.comments.postId],
+    }),
+  },
+  comments: {
+    post: r.one.posts({
+      fields: [r.comments.postId],
+      references: [r.posts.id],
+    }),
+  },
+}));
+```
+
+---
+
+## Step 4: Initialize the Client
+
+Instantiate the Mizzle client with the standard AWS DynamoDB SDK client and relations.
+
+```typescript
+// db/index.ts
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { mizzle } from "@aurios/mizzle";
+import * as schema from "./schema";
+import { relations } from "./relations";
+
+const client = new DynamoDBClient({ region: "us-east-1" });
+
+export const db = mizzle({
+  client,
+  relations: { ...schema, ...relations },
+});
+```
+
+---
+
+## Step 5: Insert and Query Data
+
+Let's populate and query our blog database using the type-safe client.
+
+### Inserting Data
+
+```typescript
+import { db } from "./db";
+import { users, posts, comments } from "./db/schema";
+
+// 1. Create a user
+const [user] = await db.insert(users).values({
+  username: "jedi_master",
+  email: "obiwan@council.org",
+}).returning();
+
+// 2. Create a post for that user
+const [post] = await db.insert(posts).values({
+  authorId: user.id,
+  title: "Understanding NoSQL Joins",
+  content: "Single-Table Design is the key to performance...",
+}).returning();
+
+// 3. Comment on the post
+await db.insert(comments).values({
+  postId: post.id,
+  authorId: user.id,
+  body: "Excellent summary! Very helpful.",
+});
+```
+
+### Relational Queries
+
+Using `db.query`, you can fetch nested relation trees in a type-safe way. Mizzle compiles this into highly efficient queries, retrieving the nested results without multiple database round-trips.
+
+```typescript
+// Retrieve a post and its comments in one shot
+const postWithComments = await db.query.posts.findFirst({
+  where: (posts, { eq }) => eq(posts.id, post.id),
+  with: {
+    comments: true,
+  },
+});
+
+console.log(postWithComments?.title);
+console.log(postWithComments?.comments.map(c => c.body));
+```
+
+## Summary
+
+You have successfully modeled, defined, and queried a relational NoSQL database. Single-Table Design does not mean you have to abandon relational properties; Mizzle makes it feel as natural as querying a SQL database.

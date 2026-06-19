@@ -101,21 +101,26 @@ export default defineConfig({
             social: [{ icon: "github", label: "GitHub", href: "https://github.com/realfakenerd/mizzle" }],
             sidebar: [
                 {
-                    label: "Introduction",
+                    label: "Getting Started",
                     items: [
                         { label: "Overview", slug: "introduction/overview" },
-                        { label: "Getting Started", slug: "introduction/getting-started" },
-                        { label: "Single-Table Design", slug: "introduction/single-table-design" },
-                        { label: "Architecture", slug: "introduction/architecture" },
+                        { label: "Installation & Setup", slug: "introduction/getting-started" },
                     ],
                 },
-                // {
-                //     label: 'Guides',
-                //     items: [
-                //         { label: 'Introduction', slug: 'guides/introduction' },
-                //         { label: 'Architecture', slug: 'guides/architecture' },
-                //     ],
-                // },
+                {
+                    label: "Core Concepts",
+                    items: [
+                        { label: "Single-Table Design", slug: "concepts/single-table-design" },
+                        { label: "Architecture", slug: "concepts/architecture" },
+                    ],
+                },
+                {
+                    label: "Guides & Tutorials",
+                    items: [
+                        { label: "Build a Relational Blog", slug: "guides/blog-tutorial" },
+                        { label: "Using GSIs & LSIs", slug: "guides/querying-gsis" },
+                    ],
+                },
                 {
                     label: "Internals",
                     items: [
@@ -126,7 +131,20 @@ export default defineConfig({
                 },
                 {
                     label: "API Reference",
-                    autogenerate: { directory: "reference" },
+                    items: [
+                        {
+                            label: "Core",
+                            autogenerate: { directory: "reference/core" },
+                        },
+                        {
+                            label: "Schema",
+                            autogenerate: { directory: "reference/schema" },
+                        },
+                        {
+                            label: "Querying",
+                            autogenerate: { directory: "reference/querying" },
+                        },
+                    ],
                     collapsed: true,
                 },
                 {
