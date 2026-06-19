@@ -63,18 +63,42 @@ bun x mizzle drop
 
 ## Configuration
 
-The CLI relies on `mizzle.config.ts` to find your schema definitions and connect to DynamoDB.
+The CLI relies on `mizzle.config.ts` (or `mizzle.config.js`) to find your schema definitions and connect to DynamoDB.
 
 ```typescript
 // mizzle.config.ts
 import { defineConfig } from "@aurios/mizzling";
 
 export default defineConfig({
+  // Path or glob pattern(s) to schema files
   schema: "./src/db/schema.ts",
-  out: "./drizzle",
-  driver: "aws-sdk",
-  dbCredentials: {
-    region: "us-east-1",
+  // Directory where generated migrations and snapshots are stored
+  out: "./migrations",
+  // AWS configuration
+  region: "us-east-1",
+  endpoint: "http://localhost:8000", // Optional: for local development
+  profile: "default", // Optional: AWS profile name
+  
+  // Explicit credentials (optional, prioritised over profile/default providers)
+  credentials: {
+    accessKeyId: "...",
+    secretAccessKey: "...",
   },
+  
+  maxAttempts: 3, // Optional: DynamoDB retry limit
+  verbose: false, // Optional: print executed commands and times
+  strict: true,   // Optional: require confirmation prompts before push
 });
 ```
+
+### Environment Overrides
+
+Any configuration properties defined in the config file can be overridden by environment variables:
+
+- `MIZZLE_CONFIG`: Overrides the default config file path.
+- `MIZZLE_SCHEMA`: Overrides the schema path.
+- `MIZZLE_OUT`: Overrides the output migrations folder.
+- `MIZZLE_REGION`: Overrides the AWS region.
+- `MIZZLE_ENDPOINT`: Overrides the DynamoDB endpoint.
+- `MIZZLE_VERBOSE`: Overrides the verbose setting (`"true"` / `"false"`).
+- `MIZZLE_STRICT`: Overrides the strict mode (`"true"` / `"false"`).
